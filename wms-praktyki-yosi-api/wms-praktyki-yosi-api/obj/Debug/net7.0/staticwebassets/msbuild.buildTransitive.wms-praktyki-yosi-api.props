@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\buildMultiTargeting\wms-praktyki-yosi-api.props" />
+</Project>
