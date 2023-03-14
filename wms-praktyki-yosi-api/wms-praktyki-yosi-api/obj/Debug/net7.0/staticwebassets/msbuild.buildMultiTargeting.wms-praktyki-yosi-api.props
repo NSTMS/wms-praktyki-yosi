@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\wms-praktyki-yosi-api.props" />
+</Project>
