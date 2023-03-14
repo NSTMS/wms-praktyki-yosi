@@ -11,13 +11,14 @@ import type { product, productToAdd } from '../types/productTypes';
 })
 export class DataTableComponent {
   dataSource: MatTableDataSource<product>;
-  _reader: DataReaderService;
   displayedColumns: string[];
 
-  constructor () {
-    this._reader = new DataReaderService();
+  constructor ( private _reader: DataReaderService) {
     this.dataSource = new MatTableDataSource(this._reader.GetAll())
-    this.displayedColumns = ["id", "productName", "EAN", "price", "quantity"]
+    this.displayedColumns = [...this._reader.columns, "edit", "delete"]
   }
-
+  handleDelete(id: number){
+   this._reader.Delete(id)
+   console.log(this._reader.GetAll())
+  }
 }

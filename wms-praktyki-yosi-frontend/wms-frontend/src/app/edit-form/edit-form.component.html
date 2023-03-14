@@ -1,0 +1,30 @@
+
+<mat-grid-list cols="1" rowHeight="75px">
+  <mat-grid-tile>
+    <mat-form-field appearance="fill">
+      <mat-label>Product Name</mat-label>
+      <input matInput [(ngModel)]="name" >
+    </mat-form-field>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-form-field appearance="fill">
+      <mat-label>EAN</mat-label>
+      <input matInput [(ngModel)]="ean" ngModel>
+    </mat-form-field>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-form-field appearance="fill">
+      <mat-label>Quantity</mat-label>
+      <input matInput [(ngModel)]="quantity" ngModel>
+    </mat-form-field>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-form-field appearance="fill">
+      <mat-label>Price</mat-label>
+      <input matInput [(ngModel)]="price" ngModel>
+    </mat-form-field>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <button mat-raised-button (click)="handleSubmit()">Submit</button>
+  </mat-grid-tile>
+</mat-grid-list>

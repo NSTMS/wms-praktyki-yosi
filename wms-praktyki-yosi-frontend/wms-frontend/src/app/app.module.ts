@@ -6,18 +6,24 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DataTableComponent } from './data-table/data-table.component';
 import { AppMaterialModule } from "./app.material-module";
+import { EditFormComponent } from './edit-form/edit-form.component';
+import {FormsModule} from "@angular/forms";
+import { AddFormComponent } from './add-form/add-form.component'
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    DataTableComponent
+    DataTableComponent,
+    EditFormComponent,
+    AddFormComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    AppMaterialModule
+    AppMaterialModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

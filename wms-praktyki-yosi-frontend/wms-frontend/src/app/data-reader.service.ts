@@ -7,7 +7,7 @@ export class DataReaderService {
 
   private readonly data: product[]
   private idCounter: number;
-
+  columns = ["id", "productName", "EAN", "price", "quantity"]
   constructor() {
     this.data = [
       {
@@ -52,6 +52,7 @@ export class DataReaderService {
     Object.keys(newProduct as object).forEach(key => {
       (element as any)[key] = (newProduct as any)[key]
     })
+    console.log(newProduct)
     return true;
   }
 
