@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { DataTableComponent } from './data-table/data-table.component';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
   selector: 'app-root',
