@@ -7,9 +7,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DataTableComponent } from './data-table/data-table.component';
 import { AppMaterialModule } from "./app.material-module";
 import { EditFormComponent } from './edit-form/edit-form.component';
-import {FormsModule} from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import { AddFormComponent } from './add-form/add-form.component'
-
+import { FormControl } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -23,7 +23,7 @@ import { AddFormComponent } from './add-form/add-form.component'
     AppRoutingModule,
     BrowserAnimationsModule,
     AppMaterialModule,
-    FormsModule
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

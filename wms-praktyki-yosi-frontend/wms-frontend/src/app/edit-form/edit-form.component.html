@@ -3,25 +3,25 @@
   <mat-grid-tile>
     <mat-form-field appearance="fill">
       <mat-label>Product Name</mat-label>
-      <input matInput [(ngModel)]="name" >
+      <input matInput [formControl]="name" >
     </mat-form-field>
   </mat-grid-tile>
   <mat-grid-tile>
     <mat-form-field appearance="fill">
       <mat-label>EAN</mat-label>
-      <input matInput [(ngModel)]="ean" ngModel>
+      <input matInput [formControl]="ean" >
     </mat-form-field>
   </mat-grid-tile>
   <mat-grid-tile>
     <mat-form-field appearance="fill">
       <mat-label>Quantity</mat-label>
-      <input matInput [(ngModel)]="quantity" ngModel>
+      <input matInput [formControl]="quantity">
     </mat-form-field>
   </mat-grid-tile>
   <mat-grid-tile>
     <mat-form-field appearance="fill">
       <mat-label>Price</mat-label>
-      <input matInput [(ngModel)]="price" ngModel>
+      <input matInput [formControl]="price">
     </mat-form-field>
   </mat-grid-tile>
   <mat-grid-tile>
