@@ -1,3 +1,4 @@
+import { DataSource } from '@angular/cdk/collections';
 import { Component } from '@angular/core';
 import { MatTableDataSource, MatTable, MatTableModule } from '@angular/material/table';
 import { DataReaderService } from '../data-reader.service';
@@ -7,14 +8,18 @@ import type { product, productToAdd } from '../types/productTypes';
 @Component({
   selector: 'app-data-table',
   templateUrl: './data-table.component.html',
-  styleUrls: ['./data-table.component.scss']
+  styleUrls: ['./data-table.component.scss'] 
 })
 export class DataTableComponent {
-  dataSource: MatTableDataSource<product>;
+  dataSource: MatTableDataSource<product> = new MatTableDataSource();
   displayedColumns: string[];
 
   constructor ( private _reader: DataReaderService) {
-    this.dataSource = new MatTableDataSource(this._reader.GetAll())
+    this._reader.GetAll().then((res)=>{
+      console.log(res);
+      
+      this.dataSource = new MatTableDataSource(res)
+    } )
     this.displayedColumns = [...this._reader.columns, "edit", "delete"]
   }
   handleDelete(id: number){

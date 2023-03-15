@@ -2,8 +2,16 @@ using wms_praktyki_yosi_api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("*");
+                      });
+});
 builder.Services.AddControllers();
 
 builder.Services.AddSingleton<IProductService, ProductService>();
@@ -14,6 +22,7 @@ var app = builder.Build();
 
 
 app.UseHttpsRedirection();
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthorization();
 

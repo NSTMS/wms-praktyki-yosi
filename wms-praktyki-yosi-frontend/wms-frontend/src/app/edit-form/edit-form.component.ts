@@ -20,12 +20,14 @@ export class EditFormComponent {
 
   constructor(private route: ActivatedRoute, private _reader: DataReaderService) {
     this.id = this.route.snapshot.params["id"];
-    if (!_reader.GetById(this.id)) return;
-    const prod = _reader.GetById(this.id) as product
-    this.name.setValue(prod.productName)
-    this.ean.setValue(prod.EAN)
-    this.quantity.setValue(prod.quantity)
-    this.price.setValue(prod.price)
+    _reader.GetById(this.id).then(res => {
+         const prod = res as product
+         this.name.setValue(prod.productName)
+         this.ean.setValue(prod.EAN)
+         this.quantity.setValue(prod.quantity)
+         this.price.setValue(prod.price)
+        })
+
 
   }
 
