@@ -26,7 +26,6 @@ export class AddFormComponent {
       quantity: this.quantity.value
     } as productToAdd)
 
-    console.log(this._reader.GetAll())
   }
 
 

@@ -9,7 +9,7 @@ import type { product, productToAdd } from '../types/productTypes';
 @Component({
   selector: 'app-data-table',
   templateUrl: './data-table.component.html',
-  styleUrls: ['./data-table.component.scss'] 
+  styleUrls: ['./data-table.component.scss']
 })
 export class DataTableComponent {
   dataSource: MatTableDataSource<product> = new MatTableDataSource();
@@ -17,8 +17,7 @@ export class DataTableComponent {
 
   constructor ( private _reader: DataReaderService,private router: Router) {
     this._reader.GetAll().then((res)=>{
-      console.log(res);
-      
+
       this.dataSource = new MatTableDataSource(res)
     } )
     this.displayedColumns = [...this._reader.columns, "edit", "delete"]
@@ -28,6 +27,5 @@ export class DataTableComponent {
    this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
     this.router.navigate(["/table"]);
 });
-   console.log(this._reader.GetAll())
   }
 }

@@ -12,7 +12,6 @@ export class DataReaderService {
   async GetAll() {
     const response = await fetch(this.link);
     const products = await response.json();
-    console.log(`products`, products);
     return products;
   }
 
