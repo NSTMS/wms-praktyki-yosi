@@ -1,6 +1,7 @@
 import { DataSource } from '@angular/cdk/collections';
 import { Component } from '@angular/core';
 import { MatTableDataSource, MatTable, MatTableModule } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { DataReaderService } from '../data-reader.service';
 import type { product, productToAdd } from '../types/productTypes';
 
@@ -14,7 +15,7 @@ export class DataTableComponent {
   dataSource: MatTableDataSource<product> = new MatTableDataSource();
   displayedColumns: string[];
 
-  constructor ( private _reader: DataReaderService) {
+  constructor ( private _reader: DataReaderService,private router: Router) {
     this._reader.GetAll().then((res)=>{
       console.log(res);
       
@@ -24,6 +25,9 @@ export class DataTableComponent {
   }
   handleDelete(id: number){
    this._reader.Delete(id)
+   this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
+    this.router.navigate(["/table"]);
+});
    console.log(this._reader.GetAll())
   }
 }

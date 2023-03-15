@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute,Router } from '@angular/router';
 import { DataReaderService } from '../data-reader.service';
 import type { product, productToAdd } from '../types/productTypes';
-// import { ReactiveFormsModule } from "@angular/forms"
 import { FormControl } from '@angular/forms';
 
 @Component({
@@ -18,7 +17,7 @@ export class EditFormComponent {
   quantity = new FormControl(0)
   price = new FormControl(0.0)
 
-  constructor(private route: ActivatedRoute, private _reader: DataReaderService) {
+  constructor(private route: ActivatedRoute, private _reader: DataReaderService,private router: Router) {
     this.id = this.route.snapshot.params["id"];
     _reader.GetById(this.id).then(res => {
          const prod = res as product
@@ -27,8 +26,6 @@ export class EditFormComponent {
          this.quantity.setValue(prod.quantity)
          this.price.setValue(prod.price)
         })
-
-
   }
 
   handleSubmit(){
@@ -39,8 +36,7 @@ export class EditFormComponent {
       quantity: this.quantity.value
     } as productToAdd)
 
+    this.router.navigate(['/table'])
     console.log(this._reader.GetAll())
   }
-
-
 }
