@@ -11,7 +11,7 @@ import {FormsModule} from "@angular/forms"
 })
 export class EditFormComponent {
   id: number;
-
+  // prod : product;
   name: string = ""
   ean = ""
   quantity = 0
@@ -19,12 +19,15 @@ export class EditFormComponent {
 
   constructor(private route: ActivatedRoute, private _reader: DataReaderService) {
     this.id = this.route.snapshot.params["id"];
-    if (!_reader.GetById(this.id)) return;
-    const prod = _reader.GetById(this.id) as product
-    this.name = prod.productName
-    this.ean = prod.EAN
-    this.quantity = prod.quantity
-    this.price = prod.price
+    // _reader.GetById(this.id).then(res => {
+    //   this.prod = res as product
+    //   if (!this.prod) return;
+    //   this.name = this.prod.productName
+    //   this.ean = this.prod.EAN
+    //   this.quantity = this.prod.quantity
+    //   this.price = this.prod.price
+    // })
+   
 
   }
 
