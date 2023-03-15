@@ -1,15 +1,19 @@
-<p>
-  <mat-toolbar>
-   <button mat-icon-button [matMenuTriggerFor]="menu" class="example-icon" aria-label="Example icon-button with menu icon">
-    <mat-icon>menu</mat-icon>
-  </button>
-  <mat-menu #menu="matMenu">
-    <a mat-menu-item routerLink="/add">Add</a>
-    <a mat-menu-item routerLink="/table">Table</a>
-  </mat-menu>
-  <span>WMS JJ</span>
+<main class="mat-app-background" style="min-height: 100vh;">
+  <p>
+    <mat-toolbar color="primary">
+     <button mat-icon-button [matMenuTriggerFor]="menu" class="example-icon" aria-label="Example icon-button with menu icon">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <a mat-menu-item routerLink="/add">Add</a>
+      <a mat-menu-item routerLink="/table">Table</a>
+    </mat-menu>
+    <span>WMS JJ</span>
 
-</mat-toolbar>
-</p>
+  </mat-toolbar>
+  </p>
 
-<router-outlet></router-outlet>
+  <router-outlet></router-outlet>
+</main>
+
+
