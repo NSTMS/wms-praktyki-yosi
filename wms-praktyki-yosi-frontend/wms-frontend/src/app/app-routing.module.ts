@@ -4,6 +4,7 @@ import { DataTableComponent } from './data-table/data-table.component';
 import { EditFormComponent } from './edit-form/edit-form.component';
 import { AddFormComponent } from './add-form/add-form.component';
 const routes: Routes = [
+  {path: "", redirectTo:"/table", pathMatch: 'full'},
   {path:"table", component: DataTableComponent},
   {path:"edit/:id", component:EditFormComponent},
   {path:"add", component:AddFormComponent}
