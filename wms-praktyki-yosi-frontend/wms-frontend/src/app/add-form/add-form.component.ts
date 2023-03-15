@@ -21,7 +21,7 @@ export class AddFormComponent {
   handleSubmit(){
     this._reader.Post({
       productName: this.name.value,
-      EAN: this.ean.value,
+      ean: this.ean.value,
       price: this.price.value,
       quantity: this.quantity.value
     } as productToAdd)

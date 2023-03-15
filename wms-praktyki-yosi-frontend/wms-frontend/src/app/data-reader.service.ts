@@ -4,8 +4,8 @@ import { type product, type productToAdd } from './types/productTypes';
   providedIn: 'root'
 })
 export class DataReaderService {
-  link : string = 'https://localhost:7223/api/products'
-  columns = ["id", "productName", "EAN", "price", "quantity"]
+  link : string = 'http://189.91.31.162:5000/api/products'
+  columns = ["id", "productName", "ean", "price", "quantity"]
   constructor() {
     // this.data = [
     //   {
@@ -38,6 +38,7 @@ export class DataReaderService {
   async GetAll() {
     const response = await fetch(this.link);
     const products = await response.json();
+    console.log(`products`, products);
     return products;
   }
 
@@ -47,7 +48,7 @@ export class DataReaderService {
     return product;
   }
 
-  async Put(id: number, newProduct:productToAdd) {    
+  async Put(id: number, newProduct:productToAdd) {
     const response = await fetch(this.link+"/"+id,
     {
       headers: {

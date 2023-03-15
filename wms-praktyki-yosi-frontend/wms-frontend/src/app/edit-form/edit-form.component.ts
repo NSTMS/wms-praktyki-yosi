@@ -22,7 +22,7 @@ export class EditFormComponent {
     _reader.GetById(this.id).then(res => {
          const prod = res as product
          this.name.setValue(prod.productName)
-         this.ean.setValue(prod.EAN)
+         this.ean.setValue(prod.ean)
          this.quantity.setValue(prod.quantity)
          this.price.setValue(prod.price)
         })
@@ -31,7 +31,7 @@ export class EditFormComponent {
   handleSubmit(){
     this._reader.Put(this.id ,{
       productName: this.name.value,
-      EAN: this.ean.value,
+      ean: this.ean.value,
       price: this.price.value,
       quantity: this.quantity.value
     } as productToAdd)

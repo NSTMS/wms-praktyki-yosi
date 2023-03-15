@@ -1,14 +1,14 @@
 export type product = {
   id: number,
   productName: string,
-  EAN: string,
+  ean: string,
   price: number,
   quantity: number
 }
 
 export type productToAdd = {
   productName: string,
-  EAN: string,
+  ean: string,
   price: number,
   quantity: number
 }
