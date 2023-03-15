@@ -37,6 +37,5 @@ export class EditFormComponent {
     } as productToAdd)
 
     this.router.navigate(['/table'])
-    console.log(this._reader.GetAll())
   }
 }
