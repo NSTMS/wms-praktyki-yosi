@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using wms_praktyki_yosi_api.Enitities;
 using wms_praktyki_yosi_api.Models;
 using wms_praktyki_yosi_api.Services;
@@ -22,24 +23,27 @@ namespace wms_praktyki_yosi_api.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<IEnumerable<Product>> Get([FromRoute]int id)
+        public ActionResult<Product> Get([FromRoute]int id)
         {
             var product = _productService.GetById(id);
             if (product == null)
             {
-                return NotFound("Nie znaleziono");
+                return NotFound(1);
             }
             return Ok(product);
         }
         [HttpPut("{id}")]
-        public ActionResult<IEnumerable<Product>> Update([FromRoute] int id, [FromBody]ProductDto dto)
+        public ActionResult Update([FromRoute] int id, [FromBody]ProductDto dto)
         {
-            var product = _productService.UpdateProduct(id,dto);
-            if (product == null)
+            if(!ModelState.IsValid)
             {
-                return NotFound("Nie znaleziono");
+                return BadRequest(ModelState);
             }
-            return Ok(product);
+
+
+            var IsUpdated  = _productService.UpdateProduct(id,dto);
+            if (IsUpdated) { return NotFound(1); }
+            return Ok();
         }
 
         [HttpDelete("{id}")]
@@ -48,7 +52,7 @@ namespace wms_praktyki_yosi_api.Controllers
             var delete = _productService.RemoveProduct(id);
             if (!delete)
             {
-                return BadRequest("Niepoprawne id");
+                return BadRequest(1);
             }
             return Ok("pomyœlnie usuniêto");
         }
@@ -59,8 +63,8 @@ namespace wms_praktyki_yosi_api.Controllers
             {
                 return BadRequest(ModelState);
             }
-            _productService.AddNewProduct(dto);
-            return Ok("dodano pomyœlnie");
+            var productId = _productService.AddNewProduct(dto);
+            return Created("/api/products/" + productId, null);
         }
     }
 

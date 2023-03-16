@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using wms_praktyki_yosi_api.Enitities;
 using wms_praktyki_yosi_api.Models;
 namespace wms_praktyki_yosi_api.Services
@@ -252,51 +253,67 @@ namespace wms_praktyki_yosi_api.Services
            Quantity = 172
        }
     };
+        private readonly MagazinesDbContext _context;
+        private readonly IMapper _mapper;
 
-        public void AddNewProduct(ProductDto dto) {
-            _products.Add(
-                new Product
-                {
-                    Id = _products.Count + 1,
-                    ProductName = dto.ProductName,
-                    EAN = dto.EAN,
-                    Price = dto.Price,
-                    Quantity = dto.Quantity
-                }
-               );
+        public ProductService(MagazinesDbContext context, IMapper mapper)
+        {
+            _context = context;
+            _mapper = mapper;
+        }
+
+        public int AddNewProduct(ProductDto dto) {
+            
+            var product = _mapper.Map<Product>( dto );
+            _context.Products
+                .Add( product );
+            _context.SaveChanges();
+            return product.Id;
+            
         }
         public bool RemoveProduct(int id) {
-            var prod = _products.FirstOrDefault(r => r.Id == id);
+            var prod =_context
+                .Products.
+                FirstOrDefault(r => r.Id == id);
             if (prod == null)
             {
                 return false;
             }
-            _products.Remove(prod);
+
+            _context
+                 .Products
+                 .Remove(prod);
+
+            _context.SaveChanges();
             return true;
         }
-        public List<Product> UpdateProduct(int id, ProductDto product) {
-            var prod = _products.FirstOrDefault(r => r.Id == id);
+        public bool UpdateProduct(int id, ProductDto dto) {
+            var prod = _context.Products.FirstOrDefault(r => r.Id == id);
 
             if(prod == null) {
-                return null;
+                return false;
             }
-            prod.Id = id;
-            prod.ProductName = product.ProductName;
-            prod.EAN = product.EAN;
-            prod.Price = product.Price;
-            prod.Quantity = product.Quantity;
 
-            return _products;
+            prod.ProductName = dto.ProductName;
+            prod.EAN = dto.EAN;
+            prod.Price = dto.Price;
+            prod.Quantity = dto.Quantity;
+            _context.SaveChanges();
+
+            return true;
         }
         public IEnumerable<Product> GetAll()
         {
-            return _products;
+            // var seeder = new MagazinesSeeder(_context);
+            // seeder.Seed();
+            return _context.Products.ToList();
         }
         public Product GetById(int id)
         {
-            var product = _products.FirstOrDefault(r => r.Id == id);
-            if (product == null) return null;
-            else return product;
+            var product = _context.Products.FirstOrDefault(r => r.Id == id);
+            if (product == null)
+                return null;
+            return product;
         }
 
     }

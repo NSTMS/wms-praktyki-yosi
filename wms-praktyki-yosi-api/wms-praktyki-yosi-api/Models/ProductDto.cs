@@ -4,7 +4,7 @@ namespace wms_praktyki_yosi_api.Models
 {
     public class ProductDto
     {
-        [MinLength(1)]
+        [Required]
         public string ProductName { get; set; }
         [MaxLength(13)]
         [MinLength(13)]

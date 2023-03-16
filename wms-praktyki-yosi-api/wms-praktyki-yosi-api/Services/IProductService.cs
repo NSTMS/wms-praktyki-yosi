@@ -5,9 +5,9 @@ namespace wms_praktyki_yosi_api.Services
 {
     public interface IProductService
     {
-        void AddNewProduct(ProductDto dto);
+        int AddNewProduct(ProductDto dto);
         bool RemoveProduct(int id);
-        List<Product> UpdateProduct(int id, ProductDto product);
+        bool UpdateProduct(int id, ProductDto dto);
         IEnumerable<Product> GetAll();
         Product GetById(int id);
     }
