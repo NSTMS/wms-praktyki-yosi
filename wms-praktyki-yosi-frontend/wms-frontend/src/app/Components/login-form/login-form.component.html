@@ -1,0 +1,17 @@
+<mat-grid-list cols="1" rowHeight="75px">
+    <mat-grid-tile>
+      <mat-form-field appearance="fill">
+        <mat-label>E-mail</mat-label>
+        <input type="email" matInput [formControl]="email" >
+      </mat-form-field>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <mat-form-field appearance="fill">
+        <mat-label>Password</mat-label>
+        <input type="password"  matInput  [formControl]="password">
+      </mat-form-field>
+    </mat-grid-tile>
+    <mat-grid-tile>
+        <button mat-raised-button (click)="handleSubmit()">Submit</button>
+      </mat-grid-tile>
+  </mat-grid-list>

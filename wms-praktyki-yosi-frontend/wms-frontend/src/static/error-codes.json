@@ -1,0 +1,19 @@
+{
+    "pl":{
+        "1":"nie znaleziono id",
+        "2":"coś nie tak w formularzu",
+        "3":"niepoprawne dane logowania",
+        "4":"",
+        "5":"",
+        "7":"zalogowano poprawnie!"
+    },
+    "en":{
+        "1":"wrong id",
+        "2":"invalid data in form",
+        "3":"invalid login or password",
+        "4":"",
+        "5":"",
+        "7":""
+    }
+}
+
