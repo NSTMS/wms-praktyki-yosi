@@ -4,7 +4,11 @@ import { type product, type productToAdd } from './types/productTypes';
   providedIn: 'root'
 })
 export class DataReaderService {
-  link : string = 'http://189.91.31.162:5000/api/products'
+  protocole = "http"
+  ip = "189.91.31.165"
+  port = 5000
+
+  link : string = `${this.protocole}://${this.ip}:${this.port}/api/products`
   columns = ["id", "productName", "ean", "price", "quantity"]
   // constructor() {}
 
