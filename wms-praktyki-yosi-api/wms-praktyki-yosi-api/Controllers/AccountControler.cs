@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Security.Claims;
 using System.Web.Http.ModelBinding;
 using System.Web.Http.Results;
 using wms_praktyki_yosi_api.Enitities;
@@ -12,7 +13,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace wms_praktyki_yosi_api.Controllers
 {
-    [Route("api/user")]
+    [Route("api/account")]
     [ApiController]
     public class AccountControler: ControllerBase
     {
@@ -25,14 +26,14 @@ namespace wms_praktyki_yosi_api.Controllers
             _validator = validator;
         }
 
-        [HttpGet]
+        [HttpGet("users")]
         [Authorize(Roles = "Admin,Moderator")]
         public async Task<ActionResult<List<UserDto>>> GetAll()
         {
             return await _service.GetAll();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("users/{id}")]
         [Authorize]
         public async Task<ActionResult<User>> Get([FromRoute] string id)
         {
@@ -52,7 +53,7 @@ namespace wms_praktyki_yosi_api.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("register")]
         [AllowAnonymous]
 
         public async Task<ActionResult> RegisterUser([FromBody]RegisterUserDto user)
@@ -103,14 +104,14 @@ namespace wms_praktyki_yosi_api.Controllers
             }
         }
         
-        [HttpPut("{id}")]
+        [HttpPut("users/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> UpdateUserRole([FromRoute]string id, [FromBody] string newRole)
         {
 
             try
             {
-                await _service.ModifyUserPermission(id, newRole);
+                await _service.ModifyUserRole(id, newRole);
                 return Ok();
             }
             catch (BadRequestException ex)
@@ -125,7 +126,7 @@ namespace wms_praktyki_yosi_api.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("users/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteUser([FromRoute]string id)
         {
@@ -146,10 +147,25 @@ namespace wms_praktyki_yosi_api.Controllers
             }
         }
 
-       /* [HttpGet("getid")] 
+        [HttpGet("info")]
         [Authorize]
-        public async Task
-*/
+        public async Task<ActionResult<UserDto>> GetUserInfo()
+        {
+            var userEmail = User.FindFirst(ClaimTypes.Name);
+            if (userEmail is null)
+                return Unauthorized();
+            
+            try
+            {
+                var userInfo = await _service.GetUserInfo(userEmail.Value);
+                return Ok(userInfo);
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Smt went wrong");
+            }
+        }
+
 
 
     }

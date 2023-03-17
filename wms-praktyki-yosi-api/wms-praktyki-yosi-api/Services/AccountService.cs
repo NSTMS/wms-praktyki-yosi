@@ -19,9 +19,10 @@ namespace wms_praktyki_yosi_api.Services
         Task<bool> RegisterUser(RegisterUserDto dto);
         Task<List<UserDto>> GetAll();
         Task<LoginResult> GetToken(UserLoginDto dto);
-        Task ModifyUserPermission(string id, string newrole);
+        Task ModifyUserRole(string id, string newrole);
         Task<User> Get(string id);
         Task DeleteUser(string id);
+        Task<UserDto> GetUserInfo(string email);
     }
 
     public class AccountService : IAccountService
@@ -146,7 +147,7 @@ namespace wms_praktyki_yosi_api.Services
             
         }
 
-        public async Task ModifyUserPermission(string id, string newrole)
+        public async Task ModifyUserRole(string id, string newrole)
         {
 
             var user = await _userManager.FindByIdAsync(id);
@@ -164,7 +165,7 @@ namespace wms_praktyki_yosi_api.Services
             }
 
             result = await _userManager.AddToRoleAsync(user, newrole);
-
+             
             if (!result.Succeeded)
             {
                 throw new Exception();
@@ -182,15 +183,22 @@ namespace wms_praktyki_yosi_api.Services
                 throw new Exception();
         }
 
-        public async Task<string> GetId(string email)
+        public async Task<UserDto> GetUserInfo(string email)
         {
-            /*var user = await _userManager.FindByNameAsync(email);
+            var user = await _userManager.FindByNameAsync(email);
             if (user is null)
                 throw new BadRequestException("9");
 
-            var id = _userManager.GetUserId(user);
-            return id;*/
-            return "";
+
+            var userDto = new UserDto()
+            {
+                Id = user.Id,
+                Email = user.Email,
+                PasswordHash = user.PasswordHash,
+                Role = (await _userManager.GetRolesAsync(user))[0]
+            };
+
+            return userDto;
         }
     }
 }
