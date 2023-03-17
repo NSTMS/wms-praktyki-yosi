@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using wms_praktyki_yosi_api.Enitities;
 
@@ -11,9 +12,11 @@ using wms_praktyki_yosi_api.Enitities;
 namespace wms_praktyki_yosi_api.Migrations
 {
     [DbContext(typeof(MagazinesDbContext))]
-    partial class MagazinesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230316134641_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -183,6 +186,23 @@ namespace wms_praktyki_yosi_api.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("wms_praktyki_yosi_api.Enitities.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+                });
+
             modelBuilder.Entity("wms_praktyki_yosi_api.Enitities.User", b =>
                 {
                     b.Property<string>("Id")
@@ -193,10 +213,6 @@ namespace wms_praktyki_yosi_api.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CustomName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")

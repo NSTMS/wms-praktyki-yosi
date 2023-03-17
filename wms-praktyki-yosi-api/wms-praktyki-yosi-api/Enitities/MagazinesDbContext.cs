@@ -1,19 +1,17 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System.Net;
 
 namespace wms_praktyki_yosi_api.Enitities
 {
-    public class MagazinesDbContext : DbContext
+    public class MagazinesDbContext : IdentityDbContext<User>
     {
-        private readonly ConnectionsStrings _connectionStrings;
-
         public DbSet<Product> Products { get; set; }
-        public DbSet<User> Users { get; set; }
-        public DbSet<Role> Roles { get; set; }
 
-        public MagazinesDbContext( ConnectionsStrings connetionsStrings)
+        public MagazinesDbContext(DbContextOptions<MagazinesDbContext> options) : base(options)
         {
-            _connectionStrings = connetionsStrings;
+           
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -27,21 +25,18 @@ namespace wms_praktyki_yosi_api.Enitities
                 .IsRequired()
                 .HasMaxLength(13);
 
-            
-            modelBuilder.Entity<User>()
+            base.OnModelCreating(modelBuilder);
+           /* modelBuilder.Entity<User>()
                 .Property(u => u.Email)
                 .IsRequired();
 
             modelBuilder.Entity<Role>()
                 .Property(u => u.Name)
-                .IsRequired();
+                .IsRequired();*/
 
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(_connectionStrings.database);
-        }
+    
     }
 
 

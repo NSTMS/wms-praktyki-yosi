@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using Microsoft.AspNetCore.Identity;
+using System.Net;
 using wms_praktyki_yosi_api.Enitities;
 
 namespace wms_praktyki_yosi_api
@@ -6,9 +7,12 @@ namespace wms_praktyki_yosi_api
     public class MagazinesSeeder
     {
         private readonly MagazinesDbContext _dbContext;
-        public MagazinesSeeder(MagazinesDbContext dbContext)
+        private readonly RoleManager<IdentityRole> _roleManager;
+
+        public MagazinesSeeder(MagazinesDbContext dbContext, RoleManager<IdentityRole> roleManager = null)
         {
             _dbContext = dbContext;
+            _roleManager = roleManager;
         }
 
         public void Seed()
@@ -21,12 +25,8 @@ namespace wms_praktyki_yosi_api
                     _dbContext.Products.AddRange(restaurants);
                     _dbContext.SaveChanges();
                 }
-                if (!_dbContext.Roles.Any())
-                {
-                    var roles = GetRoles();
-                    _dbContext.Roles.AddRange(roles);
-                    _dbContext.SaveChanges();
-                }
+                
+                
             }
 
         }
@@ -252,24 +252,17 @@ namespace wms_praktyki_yosi_api
     };
             return products;
         }
-        private List<Role> GetRoles()
+
+        public async Task<bool> SeedRoles()
         {
-            var roles = new List<Role>()
-            {
-                new Role()
-                {
-                    Name = "User",
-                },
-                new Role()
-                {
-                    Name = "Manager",
-                },
-                new Role()
-                {
-                    Name = "Admin"
-                }
-            };
-            return roles;
+            if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
+                await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
+            if (!await _roleManager.RoleExistsAsync(UserRoles.Moderator))
+                await _roleManager.CreateAsync(new IdentityRole(UserRoles.Moderator));
+            if (!await _roleManager.RoleExistsAsync(UserRoles.User))
+                await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+            return true;
         }
+        
     }
 }

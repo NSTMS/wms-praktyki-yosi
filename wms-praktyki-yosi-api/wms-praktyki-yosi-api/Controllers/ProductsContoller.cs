@@ -42,7 +42,7 @@ namespace wms_praktyki_yosi_api.Controllers
 
 
             var IsUpdated  = _productService.UpdateProduct(id,dto);
-            if (IsUpdated) { return NotFound(1); }
+            if (!IsUpdated) { return NotFound(1); }
             return Ok();
         }
 
@@ -54,14 +54,15 @@ namespace wms_praktyki_yosi_api.Controllers
             {
                 return BadRequest(1);
             }
-            return Ok("pomyœlnie usuniêto");
+            return Ok();
         }
         [HttpPost]
         public ActionResult AddProduct([FromBody] ProductDto dto)
         {
+           
             if(!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(2);
             }
             var productId = _productService.AddNewProduct(dto);
             return Created("/api/products/" + productId, null);
