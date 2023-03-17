@@ -60,7 +60,7 @@ namespace wms_praktyki_yosi_api.Services
                     Id = user.Id,
                     Email = user.Email,
                     PasswordHash = user.PasswordHash,
-                    RoleName = (await _userManager.GetRolesAsync(user))[0]
+                    Role = (await _userManager.GetRolesAsync(user))[0]
                 });
             }
             return userDtos;
