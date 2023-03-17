@@ -6,13 +6,14 @@
     align-items: center;"
    >
     <div>
-      <button  *ngIf="isLoggedIn" mat-icon-button [matMenuTriggerFor]="menu" class="example-icon"
+      <button *ngIf="isLoggedIn" mat-icon-button [matMenuTriggerFor]="menu" class="example-icon"
         aria-label="Example icon-button with menu icon">
         <mat-icon>menu</mat-icon>
       </button>
       <mat-menu  #menu="matMenu" >
-        <a mat-menu-item routerLink="/add">add record</a>
+        <a mat-menu-item routerLink="/add" *ngIf="isModeratorOrAdmin">add record</a>
         <a mat-menu-item routerLink="/table">product list</a>
+        <a mat-menu-item routerLink="/users" *ngIf="isAdmin">users</a>
         <button mat-menu-item (click)="handleLogOut()">log out</button>
       </mat-menu>
       <span>WMS JJ</span>
@@ -26,13 +27,5 @@
       </mat-form-field>
     </div>
   </mat-toolbar>
-
-  <div *ngIf="isLoggedIn; else loggedOut">
-    <router-outlet></router-outlet>
-  </div>
-  
-  <ng-template #loggedOut>
-    <app-login-form></app-login-form>
-  </ng-template>
-  
+  <router-outlet></router-outlet>
 </main>

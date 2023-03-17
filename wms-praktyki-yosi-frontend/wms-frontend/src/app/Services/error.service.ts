@@ -13,12 +13,18 @@ export class ErrorService {
 
   handleErrorCode(code : number){
     this._snackBar.open(errorCodes[(localStorage.getItem('lang') as string).toLowerCase()][code.toString()],"ok")
-    // if(localStorage.getItem('token')) localStorage.removeItem('token')
-
   }
   handleSuccesLoginIn(){
     this._snackBar.open("zalogowano pomyślnie!","ok")
-    localStorage.setItem('token',"token")
+  }
+  errorMessageShow(arr : string[]){
+    let text = ""
+    var set = new Set(arr);
+
+    set.forEach(val =>{
+      text += errorCodes[(localStorage.getItem('lang') as string).toLowerCase()][val] + "\n"
+    })
+    this._snackBar.open(text,"ok")
 
   }
 }

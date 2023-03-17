@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppMaterialModule } from "./app.material-module";
-import { FormControl } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -13,6 +12,8 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { AddFormComponent } from './Components/add-form/add-form.component'
 import { LoginFormComponent } from './Components/login-form/login-form.component';
 import { RegisterFormComponent } from './Components/register-form/register-form.component';
+import { UsersTableComponent } from './Components/users-table/users-table.component';
+import { UsersEditComponent } from './Components/users-edit/users-edit.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,9 @@ import { RegisterFormComponent } from './Components/register-form/register-form.
     EditFormComponent,
     AddFormComponent,
     LoginFormComponent,
-    RegisterFormComponent
+    RegisterFormComponent,
+    UsersTableComponent,
+    UsersEditComponent,
   ],
   imports: [
     BrowserModule,

@@ -5,30 +5,39 @@ const connection = require("src/static/connection.json")
   providedIn: 'root'
 })
 export class AuthenticationService {
-  link: string = `${connection.protocole}://${connection.ip}:${connection.port}/api/users`
-  async signUp(email: string, password:string){
+  link: string = `${connection.protocole}://${connection.ip}:${connection.port}/api/account`
+  async logIn(email: string, password: string): Promise<any> {
+    return fetch(this.link + "/login", {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      method: "POST",
+      body: JSON.stringify({ "email": email, "password": password })
+    })
+    .then(r => r.json())
+.then(res => {
+      return res;
+    })
+    .catch(ex => {
+      return null;
+    });
+  }
+  
+  async registerUser(email: string, password: string, confirmPassword: string) {
     try {
-      const response = await fetch(this.link + "/login",
-      {
+      const response = await fetch(this.link+"/register", {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
         method: "POST",
-        body: JSON.stringify({"email":email,"password":password})
+        body: JSON.stringify({ "email": email, "password": password, "confirmPassword": confirmPassword })
       });
-    const token = await response.json();
-    return token;
+      return response;
+    } catch (ex: unknown) {
+      return null;
     }
-    catch (ex: unknown) {
-      console.log(JSON.stringify(ex))
-      return false;
-    }
-
-    // if(email == "test@test.com" && password == "password")
-    // {
-    //   return true;
-    // }
-    // else return false;
   }
+
 }

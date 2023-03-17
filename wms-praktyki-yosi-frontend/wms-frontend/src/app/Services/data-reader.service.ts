@@ -7,28 +7,33 @@ const connection = require("src/static/connection.json")
   providedIn: 'root'
 })
 export class DataReaderService {
-
-
   link: string = `${connection.protocole}://${connection.ip}:${connection.port}/api/products`
   columns = ["id", "productName", "ean", "price", "quantity"]
   // constructor() {}
 
 
-  async GetAll() {
+  async GetAll() {    
     try {
-      const response = await fetch(this.link);
+      const response = await fetch(this.link, {
+        headers: {
+          Authorization : `Bearer ${localStorage.getItem("token")}`
+        }
+      });
       const products = await response.json();
       return products;
     }
     catch (ex: unknown) {
       console.log(JSON.stringify(ex))
     }
-
   }
 
   async GetById(id: number) {
     try {
-      const response = await fetch(this.link + "/" + id)
+      const response = await fetch(this.link + "/" + id, {
+        headers: {
+          Authorization : `Bearer ${localStorage.getItem("token")}`
+        }
+      })
       const product = await response.json();
       return product;
     }
@@ -43,7 +48,8 @@ export class DataReaderService {
         {
           headers: {
             'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            Authorization : `Bearer ${localStorage.getItem("token")}`
           },
           method: "PUT",
           body: JSON.stringify(newProduct)
@@ -62,7 +68,9 @@ export class DataReaderService {
         {
           headers: {
             'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            Authorization : `Bearer ${localStorage.getItem("token")}`
+
           },
           method: "POST",
           body: JSON.stringify(newProduct)
@@ -79,7 +87,8 @@ export class DataReaderService {
       {
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization : `Bearer ${localStorage.getItem("token")}`
         },
         method: "DELETE"
       });

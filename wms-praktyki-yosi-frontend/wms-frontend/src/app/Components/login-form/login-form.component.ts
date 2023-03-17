@@ -3,6 +3,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { AuthenticationService } from 'src/app/Services/authentication.service';
 import { ErrorService } from 'src/app/Services/error.service';
 import { Router } from '@angular/router';
+import type { Token } from 'src/app/types/tokenTypes';
 @Component({
   selector: 'app-login-form',
   templateUrl: './login-form.component.html',
@@ -12,26 +13,23 @@ export class LoginFormComponent {
   email = new FormControl("",[Validators.email,Validators.required])
   password = new FormControl("",Validators.required)
 
-  constructor(private _errorHandler: ErrorService,private router: Router,private _authenticationService : AuthenticationService) {}
-  handleSubmit()
-  {  
-    const token = this._authenticationService.signUp(this.email.value as string, this.password.value as string)
-    token.then(res =>{
-      console.log(res);
-      
-      if(typeof res == "number")
-      {
-        this._errorHandler.handleErrorCode(res);
-      }
-      else{
-        console.log("logged");
-        window.location.reload();
-        this.router.navigate(["/table"])
-        // this._errorHandler.handleSuccesLoginIn();
-      }
-    }).catch(ex=>{console.log(JSON.stringify(ex))})
-    
-    
-    
+  constructor(private _errorHandler: ErrorService,private router: Router,private _authenticationService : AuthenticationService) {
+    if(localStorage.getItem("token") == null) this.router.navigate(["/login"])
   }
+  async handleSubmit()
+  {  
+    const token = await this._authenticationService.logIn(this.email.value as string, this.password.value as string)      
+    if (token == null)
+    {
+      this._errorHandler.handleErrorCode(3);
+    }
+    else{        
+
+      localStorage.setItem("role", (token as Token).role)
+      localStorage.setItem('token',(token as Token).token)
+      this.router.navigate(["/table"])
+      this._errorHandler.handleSuccesLoginIn();
+    }
+  }
+
 }

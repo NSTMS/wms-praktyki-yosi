@@ -20,6 +20,8 @@ export class EditFormComponent {
 
 
   constructor(private route: ActivatedRoute, private _reader: DataReaderService,private router: Router,private _errorHandler: ErrorService) {
+    if(localStorage.getItem("token") == null) this.router.navigate(["/login"])
+    if(localStorage.getItem("role") == "User") this.router.navigate(["/table"])
     this.id = this.route.snapshot.params["id"];
     _reader.GetById(this.id).then(res => {
          const prod = res as unknown as product      

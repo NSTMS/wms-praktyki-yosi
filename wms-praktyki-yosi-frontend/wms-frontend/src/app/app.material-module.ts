@@ -12,6 +12,7 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatSelectModule} from '@angular/material/select';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatDialogModule} from '@angular/material/dialog';
 
 @NgModule({
 // since we're exporting these modules, add them to export
@@ -28,7 +29,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
       MatMenuModule,
       MatSlideToggleModule,
       MatSelectModule,
-      MatSnackBarModule
+      MatSnackBarModule,
+      MatDialogModule
   ]
 })
 export class AppMaterialModule {}

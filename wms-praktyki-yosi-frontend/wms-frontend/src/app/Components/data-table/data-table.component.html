@@ -22,11 +22,11 @@
     <mat-cell *matCellDef="let product">{{product.quantity}}</mat-cell>
   </ng-container>
 
-  <ng-container matColumnDef="edit">
+  <ng-container matColumnDef="edit"  *ngIf="canAddAndDel">
     <mat-header-cell *matHeaderCellDef></mat-header-cell>
     <mat-cell *matCellDef="let product"><a mat-stroked-button color="accent" routerLink="/edit/{{product.id}}">Edit</a></mat-cell>
   </ng-container>
-  <ng-container matColumnDef="delete">
+  <ng-container matColumnDef="delete" *ngIf="canAddAndDel">
     <mat-header-cell *matHeaderCellDef></mat-header-cell>
     <mat-cell *matCellDef="let product"><button mat-flat-button color="warn" (click)="handleDelete(product.id)">Delete</button></mat-cell>
   </ng-container>

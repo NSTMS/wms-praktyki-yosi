@@ -16,7 +16,10 @@ export class AddFormComponent {
   quantity = new FormControl(0, [Validators.required,Validators.pattern("^[0-9]+$")])
   price = new FormControl(0.0, [Validators.required,Validators.pattern("^[0-9]+?(\.[0-9]+)?$")])
 
-  constructor( private _reader: DataReaderService,private router: Router,private _errorHandler: ErrorService) {  }
+  constructor( private _reader: DataReaderService,private router: Router,private _errorHandler: ErrorService) { 
+    if(localStorage.getItem("token") == null) this.router.navigate(["/login"])
+    if(localStorage.getItem("role") == "User") this.router.navigate(["/table"])
+   }
 
   handleSubmit(){
     if(this.name.invalid || this.ean.invalid || this.quantity.invalid || this.price.invalid)
