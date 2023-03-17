@@ -146,7 +146,7 @@ namespace wms_praktyki_yosi_api.Controllers
             }
         }
 
-       /* [HttpGet("getid")]
+       /* [HttpGet("getid")] 
         [Authorize]
         public async Task
 */
