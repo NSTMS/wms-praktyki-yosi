@@ -8,13 +8,19 @@ namespace wms_praktyki_yosi_api.Models.Validators
         public RegisterUserDtoValidator(MagazinesDbContext dbContext)
         {
             RuleFor(x => x.Email)
-                .NotEmpty()
-                .EmailAddress();
+                .NotEmpty().WithErrorCode("100")
+                .EmailAddress().WithErrorCode("101");
             RuleFor(x => x.Password)
-                .NotEmpty()
-                .MinimumLength(6);
+                .NotEmpty().WithErrorCode("110")
+                .MinimumLength(6).WithErrorCode("111")
+                .Matches("[A-Z]").WithErrorCode("112")
+                .Matches("[a-z]").WithErrorCode("112")
+                .Matches(@"\d").WithErrorCode("113")
+                .Matches(@"[][""!@$%^&*(){}:;<>,.?/+_=|'~\\-]").WithErrorCode("114")
+                .Matches("^[^£# “”]*$").WithErrorCode("115");
 
-            RuleFor(x => x.ConfirmPassword).Equal(e => e.Password);
+            RuleFor(x => x.ConfirmPassword)
+                .Equal(e => e.Password).WithErrorCode("116");
 
             /*RuleFor(x => x.Email)
                 .Custom((value, context) =>

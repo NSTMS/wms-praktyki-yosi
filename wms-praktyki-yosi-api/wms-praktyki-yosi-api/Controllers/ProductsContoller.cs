@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using wms_praktyki_yosi_api.Enitities;
@@ -7,6 +8,7 @@ using wms_praktyki_yosi_api.Services;
 namespace wms_praktyki_yosi_api.Controllers
 {
     [Route("api/products")]
+    [Authorize]
     public class ProductsController: ControllerBase
     {
 
@@ -33,6 +35,7 @@ namespace wms_praktyki_yosi_api.Controllers
             return Ok(product);
         }
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin,Moderator")]
         public ActionResult Update([FromRoute] int id, [FromBody]ProductDto dto)
         {
             if(!ModelState.IsValid)
@@ -47,6 +50,7 @@ namespace wms_praktyki_yosi_api.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin,Moderator")]
         public ActionResult DeleteProduct([FromRoute]int id)
         {
             var delete = _productService.RemoveProduct(id);
@@ -57,6 +61,7 @@ namespace wms_praktyki_yosi_api.Controllers
             return Ok();
         }
         [HttpPost]
+        [Authorize(Roles = "Admin,Moderator")]
         public ActionResult AddProduct([FromBody] ProductDto dto)
         {
            

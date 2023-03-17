@@ -1,11 +1,14 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Web.Http.ModelBinding;
 using System.Web.Http.Results;
+using wms_praktyki_yosi_api.Enitities;
 using wms_praktyki_yosi_api.Exceptions;
 using wms_praktyki_yosi_api.Models;
 using wms_praktyki_yosi_api.Services;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace wms_praktyki_yosi_api.Controllers
 {
@@ -23,12 +26,35 @@ namespace wms_praktyki_yosi_api.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<UserDto>> GetAll()
+        [Authorize(Roles = "Admin,Moderator")]
+        public async Task<ActionResult<List<UserDto>>> GetAll()
         {
-            return _service.GetAll();   
+            return await _service.GetAll();
+        }
+
+        [HttpGet("{id}")]
+        [Authorize]
+        public async Task<ActionResult<User>> Get([FromRoute] string id)
+        {
+            try
+            {
+                var user = await _service.Get(id);
+                return Ok(user);
+            }
+            catch (BadRequestException ex)
+            {
+                ModelState.AddModelError("Errors", ex.Message);
+                return BadRequest(ModelState);
+            }
+            catch {
+                ModelState.AddModelError("Errors", "Internal Server error");
+                return StatusCode(StatusCodes.Status500InternalServerError, ModelState);
+            }
         }
 
         [HttpPost]
+        [AllowAnonymous]
+
         public async Task<ActionResult> RegisterUser([FromBody]RegisterUserDto user)
         {
             var result = await _validator.ValidateAsync(user);
@@ -37,7 +63,7 @@ namespace wms_praktyki_yosi_api.Controllers
             {
                 foreach (var error in result.Errors)
                 {
-                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                    ModelState.AddModelError("Errors", error.ErrorCode);
                 }
                 return BadRequest(ModelState);
             }
@@ -45,41 +71,86 @@ namespace wms_praktyki_yosi_api.Controllers
             try
             {
                 await _service.RegisterUser(user);
-
             }
             catch (BadRequestException ex)
             {
-                return BadRequest(ex.Message);
+                ModelState.AddModelError("Errors", ex.Message);
+                return BadRequest(ModelState);
             }
             
             return Ok();
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody]UserLoginDto dto)
         {
             try
             {
-                string token = await _service.GetToken(dto);
-                return Ok(new
-                {
-                    token = token,
-                    role = "user"
-                });
+                var result = await _service.GetToken(dto);
+                return Ok(result);
 
             }
             catch (BadRequestException ex)
             {
-                return BadRequest(ex.Message);
+                ModelState.AddModelError("Errors", ex.Message);
+                return BadRequest(ModelState);
+            }
+            catch
+            {
+                ModelState.AddModelError("Errors", "Internal Server error");
+                return StatusCode(StatusCodes.Status500InternalServerError, ModelState);
+            }
+        }
+        
+        [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult> UpdateUserRole([FromRoute]string id, [FromBody] string newRole)
+        {
+
+            try
+            {
+                await _service.ModifyUserPermission(id, newRole);
+                return Ok();
+            }
+            catch (BadRequestException ex)
+            {
+                ModelState.AddModelError("Errors", ex.Message);
+                return BadRequest(ModelState);
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("Errors", "Internal Server error");
+                return StatusCode(StatusCodes.Status500InternalServerError, ModelState);
             }
         }
 
-        /*[HttpPut("{id}")]
-        public ActionResult UpdateUserPermissions([FromRoute]int id, [FromBody]int newPermissionLevel)
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult> DeleteUser([FromRoute]string id)
         {
+            try
+            {
+                await _service.DeleteUser(id);
+                return Ok();
+            }
+            catch (BadRequestException ex)
+            {
+                ModelState.AddModelError("Errors", ex.Message);
+                return BadRequest(ModelState);
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("Errors", "Internal Server error");
+                return StatusCode(StatusCodes.Status500InternalServerError, ModelState);
+            }
+        }
 
-            var IsUpdated = _service.UpdateUser()
+       /* [HttpGet("getid")]
+        [Authorize]
+        public async Task
+*/
 
-        }*/
+
     }
 }

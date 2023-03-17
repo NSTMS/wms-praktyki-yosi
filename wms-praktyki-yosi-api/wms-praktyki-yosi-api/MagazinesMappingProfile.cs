@@ -10,7 +10,7 @@ namespace wms_praktyki_yosi_api
         {
             CreateMap<ProductDto, Product>();
             /*CreateMap<User, UserDto>()
-                .ForMember(u => u.RoleName, c => c.MapFrom(r => r.Role.Name));*/
+                .ForMember(u => u.RoleName, c => c.MapFrom(r => r.Name));*/
         }
     }
 }

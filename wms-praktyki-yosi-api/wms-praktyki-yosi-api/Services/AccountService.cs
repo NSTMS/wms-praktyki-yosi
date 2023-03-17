@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.Features;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -9,16 +10,18 @@ using System.Text;
 using wms_praktyki_yosi_api.Enitities;
 using wms_praktyki_yosi_api.Exceptions;
 using wms_praktyki_yosi_api.Models;
+using wms_praktyki_yosi_api.Results;
 
 namespace wms_praktyki_yosi_api.Services
 {
     public interface IAccountService
     {
         Task<bool> RegisterUser(RegisterUserDto dto);
-        List<UserDto> GetAll();
-        Task<string> GetToken(UserLoginDto dto);
-        bool ModifyUserPermission(int id, int newPermissionLevel);
-        UserDto Get(int id);
+        Task<List<UserDto>> GetAll();
+        Task<LoginResult> GetToken(UserLoginDto dto);
+        Task ModifyUserPermission(string id, string newrole);
+        Task<User> Get(string id);
+        Task DeleteUser(string id);
     }
 
     public class AccountService : IAccountService
@@ -43,28 +46,34 @@ namespace wms_praktyki_yosi_api.Services
             _context = context;
         }
         
-        public List<UserDto> GetAll()
+        public async Task<List<UserDto>> GetAll()
         {
-            /*var users = _context
+            var users = _userManager
                 .Users
-                .Include(u => u.Role)
                 .ToList();
 
-            var userDtos = _mapper.Map<List<UserDto>>(users);
-            return userDtos;*/
-            return new List<UserDto>();
+            var userDtos = new List<UserDto>();
+            foreach (var user in users)
+            {
+                userDtos.Add(new UserDto()
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    PasswordHash = user.PasswordHash,
+                    RoleName = (await _userManager.GetRolesAsync(user))[0]
+                });
+            }
+            return userDtos;
+            /*return new List<UserDto>();*/
         }
 
-        public UserDto Get(int id)
+        public async Task<User> Get(string id)
         {
-            /*var user = _context
-                .Users
-                .Include(u => u.Role)
-                .FirstOrDefault(u => u.Id == id);
-            if (user == null) return null;
-            var userDto = _mapper.Map<UserDto>(user);
-            return userDto;*/
-            return null;
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+                throw new BadRequestException("1");
+
+            return user;
         }
 
         public async Task<bool> RegisterUser(RegisterUserDto dto)
@@ -87,12 +96,16 @@ namespace wms_praktyki_yosi_api.Services
             if (!result.Succeeded)
                 throw new Exception();
 
+            result = await _userManager.AddToRoleAsync(user, UserRoles.User);
+
+            if (!result.Succeeded)
+                throw new Exception();
 
             return true;
 
         }
 
-        public async Task<string> GetToken(UserLoginDto dto)
+        public async Task<LoginResult> GetToken(UserLoginDto dto)
         {
 
 
@@ -119,31 +132,65 @@ namespace wms_praktyki_yosi_api.Services
             var token = new JwtSecurityToken(
                 issuer: _authenticationSettings.JwtIssuer,
                 audience: _authenticationSettings.JwtIssuer,
-                expires: DateTime.Now.AddHours(3),
+                expires: DateTime.Now.AddDays(30),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                 );
+            var res = new LoginResult()
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(token),
+                role = (await _userManager.GetRolesAsync(user))[0]
+            };
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            return res;
             
         }
 
-        public bool ModifyUserPermission(int id, int newPermissionLevel)
+        public async Task ModifyUserPermission(string id, string newrole)
         {
 
-            /*if (newPermissionLevel > 3 || newPermissionLevel < 0)
+            var user = await _userManager.FindByIdAsync(id);
+            if (user is null)
             {
-                throw new
+                throw new BadRequestException("1");
             }
 
-            var user = _context.Users.Include(u => u.Role).FirstOrDefault(u => u.Id == id);
-            if (user == null)
+            var oldRole = (await _userManager.GetRolesAsync(user))[0];
+            var result = await _userManager.RemoveFromRoleAsync(user, oldRole);
+
+            if (!result.Succeeded)
             {
-                return false;
-            }*/
-            return true;
+                throw new Exception();
+            }
 
+            result = await _userManager.AddToRoleAsync(user, newrole);
 
+            if (!result.Succeeded)
+            {
+                throw new Exception();
+            }
+
+        }
+
+        public async Task DeleteUser(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user is null)
+                throw new BadRequestException("1");
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+                throw new Exception();
+        }
+
+        public async Task<string> GetId(string email)
+        {
+            /*var user = await _userManager.FindByNameAsync(email);
+            if (user is null)
+                throw new BadRequestException("9");
+
+            var id = _userManager.GetUserId(user);
+            return id;*/
+            return "";
         }
     }
 }

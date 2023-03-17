@@ -5,10 +5,8 @@ namespace wms_praktyki_yosi_api.Models
 {
     public class UserDto
     {
-        public int Id { get; set; }
-        [Required]
+        public string Id { get; set; }
         public string Email { get; set; }
-        [Required]
         public string PasswordHash { get; set; }
         public string RoleName { get; set; }
     }
