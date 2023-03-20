@@ -5,7 +5,7 @@ namespace wms_praktyki_yosi_api.Enitities
     public class Product
     {
         public int Id { get; set; }
-        [MinLength(1)]
+        [Required]
         public string ProductName { get; set; }
         [MaxLength(13)]
         [MinLength(13)]
