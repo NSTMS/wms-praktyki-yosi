@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { MatTableDataSource, MatTable, MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { DataReaderService } from 'src/app/Services/data-reader.service';
+
+import { DataReaderService } from '@services/data-reader.service';
 import type { product } from '@static/types/productTypes';
 
 @Component({
@@ -16,28 +17,32 @@ export class DataTableComponent{
   canAddAndDel : boolean;
 
   constructor ( private _reader: DataReaderService,private router: Router) {
-    if(localStorage.getItem("token") == null) this.router.navigate(["/login"])
+
+    if(localStorage.getItem("token") == null)
+      this.router.navigate(["/login"])
+
     this.canAddAndDel = localStorage.getItem("role") != "User"
+
     this._reader.GetAll().then((res)=>{
-      try{
-        this.length = res.length
-      }
-      catch{
-        this.length = 0
-      }
+      this.length = res.length || 0
+      // try{
+      //   this.length = res.length
+      // }
+      // catch{
+      //   this.length = 0
+      // }
       this.dataSource = new MatTableDataSource(res)
-    } )
+    })
     if(this.canAddAndDel)
-    {
-      this.displayedColumns = [...this._reader.columns, "edit", "delete"]
-    }
-    else this.displayedColumns = [...this._reader.columns]
+      this.displayedColumns = [...this._reader.columns, "edit", "info", "delete"]
+    else
+      this.displayedColumns = [...this._reader.columns]
   }
 
   handleDelete(id: number){
-   this._reader.Delete(id)
-   this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
-    this.router.navigate(["/table"]);
-});
+    this._reader.Delete(id)
+    this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
+      this.router.navigate(["/table"]);
+    });
   }
 }

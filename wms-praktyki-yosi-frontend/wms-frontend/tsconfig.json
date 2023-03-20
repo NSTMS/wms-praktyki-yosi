@@ -28,6 +28,12 @@
       ],
       "@static/*": [
         "src/static/*"
+      ],
+      "@services/*": [
+        "src/app/Services/*"
+      ],
+      "@components/*": [
+        "src/app/Components/*"
       ]
     }
   },

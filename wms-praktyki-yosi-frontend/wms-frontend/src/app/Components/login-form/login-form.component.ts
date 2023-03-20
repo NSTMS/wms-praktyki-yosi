@@ -26,13 +26,11 @@ export class LoginFormComponent {
       this._errorHandler.handleErrorCode(3);
     }
     else{
-
       localStorage.setItem("role", (token as Token).role)
       localStorage.setItem('token',(token as Token).token)
       this.router.navigate(["/table"])
       // window.location.reload()
       console.log("logged");
-
 
       this._errorHandler.handleSuccesLoginIn();
     }
