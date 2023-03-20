@@ -7,7 +7,7 @@ const connection = require("src/static/connection.json")
 export class AuthenticationService {
   link: string = `${connection.protocole}://${connection.ip}:${connection.port}/api/account`
   async logIn(email: string, password: string): Promise<any> {
-    return fetch(this.link + "/login", {
+    const response = await fetch(this.link + "/login", {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
@@ -15,13 +15,14 @@ export class AuthenticationService {
       method: "POST",
       body: JSON.stringify({ "email": email, "password": password })
     })
-    .then(r => r.json())
-.then(res => {
-      return res;
-    })
-    .catch(ex => {
-      return null;
-    });
+    if(response.ok)
+    {
+      const res = await response.json()
+      return res
+    }
+    else{
+      return null
+    }
   }
   
   async registerUser(email: string, password: string, confirmPassword: string) {

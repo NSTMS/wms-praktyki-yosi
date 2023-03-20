@@ -32,7 +32,7 @@ export class RegisterFormComponent {
         this.router.navigate(["/login"])
         }
       }
-    }).catch(ex=> { console.log(JSON.stringify(ex))})
+    }).catch(ex=> { console.log(ex)})
 
   }
 }

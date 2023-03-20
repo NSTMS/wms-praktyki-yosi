@@ -14,6 +14,7 @@ import { LoginFormComponent } from './Components/login-form/login-form.component
 import { RegisterFormComponent } from './Components/register-form/register-form.component';
 import { UsersTableComponent } from './Components/users-table/users-table.component';
 import { UsersEditComponent } from './Components/users-edit/users-edit.component';
+import { NavigationComponent } from './Components/navigation/navigation.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { UsersEditComponent } from './Components/users-edit/users-edit.component
     RegisterFormComponent,
     UsersTableComponent,
     UsersEditComponent,
+    NavigationComponent,
   ],
   imports: [
     BrowserModule,

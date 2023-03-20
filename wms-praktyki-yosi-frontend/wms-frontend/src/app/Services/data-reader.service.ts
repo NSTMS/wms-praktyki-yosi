@@ -19,12 +19,20 @@ export class DataReaderService {
           Authorization : `Bearer ${localStorage.getItem("token")}`
         }
       });
-      const products = await response.json();
-      return products;
+      console.log(response);
+      if(response.ok)
+      {
+        const products = await response.json();
+        return products;
+      }
+      else{
+        return null
+      }
+
     }
     catch (ex: unknown) {
-      console.log(JSON.stringify(ex))
-    }
+      console.log(ex);
+      }
   }
 
   async GetById(id: number) {

@@ -1,31 +1,5 @@
 <main class="mat-app-background" style="min-height: 100vh;">
-  <mat-toolbar color="primary" style="
-    height: 60px;
-    display:flex;
-    justify-content: space-between;
-    align-items: center;"
-   >
-    <div>
-      <button *ngIf="isLoggedIn" mat-icon-button [matMenuTriggerFor]="menu" class="example-icon"
-        aria-label="Example icon-button with menu icon">
-        <mat-icon>menu</mat-icon>
-      </button>
-      <mat-menu  #menu="matMenu" >
-        <a mat-menu-item routerLink="/add" *ngIf="isModeratorOrAdmin">add record</a>
-        <a mat-menu-item routerLink="/table">product list</a>
-        <a mat-menu-item routerLink="/users" *ngIf="isAdmin">users</a>
-        <button mat-menu-item (click)="handleLogOut()">log out</button>
-      </mat-menu>
-      <span>WMS JJ</span>
-    </div>
-    <div>
-      <mat-form-field style="width:80px;">
-        <mat-select [(ngModel)]="selected" (ngModelChange)="saveToLocalStorage()">
-          <mat-option value="PL">PL</mat-option>
-          <mat-option value="EN">EN</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-  </mat-toolbar>
-  <router-outlet></router-outlet>
+  <router-outlet>
+    <app-navigation></app-navigation>
+  </router-outlet>
 </main>

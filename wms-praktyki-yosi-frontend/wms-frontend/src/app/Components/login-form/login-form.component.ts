@@ -15,10 +15,12 @@ export class LoginFormComponent {
 
   constructor(private _errorHandler: ErrorService,private router: Router,private _authenticationService : AuthenticationService) {
     if(localStorage.getItem("token") == null) this.router.navigate(["/login"])
+    if(localStorage.getItem("token")) this.router.navigate(['/table'])
   }
   async handleSubmit()
   {  
     const token = await this._authenticationService.logIn(this.email.value as string, this.password.value as string)      
+    
     if (token == null)
     {
       this._errorHandler.handleErrorCode(3);
@@ -28,6 +30,10 @@ export class LoginFormComponent {
       localStorage.setItem("role", (token as Token).role)
       localStorage.setItem('token',(token as Token).token)
       this.router.navigate(["/table"])
+      // window.location.reload()
+      console.log("logged");
+      
+
       this._errorHandler.handleSuccesLoginIn();
     }
   }
