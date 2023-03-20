@@ -3,7 +3,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { AuthenticationService } from 'src/app/Services/authentication.service';
 import { ErrorService } from 'src/app/Services/error.service';
 import { Router } from '@angular/router';
-import type { Token } from 'src/app/types/tokenTypes';
+import type { Token } from '@static/types/tokenTypes';
 @Component({
   selector: 'app-login-form',
   templateUrl: './login-form.component.html',
@@ -18,21 +18,21 @@ export class LoginFormComponent {
     if(localStorage.getItem("token")) this.router.navigate(['/table'])
   }
   async handleSubmit()
-  {  
-    const token = await this._authenticationService.logIn(this.email.value as string, this.password.value as string)      
-    
+  {
+    const token = await this._authenticationService.logIn(this.email.value as string, this.password.value as string)
+
     if (token == null)
     {
       this._errorHandler.handleErrorCode(3);
     }
-    else{        
+    else{
 
       localStorage.setItem("role", (token as Token).role)
       localStorage.setItem('token',(token as Token).token)
       this.router.navigate(["/table"])
       // window.location.reload()
       console.log("logged");
-      
+
 
       this._errorHandler.handleSuccesLoginIn();
     }

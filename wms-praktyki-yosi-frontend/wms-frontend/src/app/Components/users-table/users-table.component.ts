@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { user } from 'src/app/types/userTypes';
+import { user } from '@static/types/userTypes';
 import { AdminPanelService } from 'src/app/Services/admin-panel.service';
 import {MatDialog} from '@angular/material/dialog';
 
@@ -30,7 +30,7 @@ export class UsersTableComponent {
     } )
 
       this.displayedColumns = [...this._reader.columns, "edit", "delete"]
-  } 
+  }
 
   handleDelete(id: number){
    this._reader.Delete(id)

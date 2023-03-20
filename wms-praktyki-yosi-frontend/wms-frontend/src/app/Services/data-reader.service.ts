@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import type { product, productToAdd } from '../types/productTypes';
+import type { product, productToAdd } from '@static/types/productTypes';
 declare var require: any;
 const connection = require("src/static/connection.json")
 
@@ -12,7 +12,7 @@ export class DataReaderService {
   // constructor() {}
 
 
-  async GetAll() {    
+  async GetAll() {
     try {
       const response = await fetch(this.link, {
         headers: {

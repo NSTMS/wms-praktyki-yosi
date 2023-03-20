@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute,Router } from '@angular/router';
 import { DataReaderService } from 'src/app/Services/data-reader.service';
-import type { product,productToAdd } from 'src/app/types/productTypes';
+import type { product,productToAdd } from '@static/types/productTypes';
 import { FormControl, Validators } from '@angular/forms';
 import { ErrorService } from 'src/app/Services/error.service';
 
@@ -24,7 +24,7 @@ export class EditFormComponent {
     if(localStorage.getItem("role") == "User") this.router.navigate(["/table"])
     this.id = this.route.snapshot.params["id"];
     _reader.GetById(this.id).then(res => {
-         const prod = res as unknown as product      
+         const prod = res as unknown as product
          if(typeof prod === "number")
          {
           this.router.navigate(['table'])

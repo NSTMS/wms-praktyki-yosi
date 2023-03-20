@@ -2,7 +2,7 @@ import { Component,OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AdminPanelService } from 'src/app/Services/admin-panel.service';
 import { Form, FormControl, Validators } from '@angular/forms';
-import { user } from 'src/app/types/userTypes';
+import { user } from '@static/types/userTypes';
 
 @Component({
   selector: 'app-users-edit',
@@ -15,10 +15,10 @@ export class UsersEditComponent implements OnInit{
   Id : FormControl;
   Email : FormControl;
   role : FormControl;
-  constructor(private _reader : AdminPanelService,private route: ActivatedRoute) { 
+  constructor(private _reader : AdminPanelService,private route: ActivatedRoute) {
     const temp = this.data;
     console.log(temp);
-    
+
     this.selected = this.data?.id
     this.Id = new FormControl({value:this.route.snapshot.paramMap.get('id'), disabled:true}, Validators.required)
     this.Email = new FormControl(this.data?.email, Validators.required)
@@ -38,6 +38,6 @@ export class UsersEditComponent implements OnInit{
   }
   handleSelectChange(){
     console.log(this.selected);
-    
+
   }
 }

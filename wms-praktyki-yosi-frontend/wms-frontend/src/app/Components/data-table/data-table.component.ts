@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MatTableDataSource, MatTable, MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { DataReaderService } from 'src/app/Services/data-reader.service';
-import type { product } from 'src/app/types/productTypes';
+import type { product } from '@static/types/productTypes';
 
 @Component({
   selector: 'app-data-table',
@@ -32,7 +32,7 @@ export class DataTableComponent{
       this.displayedColumns = [...this._reader.columns, "edit", "delete"]
     }
     else this.displayedColumns = [...this._reader.columns]
-  } 
+  }
 
   handleDelete(id: number){
    this._reader.Delete(id)
