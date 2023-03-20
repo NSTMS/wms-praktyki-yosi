@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using wms_praktyki_yosi_api.Enitities;
 using wms_praktyki_yosi_api.Models;
 namespace wms_praktyki_yosi_api.Services
 {
     public class ProductService : IProductService
     {
-        private List<Product> _products = new List<Product>() {
+       /* private List<Product> _products = new List<Product>() {
              new Product {
          Id = 1,
            ProductName = "Laptop Lenovo ThinkPad",
@@ -252,7 +253,7 @@ namespace wms_praktyki_yosi_api.Services
            Price = 599.99,
            Quantity = 172
        }
-    };
+    };*/
         private readonly MagazinesDbContext _context;
         private readonly IMapper _mapper;
 
@@ -263,7 +264,6 @@ namespace wms_praktyki_yosi_api.Services
         }
 
         public int AddNewProduct(ProductDto dto) {
-            
             var product = _mapper.Map<Product>( dto );
             _context.Products
                 .Add( product );
@@ -297,17 +297,24 @@ namespace wms_praktyki_yosi_api.Services
             prod.ProductName = dto.ProductName;
             prod.EAN = dto.EAN;
             prod.Price = dto.Price;
-            prod.Quantity = dto.Quantity;
             _context.SaveChanges();
 
             return true;
         }
-        public IEnumerable<Product> GetAll()
+        public IEnumerable<ProductDto> GetAll()
         {
-            /*//var seeder = new MagazinesSeeder(_context);
-            //seeder.Seed();*/
-            return _context.Products.ToList();
+            var products = _context.Products.Include(p => p.Locations).ToList();
+            var dtos = products.Select(p => new ProductDto
+            {
+                Id = p.Id,
+                ProductName = p.ProductName,
+                EAN = p.EAN,
+                Price = p.Price,
+                Quantity = p.Locations.Where(l => l.ProductId == p.Id.ToString()).Sum(l => l.Quantity)
+            });
+            return dtos;
         }
+
         public Product GetById(int id)
         {
             var product = _context.Products.FirstOrDefault(r => r.Id == id);
@@ -315,6 +322,5 @@ namespace wms_praktyki_yosi_api.Services
                 return null;
             return product;
         }
-
     }
 }

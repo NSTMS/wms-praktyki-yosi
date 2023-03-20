@@ -25,13 +25,16 @@ namespace wms_praktyki_yosi_api
                     _dbContext.Products.AddRange(restaurants);
                     _dbContext.SaveChanges();
                 }
-                
-                
+
+
             }
 
         }
 
         private List<Product> GetProducts()
+        {
+            List<Product> products = new List<Product>();
+/*
         {
             List<Product> products = new List<Product>() {
              new Product {
@@ -88,7 +91,7 @@ namespace wms_praktyki_yosi_api
            Price = 119.99,
            Quantity = 873
        },
-       new Product {    
+       new Product {
          ProductName = "Słuchawki Bezprzewodowe Sony",
            EAN = "568274901",
            Price = 299.99,
@@ -250,6 +253,7 @@ namespace wms_praktyki_yosi_api
            Quantity = 172
        }
     };
+*/
             return products;
         }
 

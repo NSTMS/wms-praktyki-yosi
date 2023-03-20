@@ -175,12 +175,63 @@ namespace wms_praktyki_yosi_api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.HasKey("Id");
+
+                    b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("wms_praktyki_yosi_api.Enitities.ProductLocations", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ProductId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProductId1")
+                        .HasColumnType("int");
+
                     b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ShelfId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ShelvesId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Products");
+                    b.HasIndex("ProductId1");
+
+                    b.HasIndex("ShelvesId");
+
+                    b.ToTable("ProductLocations");
+                });
+
+            modelBuilder.Entity("wms_praktyki_yosi_api.Enitities.Shelves", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("MagazineId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Position")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Shelves");
                 });
 
             modelBuilder.Entity("wms_praktyki_yosi_api.Enitities.User", b =>
@@ -301,6 +352,35 @@ namespace wms_praktyki_yosi_api.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("wms_praktyki_yosi_api.Enitities.ProductLocations", b =>
+                {
+                    b.HasOne("wms_praktyki_yosi_api.Enitities.Product", "Product")
+                        .WithMany("Locations")
+                        .HasForeignKey("ProductId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("wms_praktyki_yosi_api.Enitities.Shelves", "Shelves")
+                        .WithMany("Locations")
+                        .HasForeignKey("ShelvesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Shelves");
+                });
+
+            modelBuilder.Entity("wms_praktyki_yosi_api.Enitities.Product", b =>
+                {
+                    b.Navigation("Locations");
+                });
+
+            modelBuilder.Entity("wms_praktyki_yosi_api.Enitities.Shelves", b =>
+                {
+                    b.Navigation("Locations");
                 });
 #pragma warning restore 612, 618
         }

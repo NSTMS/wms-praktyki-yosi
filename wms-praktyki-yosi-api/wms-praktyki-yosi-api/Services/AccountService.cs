@@ -182,8 +182,6 @@ namespace wms_praktyki_yosi_api.Services
             var user = await _userManager.FindByNameAsync(email);
             if (user is null)
                 throw new BadRequestException("9");
-
-
             var userDto = new UserDto()
             {
                 Id = user.Id,
