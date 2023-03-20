@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import { MatToolbarModule } from '@angular/material/toolbar';
+import { Component  } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -7,5 +6,5 @@ import { MatToolbarModule } from '@angular/material/toolbar';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'wms-frontend';
+
 }
