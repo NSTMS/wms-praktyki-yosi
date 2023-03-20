@@ -30,6 +30,9 @@ namespace wms_praktyki_yosi_api.Controllers
         [Authorize(Roles = "Admin,Moderator")]
         public async Task<ActionResult<List<UserDto>>> GetAll()
         {
+            if (!await UserIsAuthorized(User))
+                return Forbid();
+
             return await _service.GetAll();
         }
 
@@ -37,6 +40,9 @@ namespace wms_praktyki_yosi_api.Controllers
         [Authorize]
         public async Task<ActionResult<User>> Get([FromRoute] string id)
         {
+            if (!await UserIsAuthorized(User))
+                return Unauthorized();
+
             try
             {
                 var user = await _service.Get(id);
@@ -108,6 +114,8 @@ namespace wms_praktyki_yosi_api.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> UpdateUserRole([FromRoute]string id, [FromBody] string newRole)
         {
+            if (!await UserIsAuthorized(User))
+                return Unauthorized();
 
             try
             {
@@ -130,6 +138,9 @@ namespace wms_praktyki_yosi_api.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteUser([FromRoute]string id)
         {
+            if (!await UserIsAuthorized(User))
+                return Unauthorized();
+
             try
             {
                 await _service.DeleteUser(id);
@@ -151,6 +162,9 @@ namespace wms_praktyki_yosi_api.Controllers
         [Authorize]
         public async Task<ActionResult<UserDto>> GetUserInfo()
         {
+            if (!await UserIsAuthorized(User))
+                return Unauthorized();
+
             var userEmail = User.FindFirst(ClaimTypes.Name);
             if (userEmail is null)
                 return Unauthorized();
@@ -163,6 +177,23 @@ namespace wms_praktyki_yosi_api.Controllers
             catch
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Smt went wrong");
+            }
+        }
+
+        private async Task<bool> UserIsAuthorized(ClaimsPrincipal user)
+        {
+            var userEmail = user.FindFirst(ClaimTypes.Name);
+            if (userEmail is null)
+                return false;
+
+            try
+            {
+                var userInfo = await _service.GetUserInfo(userEmail.Value);
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
 

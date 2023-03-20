@@ -304,8 +304,8 @@ namespace wms_praktyki_yosi_api.Services
         }
         public IEnumerable<Product> GetAll()
         {
-            var seeder = new MagazinesSeeder(_context);
-            seeder.Seed();
+            //var seeder = new MagazinesSeeder(_context);
+            //seeder.Seed();
             return _context.Products.ToList();
         }
         public Product GetById(int id)

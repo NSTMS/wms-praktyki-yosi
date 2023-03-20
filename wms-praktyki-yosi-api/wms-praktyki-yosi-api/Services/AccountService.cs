@@ -27,7 +27,6 @@ namespace wms_praktyki_yosi_api.Services
 
     public class AccountService : IAccountService
     {
-        private readonly IMapper _mapper;
         private readonly AuthenticationSettings _authenticationSettings;
         private readonly MagazinesDbContext _context;
         private readonly UserManager<User> _userManager;
@@ -36,51 +35,46 @@ namespace wms_praktyki_yosi_api.Services
         public AccountService(
             UserManager<User> userManager,
             RoleManager<IdentityRole> roleManager,
-            IMapper mapper,
             AuthenticationSettings authenticationSetings,
             MagazinesDbContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
-            _mapper = mapper;
             _authenticationSettings = authenticationSetings;
             _context = context;
         }
         
         public async Task<List<UserDto>> GetAll()
         {
-            var users = _userManager
-                .Users
-                .ToList();
+            var users = _userManager.Users.ToList();
 
             var userDtos = new List<UserDto>();
             foreach (var user in users)
             {
                 userDtos.Add(new UserDto()
-                {
-                    Id = user.Id,
-                    Email = user.Email,
-                    PasswordHash = user.PasswordHash,
-                    Role = (await _userManager.GetRolesAsync(user))[0]
-                });
+                    {
+                        Id = user.Id,
+                        Email = user.Email,
+                        PasswordHash = user.PasswordHash,
+                        Role = (await _userManager.GetRolesAsync(user))[0]
+                    });
             }
+
             return userDtos;
-            /*return new List<UserDto>();*/
         }
 
         public async Task<User> Get(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-            if (user == null)
-                throw new BadRequestException("1");
 
-            return user;
+            return user == null ? throw new BadRequestException("1") : user;
         }
 
         public async Task<bool> RegisterUser(RegisterUserDto dto)
         {
-            var seeder = new MagazinesSeeder(_context, _roleManager);
-            await seeder.SeedRoles();
+            // var seeder = new MagazinesSeeder(_context, _roleManager);
+            // await seeder.SeedRoles();
+
             var userExists = await _userManager.FindByNameAsync(dto.Email);
             if (userExists != null)
                 throw new BadRequestException("4");
@@ -90,7 +84,7 @@ namespace wms_praktyki_yosi_api.Services
                 Email = dto.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
                 UserName = dto.Email,
-                CustomName = dto.Email.Substring(0, 5)
+                CustomName = dto.Email[..5]
             };
             var result = await _userManager.CreateAsync(user, dto.Password);
 
