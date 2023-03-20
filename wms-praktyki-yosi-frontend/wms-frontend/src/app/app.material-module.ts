@@ -9,6 +9,11 @@ import {MatGridListModule} from "@angular/material/grid-list"
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatIconModule} from '@angular/material/icon';
 import {MatMenuModule} from '@angular/material/menu';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatSelectModule} from '@angular/material/select';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatDialogModule} from '@angular/material/dialog';
+
 @NgModule({
 // since we're exporting these modules, add them to export
   exports: [
@@ -21,7 +26,11 @@ import {MatMenuModule} from '@angular/material/menu';
       MatGridListModule,
       MatToolbarModule,
       MatIconModule,
-      MatMenuModule
+      MatMenuModule,
+      MatSlideToggleModule,
+      MatSelectModule,
+      MatSnackBarModule,
+      MatDialogModule
   ]
 })
 export class AppMaterialModule {}
