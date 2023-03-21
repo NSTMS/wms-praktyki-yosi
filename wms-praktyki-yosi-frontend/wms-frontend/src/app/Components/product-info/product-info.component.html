@@ -1,0 +1,59 @@
+<mat-grid-list cols="1" rowHeight="75px">
+  <mat-grid-tile>
+    <mat-form-field appearance="fill">
+      <mat-label>Product Name</mat-label>
+      <input matInput disabled [value]="product.productName">
+    </mat-form-field>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-form-field appearance="fill">
+      <mat-label>EAN</mat-label>
+      <input matInput disabled [value]="product.ean">
+    </mat-form-field>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-form-field appearance="fill">
+      <mat-label>Quantity</mat-label>
+      <input matInput disabled [value]="product.quantity">
+    </mat-form-field>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-form-field appearance="fill">
+      <mat-label>Price</mat-label>
+      <input matInput disabled [value]="product.price">
+    </mat-form-field>
+  </mat-grid-tile>
+</mat-grid-list>
+
+<mat-table class="mat-table" #table [dataSource]="dataSource">
+  <ng-container matColumnDef="id">
+    <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>
+    <mat-cell *matCellDef="let location">{{location.id}}</mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="position">
+    <mat-header-cell *matHeaderCellDef>Position</mat-header-cell>
+    <mat-cell *matCellDef="let location">{{location.position}}</mat-cell>
+  </ng-container>
+
+
+  <ng-container matColumnDef="quantity">
+    <mat-header-cell *matHeaderCellDef>Quantity</mat-header-cell>
+    <mat-cell *matCellDef="let location">{{location.quantity}}</mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="edit"  *ngIf="canAddAndDel">
+    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+    <mat-cell *matCellDef="let location"><a mat-stroked-button color="accent" routerLink="/locations/edit/{{location.id}}">Edit</a></mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="delete" *ngIf="canAddAndDel">
+    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+    <mat-cell *matCellDef="let product"><button mat-flat-button color="warn" (click)="handleDelete(product.id)">Delete</button></mat-cell>
+  </ng-container>
+
+
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+
+</mat-table>
