@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using wms_praktyki_yosi_api.Enitities;
+using wms_praktyki_yosi_api.Exceptions;
 using wms_praktyki_yosi_api.Models;
 namespace wms_praktyki_yosi_api.Services
 {
@@ -16,45 +17,82 @@ namespace wms_praktyki_yosi_api.Services
             _context = context;
             _mapper = mapper;
         }
-
-        public int AddNewLocation(ProductLocationDto location)
+        public int AddProductToLocation(ProductLocationDto location)
         {
-            var loc = _mapper.Map<ProductLocations>(location);
-            _context.ProductLocations.Add(loc);
-            _context.SaveChanges();
-            return loc.Id;
+            var product = _context
+                .Products
+                .FirstOrDefault(p => p.Id == location.ProductId) 
+                ?? throw new BadRequestException("151");
+            var shelf = _context
+                .Shelves
+                .FirstOrDefault(s => s.Position == location.Position)
+                ?? throw new BadRequestException("150"); //czy półka istnieje 
+
+            var prodLoc = _context
+                .ProductLocations
+                .Include(l => l.Shelf)
+                .FirstOrDefault(l => location.Position ==  l.Shelf.Position); //czy prod znajduje sie na półce
+
+
+            if (prodLoc != null)
+            {
+                prodLoc.Quantity += location.Quantity;
+                _context.SaveChanges();
+            }
+            else
+            {
+                var mappedProd = _mapper.Map<ProductLocations>(location);
+                mappedProd.ShelfId = shelf.Id;
+                _context.ProductLocations.Add(mappedProd);
+                _context.SaveChanges();
+
+            }
+            return product.Id;
         }
 
         public IEnumerable<ProductLocationDto> GetAllLocations()
         {
-            var locations = _context.ProductLocations.Include(r => r.Id).ToList();
+            var locations = _context.ProductLocations.Include(r => r.Shelf).ToList();
             var dtos = locations.Select(p => new ProductLocationDto
             {
                 ProductId = p.ProductId,
-                ShelfId = p.ShelfId,
+                Position = p.Shelf.Position,
                 Quantity = p.Quantity
             });
-            if (dtos == null) return null;
+            if (dtos == null) 
+                return null;
             return dtos;
         }
-        public ProductLocations GetLocationById(int id)
+        public ReturnProductLocationDto GetLocationById(int id)
         {
-            var loc = _context.ProductLocations.FirstOrDefault(r => r.Id == id);
-            if (loc == null) return null;
-            return loc;
+            var loc = _context
+                .ProductLocations
+                .Include(l => l.Shelf)
+                .FirstOrDefault(r => r.Id == id);
+
+            if (loc == null) 
+                return null;
+
+            var res = _mapper.Map<ReturnProductLocationDto>(loc);
+
+            return res;
         }
 
         public bool UpdateLocation(int id, ProductLocationDto location)
         {
-            var loc = _context.ProductLocations.FirstOrDefault(r => r.Id == id);
+            var loc = _context
+                .ProductLocations
+                .FirstOrDefault(r => r.Id == id);
 
             if (loc == null)
-            {
                 return false;
-            }
-            loc.ProductId = location.ProductId;
-            loc.ShelfId = location.ShelfId;
-            loc.Quantity = loc.Quantity;
+            
+            var shelf = _context.Shelves.FirstOrDefault(s => s.Position == location.Position);
+            if (shelf == null)
+                return false;
+
+            loc.ShelfId= shelf.Id;
+            loc.Quantity = location.Quantity;
 
             _context.SaveChanges();
             return true;
@@ -63,9 +101,7 @@ namespace wms_praktyki_yosi_api.Services
         {
             var loc = _context.ProductLocations.FirstOrDefault(r => r.Id == id);
             if (loc == null)
-            {
                 return false;
-            }
             _context.ProductLocations.Remove(loc);
 
             _context.SaveChanges();

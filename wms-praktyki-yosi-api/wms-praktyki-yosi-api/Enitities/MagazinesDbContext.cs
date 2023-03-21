@@ -11,7 +11,7 @@ namespace wms_praktyki_yosi_api.Enitities
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductLocations> ProductLocations { get; set; }
 
-        public DbSet<Shelves> Shelves { get; set; } 
+        public DbSet<Shelf> Shelves { get; set; } 
         private readonly ConnectionsStrings _connectionStrings;
         public MagazinesDbContext(DbContextOptions<MagazinesDbContext> options, ConnectionsStrings connectionStrings) : base(options)
         {
@@ -29,14 +29,6 @@ namespace wms_praktyki_yosi_api.Enitities
                 .Property(r => r.EAN)
                 .IsRequired()
                 .HasMaxLength(13);
-
-            modelBuilder.Entity<ProductLocations>()
-                .Property(r => r.ProductId)
-                .IsRequired();
-
-            modelBuilder.Entity<ProductLocations>()
-                .Property(r => r.ShelfId)
-                .IsRequired();
 
 
             base.OnModelCreating(modelBuilder);

@@ -5,10 +5,10 @@ namespace wms_praktyki_yosi_api.Services
 {
     public interface ILocationService
     {
-        int AddNewLocation(ProductLocationDto location);
+        public int AddProductToLocation(ProductLocationDto location);
         bool DeleteLocation(int id);
         IEnumerable<ProductLocationDto> GetAllLocations();
-        ProductLocations GetLocationById(int id);
+        ReturnProductLocationDto GetLocationById(int id);
         bool UpdateLocation(int id, ProductLocationDto location);
     }
-}
+}   

@@ -185,7 +185,6 @@ namespace wms_praktyki_yosi_api.Controllers
             var userEmail = user.FindFirst(ClaimTypes.Name);
             if (userEmail is null)
                 return false;
-
             try
             {
                 var userInfo = await _service.GetUserInfo(userEmail.Value);

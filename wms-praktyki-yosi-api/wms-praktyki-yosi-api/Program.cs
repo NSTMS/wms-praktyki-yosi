@@ -46,10 +46,11 @@ builder.Services.AddIdentity<User, IdentityRole>()
 
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<ILocationService, LocationService>();
+
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
-
 
 //            Authentication loading
 var authenticationSettings = new AuthenticationSettings();

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Security.Claims;
 using wms_praktyki_yosi_api.Enitities;
+using wms_praktyki_yosi_api.Exceptions;
 using wms_praktyki_yosi_api.Models;
 using wms_praktyki_yosi_api.Services;
 namespace wms_praktyki_yosi_api.Controllers
@@ -14,31 +15,46 @@ namespace wms_praktyki_yosi_api.Controllers
 
         private readonly ILocationService _locationService;
 
-        public LocationController(LocationService locationService)
+        public LocationController(ILocationService locationService)
         {
             _locationService = locationService;
         }
- 
-        [HttpPost] public ActionResult GetAll() {
+
+        [HttpGet] public ActionResult GetAll() {
             var result = _locationService.GetAllLocations();
             if (result == null)
             {
-                return NotFound(1);//zmień na jakis inny error code
+                return NotFound(151);//zmień na jakis inny error code
             }
             return Ok(result);
         }
-        [HttpGet("{id}")] public ActionResult GetById([FromRoute]int id)
+        [HttpPost]
+        public ActionResult AddProductToLocation([FromBody] ProductLocationDto dto)
+        {
+            try
+            {
+                var result = _locationService.AddProductToLocation(dto);
+                return Ok();
+            }
+            catch(BadRequestException ex)
+            {
+                ModelState.AddModelError("Errors", ex.Message);
+                return BadRequest(ModelState);
+            }
+          
+        }
+        [HttpGet("{id}")] public ActionResult GetById([FromRoute] int id)
         {
             var result = _locationService.GetLocationById(id);
             return Ok(result);
         }
-        [HttpPut("{id}")] public ActionResult Edit([FromRoute]int id, [FromBody]ProductLocationDto dto) {
-            var result = _locationService.UpdateLocation(id,dto);
+        [HttpPut("{id}")] public ActionResult Edit([FromRoute] int id, [FromBody] ProductLocationDto dto) {
+            var result = _locationService.UpdateLocation(id, dto);
             if (!result)
             {
                 return NotFound(1);//zmień na jakis inny error code
             }
-            return Ok("Zaktualizowano pomyślnie");  
+            return Ok();
         }
         [HttpDelete("{id}")] public ActionResult Delete([FromRoute] int id) {
             var result = _locationService.DeleteLocation(id);
@@ -46,7 +62,7 @@ namespace wms_praktyki_yosi_api.Controllers
             {
                 return NotFound(1);//zmień na jakis inny error code
             }
-            return Ok("Usunięto pomyślnie");
+            return Ok();
         }
     }
 }

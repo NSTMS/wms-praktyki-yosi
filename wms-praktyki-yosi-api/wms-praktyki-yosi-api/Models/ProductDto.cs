@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Reflection.PortableExecutable;
 
 namespace wms_praktyki_yosi_api.Models
 {
@@ -12,5 +13,6 @@ namespace wms_praktyki_yosi_api.Models
         public string EAN { get; set; }
         public double Price { get; set; }
         public int Quantity { get; set; }
+        public List<ReturnProductLocationDto> Locations { get; set; } 
     }
 }

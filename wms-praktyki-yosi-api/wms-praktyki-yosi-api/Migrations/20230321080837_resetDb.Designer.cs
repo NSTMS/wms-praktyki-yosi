@@ -12,8 +12,8 @@ using wms_praktyki_yosi_api.Enitities;
 namespace wms_praktyki_yosi_api.Migrations
 {
     [DbContext(typeof(MagazinesDbContext))]
-    [Migration("20230320142533_AddColumns")]
-    partial class AddColumns
+    [Migration("20230321080837_resetDb")]
+    partial class resetDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -191,33 +191,25 @@ namespace wms_praktyki_yosi_api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ProductId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ProductId1")
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<string>("ShelfId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ShelvesId")
+                    b.Property<int>("ShelfId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId1");
+                    b.HasIndex("ProductId");
 
-                    b.HasIndex("ShelvesId");
+                    b.HasIndex("ShelfId");
 
                     b.ToTable("ProductLocations");
                 });
 
-            modelBuilder.Entity("wms_praktyki_yosi_api.Enitities.Shelves", b =>
+            modelBuilder.Entity("wms_praktyki_yosi_api.Enitities.Shelf", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -361,19 +353,19 @@ namespace wms_praktyki_yosi_api.Migrations
                 {
                     b.HasOne("wms_praktyki_yosi_api.Enitities.Product", "Product")
                         .WithMany("Locations")
-                        .HasForeignKey("ProductId1")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("wms_praktyki_yosi_api.Enitities.Shelves", "Shelves")
+                    b.HasOne("wms_praktyki_yosi_api.Enitities.Shelf", "Shelf")
                         .WithMany("Locations")
-                        .HasForeignKey("ShelvesId")
+                        .HasForeignKey("ShelfId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Product");
 
-                    b.Navigation("Shelves");
+                    b.Navigation("Shelf");
                 });
 
             modelBuilder.Entity("wms_praktyki_yosi_api.Enitities.Product", b =>
@@ -381,7 +373,7 @@ namespace wms_praktyki_yosi_api.Migrations
                     b.Navigation("Locations");
                 });
 
-            modelBuilder.Entity("wms_praktyki_yosi_api.Enitities.Shelves", b =>
+            modelBuilder.Entity("wms_praktyki_yosi_api.Enitities.Shelf", b =>
                 {
                     b.Navigation("Locations");
                 });
