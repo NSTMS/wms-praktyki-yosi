@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "B0rZCCG9RwoYP3YVaLqT/zR7ahD4QiP6axCmZFnXyEbXaR918z9So8SCYoq9OwIer6pIryK5IEziijllFHoEpw==",
+  "dgSpecHash": "ctCmIybps4Vvj27tPC/1nogejy6MdLmXVOwf7SZbf+zlKu1DXYsrtuQ6mfvdhXciAvXnCl6ASkuHWTcqR7tJnw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\jan\\Desktop\\wms-praktyki-yosi\\wms-praktyki-yosi-api\\wms-praktyki-yosi-api\\wms-praktyki-yosi-api.csproj",
+  "projectFilePath": "C:\\Users\\jan\\source\\repos\\wms-praktyki-yosi\\wms-praktyki-yosi-api\\wms-praktyki-yosi-api\\wms-praktyki-yosi-api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\jan\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\jan\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.0\\automapper.extensions.microsoft.dependencyinjection.12.0.0.nupkg.sha512",

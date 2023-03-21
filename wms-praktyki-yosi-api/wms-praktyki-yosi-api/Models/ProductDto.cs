@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Reflection.PortableExecutable;
 
 namespace wms_praktyki_yosi_api.Models
 {
     public class ProductDto
     {
+        public int Id { get; set; }
         [Required]
         public string ProductName { get; set; }
         [MaxLength(13)]
@@ -11,5 +13,6 @@ namespace wms_praktyki_yosi_api.Models
         public string EAN { get; set; }
         public double Price { get; set; }
         public int Quantity { get; set; }
+        public List<ReturnProductLocationDto> Locations { get; set; } 
     }
 }
