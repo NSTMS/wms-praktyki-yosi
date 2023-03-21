@@ -15,6 +15,11 @@ import {
   styleUrls: ['./edit-location.component.scss'],
 })
 export class EditLocationComponent {
+  magazineId = new FormControl(0, [
+    Validators.required,
+    Validators.pattern('^[0-9]+$'),
+  ]);
+
   position = new FormControl('', [
     Validators.required,
     Validators.pattern('^[A-Z]+[0-9]+\/[0-9]+$'),

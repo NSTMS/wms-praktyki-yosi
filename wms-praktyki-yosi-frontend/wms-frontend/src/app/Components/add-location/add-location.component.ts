@@ -16,6 +16,11 @@ export class AddLocationComponent {
     Validators.pattern('^[0-9]+$'),
   ]);
 
+  magazineId = new FormControl(0, [
+    Validators.required,
+    Validators.pattern('^[0-9]+$'),
+  ]);
+
   position = new FormControl('', [
     Validators.required,
     Validators.pattern('^[A-Z]+[0-9]+\/[0-9]+$'),

@@ -1,5 +1,6 @@
 export type productLocation = {
   id: number,
+  magazineId: number,
   position: string,
   quantity: number
 }

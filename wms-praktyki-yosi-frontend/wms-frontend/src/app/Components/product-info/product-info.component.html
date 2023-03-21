@@ -31,6 +31,11 @@
     <mat-cell *matCellDef="let location">{{location.id}}</mat-cell>
   </ng-container>
 
+  <ng-container matColumnDef="magazineId">
+    <mat-header-cell *matHeaderCellDef>Magazine Id</mat-header-cell>
+    <mat-cell *matCellDef="let location">{{location.magazineId}}</mat-cell>
+  </ng-container>
+
   <ng-container matColumnDef="position">
     <mat-header-cell *matHeaderCellDef>Position</mat-header-cell>
     <mat-cell *matCellDef="let location">{{location.position}}</mat-cell>

@@ -10,7 +10,7 @@ const connection = require("@static/connection.json")
   providedIn: 'root'
 })
 export class LocationService {
-  columns = ["id", "position", "quantity"]
+  columns = ["id", "magazineId", "position", "quantity"]
 
   headers = {
     'Accept': 'application/json',
