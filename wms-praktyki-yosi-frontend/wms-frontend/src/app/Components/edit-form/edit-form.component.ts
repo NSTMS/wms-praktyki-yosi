@@ -18,10 +18,6 @@ export class EditFormComponent {
     Validators.required,
     Validators.pattern('^[0-9]{13}$'),
   ]);
-  quantity = new FormControl(0, [
-    Validators.required,
-    Validators.pattern('^[0-9]+$'),
-  ]);
   price = new FormControl(0.0, [
     Validators.required,
     Validators.pattern('^[0-9]+?(.[0-9]+)?$'),
@@ -46,7 +42,6 @@ export class EditFormComponent {
         }
         this.name.setValue(prod.productName);
         this.ean.setValue(prod.ean);
-        this.quantity.setValue(prod.quantity);
         this.price.setValue(prod.price);
       })
       .catch((ex) => {
@@ -59,7 +54,6 @@ export class EditFormComponent {
     if (
       this.name.invalid ||
       this.ean.invalid ||
-      this.quantity.invalid ||
       this.price.invalid
     ) {
       this._errorHandler.handleErrorCode(2);
@@ -67,8 +61,7 @@ export class EditFormComponent {
       this._reader.Put(this.id, {
         productName: this.name.value,
         ean: this.ean.value,
-        price: this.price.value,
-        quantity: this.quantity.value,
+        price: this.price.value
       } as productToAdd);
       this.router.navigate(['/table']);
     }

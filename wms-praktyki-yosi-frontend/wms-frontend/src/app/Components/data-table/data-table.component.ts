@@ -24,19 +24,25 @@ export class DataTableComponent{
     this.canAddAndDel = localStorage.getItem("role") != "User"
 
     this._reader.GetAll().then((res)=>{
-      this.length = res.length || 0
-      // try{
-      //   this.length = res.length
-      // }
-      // catch{
-      //   this.length = 0
-      // }
+      if (res)
+        this.length = res.length || 0
+      else
+        this.length = 0
       this.dataSource = new MatTableDataSource(res)
     })
     if(this.canAddAndDel)
       this.displayedColumns = [...this._reader.columns, "edit", "info", "delete"]
     else
       this.displayedColumns = [...this._reader.columns]
+  }
+  ngAfterContentInit()  {
+    this._reader.GetAll().then((res)=>{
+      if (res)
+        this.length = res.length || 0
+      else
+        this.length = 0
+      this.dataSource = new MatTableDataSource(res)
+    })
   }
 
   handleDelete(id: number){

@@ -13,7 +13,6 @@ import { productLocation } from '@static/types/locationTypes';
   styleUrls: ['./product-info.component.scss']
 })
 export class ProductInfoComponent {
-  temp = "aaa"
   id: number
   product: product = {} as product
   dataSource = new MatTableDataSource<productLocation>()
@@ -44,13 +43,7 @@ export class ProductInfoComponent {
           this.router.navigate(['/table']);
           _errorHandler.handleErrorCode(prod);
         }
-        prod.locations = [
-          {
-            id: 1,
-            position: "A5/4",
-            quantity: 12
-          }
-        ]
+        prod.locations
         this.product = prod
         this.dataSource = new MatTableDataSource<productLocation>(prod.locations)
 

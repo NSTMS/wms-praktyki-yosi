@@ -13,6 +13,5 @@ export type productToAdd = {
   productName: string,
   ean: string,
   price: number,
-  quantity: number
 }
 

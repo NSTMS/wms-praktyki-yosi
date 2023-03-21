@@ -21,7 +21,7 @@ export class LocationService {
   link = `${connection.protocole}://${connection.ip}:${connection.port}/api/locations`
   constructor(private _errorHandler: ErrorService ) { }
 
-  async EditLocalization (id: number, newLocation: locationToEdit){
+  async EditLocation (id: number, newLocation: locationToEdit){
     const response = await fetch(`${this.link}/${id}`, {
       method: "PUT",
       headers: this.headers,
@@ -41,7 +41,7 @@ export class LocationService {
     return false;
   }
 
-  async AddLocalization(newLocation: locationToAdd){
+  async AddLocation(newLocation: locationToAdd){
     const response = await fetch(this.link, {
       method: "POST",
       headers: this.headers,
@@ -63,10 +63,10 @@ export class LocationService {
   }
 
   async GetById(id: number) {
-
     const response = await fetch(this.link + "/" + id, {
       headers: this.headers
     })
+
     if (response.ok)
       return await response.json();
 
@@ -76,5 +76,7 @@ export class LocationService {
       this._errorHandler.handleErrorCode(errCode)
     })
   }
+
+
 
 }

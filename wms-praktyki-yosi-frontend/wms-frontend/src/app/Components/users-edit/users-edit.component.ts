@@ -17,7 +17,6 @@ export class UsersEditComponent implements OnInit{
   role : FormControl;
   constructor(private _reader : AdminPanelService,private route: ActivatedRoute) {
     const temp = this.data;
-    console.log(temp);
 
     this.selected = this.data?.id
     this.Id = new FormControl({value:this.route.snapshot.paramMap.get('id'), disabled:true}, Validators.required)

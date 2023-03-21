@@ -13,7 +13,6 @@ import { ErrorService } from 'src/app/Services/error.service';
 export class AddFormComponent {
   name = new FormControl("", Validators.required)
   ean = new FormControl("", [Validators.required,Validators.pattern("^[0-9]{13}$")])
-  quantity = new FormControl(0, [Validators.required,Validators.pattern("^[0-9]+$")])
   price = new FormControl(0.0, [Validators.required,Validators.pattern("^[0-9]+?(\.[0-9]+)?$")])
 
   constructor( private _reader: DataReaderService,private router: Router,private _errorHandler: ErrorService) {
@@ -22,7 +21,7 @@ export class AddFormComponent {
    }
 
   handleSubmit(){
-    if(this.name.invalid || this.ean.invalid || this.quantity.invalid || this.price.invalid)
+    if(this.name.invalid || this.ean.invalid || this.price.invalid)
     {
       this._errorHandler.handleErrorCode(2)
     }
@@ -31,7 +30,6 @@ export class AddFormComponent {
         productName: this.name.value,
         ean: this.ean.value,
         price: this.price.value,
-        quantity: this.quantity.value
       } as productToAdd)
 
       this.router.navigate(['/table'])
