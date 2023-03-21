@@ -44,8 +44,15 @@ export class DataReaderService {
           Authorization : `Bearer ${localStorage.getItem("token")}`
         }
       })
+
       const product = await response.json();
-      return product;
+
+      if (response.ok){
+        return product;
+      }
+
+      return product.errors[0]
+
     }
     catch (ex: unknown) {
       console.error(ex)

@@ -17,7 +17,7 @@ import {
 export class EditLocationComponent {
   position = new FormControl('', [
     Validators.required,
-    Validators.pattern('^[A-Z]+d+/d+$'),
+    Validators.pattern('^[A-Z]+[0-9]+\/[0-9]+$'),
   ]);
 
   quantity = new FormControl(0, [

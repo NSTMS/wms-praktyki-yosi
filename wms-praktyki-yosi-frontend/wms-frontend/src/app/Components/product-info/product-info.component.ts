@@ -36,14 +36,18 @@ export class ProductInfoComponent {
     else
       this.displayedColumns = _locationService.columns
 
-    _reader
+    this.loadData()
+
+  }
+
+  loadData(){
+    this._reader
       .GetById(this.id)
       .then((prod: product) => {
         if (typeof prod === 'number') {
           this.router.navigate(['/table']);
-          _errorHandler.handleErrorCode(prod);
+          this._errorHandler.handleErrorCode(prod);
         }
-        prod.locations
         this.product = prod
         this.dataSource = new MatTableDataSource<productLocation>(prod.locations)
 
@@ -55,7 +59,13 @@ export class ProductInfoComponent {
   }
 
 
-  handleDelete(id : number) {
-    return ;
+  async handleDelete(id : number) {
+    const deleted = await this._locationService.Delete(id);
+    if (!deleted)
+      return;
+
+    this.loadData()
+
+    this._errorHandler.errorMessageShow(["Pomyślnie usunieto", "ok"])
   }
 }

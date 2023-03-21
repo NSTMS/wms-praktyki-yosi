@@ -77,6 +77,23 @@ export class LocationService {
     })
   }
 
+  async Delete(id: number){
+    const response = await fetch(this.link + "/" + id, {
+      headers: this.headers,
+      method: "DELETE"
+    })
+
+    if (response.ok)
+      return true;
+
+    const json = await response.json()
+
+    json?.Errors.forEach((errCode: number) => {
+      this._errorHandler.handleErrorCode(errCode);
+    })
+    return false;
+  }
+
 
 
 }
