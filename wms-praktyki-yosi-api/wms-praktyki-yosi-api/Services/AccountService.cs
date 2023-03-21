@@ -72,8 +72,8 @@ namespace wms_praktyki_yosi_api.Services
 
         public async Task<bool> RegisterUser(RegisterUserDto dto)
         {
-            // var seeder = new MagazinesSeeder(_context, _roleManager);
-            // await seeder.SeedRoles();
+             var seeder = new MagazinesSeeder(_context, _roleManager);
+             await seeder.SeedRoles();
 
             var userExists = await _userManager.FindByNameAsync(dto.Email);
             if (userExists != null)
@@ -97,7 +97,6 @@ namespace wms_praktyki_yosi_api.Services
                 throw new Exception();
 
             return true;
-
         }
 
         public async Task<LoginResult> GetToken(UserLoginDto dto)
@@ -182,8 +181,6 @@ namespace wms_praktyki_yosi_api.Services
             var user = await _userManager.FindByNameAsync(email);
             if (user is null)
                 throw new BadRequestException("9");
-
-
             var userDto = new UserDto()
             {
                 Id = user.Id,
