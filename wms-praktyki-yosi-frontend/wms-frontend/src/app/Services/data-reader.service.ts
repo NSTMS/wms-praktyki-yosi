@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import type { product, productToAdd } from '../types/productTypes';
+import type { product, productToAdd } from '@static/types/productTypes';
+import { ErrorService } from './error.service';
 declare var require: any;
 const connection = require("src/static/connection.json")
 
@@ -9,17 +10,18 @@ const connection = require("src/static/connection.json")
 export class DataReaderService {
   link: string = `${connection.protocole}://${connection.ip}:${connection.port}/api/products`
   columns = ["id", "productName", "ean", "price", "quantity"]
-  // constructor() {}
+
+  constructor(private _errorService: ErrorService) {}
 
 
-  async GetAll() {    
+
+  async GetAll() {
     try {
       const response = await fetch(this.link, {
         headers: {
           Authorization : `Bearer ${localStorage.getItem("token")}`
         }
       });
-      console.log(response);
       if(response.ok)
       {
         const products = await response.json();
@@ -31,7 +33,7 @@ export class DataReaderService {
 
     }
     catch (ex: unknown) {
-      console.log(ex);
+      console.error(ex);
       }
   }
 
@@ -42,11 +44,18 @@ export class DataReaderService {
           Authorization : `Bearer ${localStorage.getItem("token")}`
         }
       })
+
       const product = await response.json();
-      return product;
+
+      if (response.ok){
+        return product;
+      }
+
+      return product.errors[0]
+
     }
     catch (ex: unknown) {
-      console.log(JSON.stringify(ex))
+      console.error(ex)
     }
   }
 
@@ -62,10 +71,17 @@ export class DataReaderService {
           method: "PUT",
           body: JSON.stringify(newProduct)
         });
-      const product = await response.json();
-      return product;
+        if (response.ok)
+          return true
+
+        const json = await response.json();
+        json?.Errors.forEach((errCode: number) => {
+          this._errorService.handleErrorCode(errCode)
+        })
+        return false
     } catch (ex: unknown) {
-      console.log(JSON.stringify(ex))
+      console.error(ex)
+      return false
     }
 
   }
@@ -86,7 +102,7 @@ export class DataReaderService {
       const product = await response.json();
       return product;
     } catch (ex: unknown) {
-      console.log(JSON.stringify(ex))
+      console.error(ex)
     }
   }
 

@@ -1,12 +1,13 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, SimpleChanges, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { GlobalService } from '@app/Services/global.service';
 
 @Component({
   selector: 'app-navigation',
   templateUrl: './navigation.component.html',
   styleUrls: ['./navigation.component.scss']
 })
-export class NavigationComponent implements AfterViewInit {
+export class NavigationComponent {
   @ViewChild('navigation') myElement: any;
 
   title = 'wms-frontend';
@@ -17,9 +18,9 @@ export class NavigationComponent implements AfterViewInit {
   isAdmin : boolean = localStorage.getItem("role") == "Admin"
   // User Admin Moderator
 
-  constructor(private router: Router,private cd: ChangeDetectorRef)
+  constructor(private router: Router, private globalSrv: GlobalService)
   {
-    
+
     this.router.events.subscribe((val) => {
       this.isLoggedIn = (localStorage.getItem('token') == null) ? false : true;
     // console.log(this.isLoggedIn)
@@ -33,10 +34,12 @@ export class NavigationComponent implements AfterViewInit {
     localStorage.removeItem("role");
     window.location.reload();
   }
-  ngAfterViewInit() {
-    // Call detectChanges on the ChangeDetectorRef to refresh the element
-    this.cd.detectChanges();
-    this.isModeratorOrAdmin = localStorage.getItem("role") == "Admin" || localStorage.getItem("role") == "Moderator"
+
+  ngOnInit(): void {
+    this.globalSrv.role.subscribe((nextValue) => {
+    this.isModeratorOrAdmin = nextValue == "Admin" || localStorage.getItem("role") == "Moderator"
+
+   })
 
   }
 }

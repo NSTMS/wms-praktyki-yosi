@@ -15,6 +15,9 @@ import { RegisterFormComponent } from './Components/register-form/register-form.
 import { UsersTableComponent } from './Components/users-table/users-table.component';
 import { UsersEditComponent } from './Components/users-edit/users-edit.component';
 import { NavigationComponent } from './Components/navigation/navigation.component';
+import { ProductInfoComponent } from './Components/product-info/product-info.component';
+import { EditLocationComponent } from './Components/edit-location/edit-location.component';
+import { AddLocationComponent } from './Components/add-location/add-location.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +30,9 @@ import { NavigationComponent } from './Components/navigation/navigation.componen
     UsersTableComponent,
     UsersEditComponent,
     NavigationComponent,
+    ProductInfoComponent,
+    EditLocationComponent,
+    AddLocationComponent,
   ],
   imports: [
     BrowserModule,

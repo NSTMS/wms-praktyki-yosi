@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { user } from '../types/userTypes';
+import { user } from '@static/types/userTypes';
 declare var require: any;
 const connection = require("src/static/connection.json")
 @Injectable({
@@ -11,7 +11,7 @@ export class AdminPanelService {
 
   constructor() { }
 
-  async GetAll() {    
+  async GetAll() {
     try {
       const response = await fetch(this.link+"/users", {
         headers: {
@@ -25,7 +25,7 @@ export class AdminPanelService {
       console.log(JSON.stringify(ex))
     }
   }
-  async GetInfoFromToken() {    
+  async GetInfoFromToken() {
     try {
       const response = await fetch(this.link+"/info", {
         headers: {

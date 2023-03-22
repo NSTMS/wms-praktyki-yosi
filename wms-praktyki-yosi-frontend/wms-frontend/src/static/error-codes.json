@@ -18,7 +18,10 @@
         "113":"Hasło musi zawierać liczby",
         "114":"Hasło musi zawierać znaki specjalne",
         "115":"Twoje hasło zwiera niedozwolone znaki",
-        "116":"Hasła są różne"
+        "116":"Hasła są różne",
+
+        "150": "Nie ma tekiej półki",
+        "151": "Nie ma produktu o takim id"
     },
     "en":{
         "1": "id not found",
@@ -39,7 +42,10 @@
         "113":"Password must contain numbers",
         "114":"Password must contain special characters",
         "115":"Your password contains illegal characters",
-        "116":"The passwords are different"
+        "116":"The passwords are different",
+
+        "150": "There is no shelf of that position",
+        "151": "Product of this id don't exist"
     }
 }
 
