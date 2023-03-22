@@ -1,6 +1,6 @@
 import { Component,OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { AdminPanelService } from 'src/app/Services/admin-panel.service';
+import { AdminPanelService } from '@services/admin-panel/admin-panel.service';
 import { Form, FormControl, Validators } from '@angular/forms';
 import { user } from '@static/types/userTypes';
 

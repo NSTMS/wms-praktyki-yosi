@@ -3,7 +3,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource, MatTable, MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
 
-import { DataReaderService } from '@services/data-reader.service';
+import { DataReaderService } from '@services/fetching-services/data-reader.service';
 import type { product } from '@static/types/productTypes';
 
 @Component({

@@ -1,14 +1,18 @@
 import { Component } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ErrorService } from '@app/Services/error.service';
-import { LocationService } from '@app/Services/location.service';
-import { productLocation, locationToEdit, locationToAdd } from '@static/types/locationTypes';
+import { ErrorService } from '@services/error-handling/error.service';
+import { LocationService } from '@services/fetching-services/location.service';
+import {
+  productLocation,
+  locationToEdit,
+  locationToAdd,
+} from '@static/types/locationTypes';
 
 @Component({
   selector: 'app-add-location',
   templateUrl: './add-location.component.html',
-  styleUrls: ['./add-location.component.scss']
+  styleUrls: ['./add-location.component.scss'],
 })
 export class AddLocationComponent {
   productId = new FormControl(0, [
@@ -23,7 +27,7 @@ export class AddLocationComponent {
 
   position = new FormControl('', [
     Validators.required,
-    Validators.pattern('^[A-Z]+[0-9]+\/[0-9]+$'),
+    Validators.pattern('^[A-Z]+[0-9]+/[0-9]+$'),
   ]);
 
   quantity = new FormControl(0, [
@@ -35,32 +39,31 @@ export class AddLocationComponent {
     private router: Router,
     private _service: LocationService,
     private _errorHandler: ErrorService
-  ) {
-
-  }
+  ) {}
 
   async handleSubmit() {
     if (
       this.position.invalid ||
       this.quantity.invalid ||
-      this.productId.invalid)
-    {
+      this.productId.invalid ||
+      this.magazineId.invalid
+    ) {
       this._errorHandler.handleErrorCode(2);
       return;
     }
 
     const newLocation: locationToAdd = {
       position: this.position.value || '',
+      magazineId: this.magazineId.value || -1,
       quantity: this.quantity.value || 0,
-      productId: this.productId.value || -1
+      productId: this.productId.value || -1,
     };
 
     const added = await this._service.AddLocation(newLocation);
 
-    if (!added)
-      return;
+    if (!added) return;
 
-    const productId = this.productId.value
+    const productId = this.productId.value;
     this.router.navigate([`/info/${productId}`]);
   }
 }

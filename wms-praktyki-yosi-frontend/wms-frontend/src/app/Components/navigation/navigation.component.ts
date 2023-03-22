@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectorRef, Component, SimpleChanges, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { GlobalService } from '@app/Services/global.service';
+import { GlobalService } from '@services/global/global.service';
 
 @Component({
   selector: 'app-navigation',

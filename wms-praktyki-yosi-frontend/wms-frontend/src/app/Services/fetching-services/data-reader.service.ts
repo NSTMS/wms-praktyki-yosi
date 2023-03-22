@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import type { product, productToAdd } from '@static/types/productTypes';
-import { ErrorService } from './error.service';
+import { ErrorService } from '@services/error-handling/error.service';
 declare var require: any;
 const connection = require("src/static/connection.json")
 

@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DataReaderService } from 'src/app/Services/data-reader.service';
+import { DataReaderService } from '@services/fetching-services/data-reader.service';
 import type { product, productToAdd } from '@static/types/productTypes';
 import { FormControl, Validators } from '@angular/forms';
-import { ErrorService } from 'src/app/Services/error.service';
+import { ErrorService } from '@services/error-handling/error.service';
 
 @Component({
   selector: 'app-edit-form',

@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, Route, Router } from '@angular/router';
-import { ErrorService } from '@services/error.service';
-import { LocationService } from '@services/location.service';
+import { ErrorService } from '@services/error-handling/error.service';
+import { LocationService } from '@services/fetching-services/location.service';
 import {
   locationToAdd,
   locationToEdit,
@@ -22,7 +22,7 @@ export class EditLocationComponent {
 
   position = new FormControl('', [
     Validators.required,
-    Validators.pattern('^[A-Z]+[0-9]+\/[0-9]+$'),
+    Validators.pattern('^[A-Z]+[0-9]+/[0-9]+$'),
   ]);
 
   quantity = new FormControl(0, [
@@ -55,7 +55,11 @@ export class EditLocationComponent {
   }
 
   async handleSubmit() {
-    if (this.position.invalid || this.quantity.invalid) {
+    if (
+      this.position.invalid ||
+      this.quantity.invalid ||
+      this.magazineId.invalid
+    ) {
       this._errorHandler.handleErrorCode(2);
       return;
     }
@@ -63,6 +67,7 @@ export class EditLocationComponent {
     const newLocation: locationToEdit = {
       position: this.position.value || '',
       quantity: this.quantity.value || 0,
+      magazineId: this.magazineId.value || -1,
     };
 
     const edited = await this._service.EditLocation(this.id, newLocation);

@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LocationService } from '@app/Services/location.service';
-import { DataReaderService } from '@services/data-reader.service';
-import { ErrorService } from '@services/error.service';
+import { LocationService } from '@services/fetching-services/location.service';
+import { DataReaderService } from '@services/fetching-services/data-reader.service';
+import { ErrorService } from '@services/error-handling/error.service';
 import { product } from '@static/types/productTypes';
 import { productLocation } from '@static/types/locationTypes';
 

@@ -1,7 +1,6 @@
-import { ThisReceiver } from '@angular/compiler';
 import { Injectable } from '@angular/core';
 import { locationToEdit, locationToAdd } from '@static/types/locationTypes';
-import { ErrorService } from '@services/error.service';
+import { ErrorService } from '@services/error-handling/error.service';
 
 declare var require: any;
 const connection = require("@static/connection.json")

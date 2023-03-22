@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthenticationService } from 'src/app/Services/authentication.service';
-import { ErrorService } from 'src/app/Services/error.service';
+import { AuthenticationService } from '@services/authentication/authentication.service';
+import { ErrorService } from '@services/error-handling/error.service';
 
 type errorMessage = {
   Errors: string[]

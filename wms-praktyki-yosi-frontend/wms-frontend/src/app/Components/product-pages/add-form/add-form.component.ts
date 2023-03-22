@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { DataReaderService } from 'src/app/Services/data-reader.service';
+import { DataReaderService } from '@services/fetching-services/data-reader.service';
 import type { productToAdd } from '@static/types/productTypes';
 import { FormControl,Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ErrorService } from 'src/app/Services/error.service';
+import { ErrorService } from '@services/error-handling/error.service';
 
 @Component({
   selector: 'app-add-form',

@@ -1,15 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { DataTableComponent } from './Components/data-table/data-table.component';
-import { EditFormComponent } from './Components/edit-form/edit-form.component';
-import { AddFormComponent } from './Components/add-form/add-form.component';
-import { LoginFormComponent } from './Components/login-form/login-form.component';
-import { RegisterFormComponent } from './Components/register-form/register-form.component';
-import { UsersTableComponent } from './Components/users-table/users-table.component';
-import { UsersEditComponent } from './Components/users-edit/users-edit.component';
-import { ProductInfoComponent } from './Components/product-info/product-info.component';
-import { EditLocationComponent } from './Components/edit-location/edit-location.component';
-import { AddLocationComponent } from './Components/add-location/add-location.component';
+import { DataTableComponent } from './Components/product-pages/data-table/data-table.component';
+import { EditFormComponent } from './Components/product-pages/edit-form/edit-form.component';
+import { AddFormComponent } from './Components/product-pages/add-form/add-form.component';
+import { LoginFormComponent } from './Components/user-pages/login-form/login-form.component';
+import { RegisterFormComponent } from './Components/user-pages/register-form/register-form.component';
+import { UsersTableComponent } from './Components/user-pages/users-table/users-table.component';
+import { UsersEditComponent } from './Components/user-pages/users-edit/users-edit.component';
+import { ProductInfoComponent } from './Components/product-pages/product-info/product-info.component';
+import { EditLocationComponent } from './Components/location-pages/edit-location/edit-location.component';
+import { AddLocationComponent } from './Components/location-pages/add-location/add-location.component';
 
 
 const routes: Routes = [

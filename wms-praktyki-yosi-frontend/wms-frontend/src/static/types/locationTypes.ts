@@ -7,11 +7,13 @@ export type productLocation = {
 
 export type locationToEdit = {
   position: string,
+  magazineId: number,
   quantity: number
 }
 
 export type locationToAdd = {
   position: string,
+  magazineId: number,
   quantity: number,
   productId: number
 }

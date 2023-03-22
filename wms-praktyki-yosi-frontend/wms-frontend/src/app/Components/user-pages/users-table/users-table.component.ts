@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { user } from '@static/types/userTypes';
-import { AdminPanelService } from 'src/app/Services/admin-panel.service';
+import { AdminPanelService } from '@services/admin-panel/admin-panel.service';
 import {MatDialog} from '@angular/material/dialog';
 
 @Component({

@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { AuthenticationService } from 'src/app/Services/authentication.service';
-import { ErrorService } from 'src/app/Services/error.service';
+import { AuthenticationService } from '@services/authentication/authentication.service';
+import { ErrorService } from '@services/error-handling/error.service';
 import { Router } from '@angular/router';
 import type { Token } from '@static/types/tokenTypes';
-import { GlobalService } from '@app/Services/global.service';
+import { GlobalService } from '@services/global/global.service';
 @Component({
   selector: 'app-login-form',
   templateUrl: './login-form.component.html',
