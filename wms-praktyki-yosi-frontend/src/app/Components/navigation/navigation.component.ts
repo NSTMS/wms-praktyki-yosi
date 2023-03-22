@@ -43,7 +43,8 @@ export class NavigationComponent {
   ngOnInit(): void {
     this.globalSrv.role.subscribe((nextValue) => {
       this.isModeratorOrAdmin =
-        nextValue == 'Admin' || localStorage.getItem('role') == 'Moderator';
+        nextValue == 'Admin' || nextValue == 'Moderator';
+      this.isAdmin = nextValue == 'Admin'
     });
   }
 }

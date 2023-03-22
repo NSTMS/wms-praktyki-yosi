@@ -24,28 +24,31 @@ export class RegisterFormComponent {
     private _authenticationService: AuthenticationService
   ) {}
   async handleButtonClick() {
-    const token = this._authenticationService.registerUser(
+    this._authenticationService.registerUser(
       this.email.value as string,
       this.password.value as string,
       this.confirmPassword.value as string
-    );
-    token
-      .then((response) => response?.json())
-      .then((res) => {
-        try {
-          this._errorHandler.errorMessageShow(
-            (res as unknown as errorMessage).Errors
-          );
-        } catch {
-          if (res.ok) {
-            this._errorHandler.handleErrorCode(8);
+    ).then((response: Response | null) => {
+      if(response == null)
+        return;
 
-            this.router.navigate(['/login']);
+      if(!response.ok)
+        response?.json()
+
+    }).then((res: any) => {
+          if (res && res.Errors){
+            this._errorHandler.errorMessageShow(
+              res.Errors
+            );
+            return;
           }
-        }
+
+          this._errorHandler.handleErrorCode(8);
+          this.router.navigate(['/login']);
+
       })
-      .catch((ex) => {
-        console.log(ex);
-      });
+      // .catch((ex) => {
+      //   console.log(ex);
+      // });
   }
 }

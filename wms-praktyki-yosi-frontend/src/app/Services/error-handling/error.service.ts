@@ -39,7 +39,7 @@ export class ErrorService {
     try {
       const responseData = await respone.json();
 
-      const errors = responseData.errors as string[];
+      const errors = responseData.Errors as string[];
       this.errorMessageShow(errors);
     } catch {
       console.error('Status: ', respone.status, respone.statusText);

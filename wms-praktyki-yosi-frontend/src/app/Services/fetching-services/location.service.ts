@@ -68,7 +68,7 @@ export class LocationService {
 
     const json = await response.json();
 
-    json?.errors.forEach((errCode: number) => {
+    json.Errors.forEach((errCode: number) => {
       this._errorHandler.handleErrorCode(errCode);
     });
   }
@@ -83,7 +83,7 @@ export class LocationService {
 
     const json = await response.json();
 
-    json?.Errors.forEach((errCode: number) => {
+    json.Errors.forEach((errCode: number) => {
       this._errorHandler.handleErrorCode(errCode);
     });
     return false;

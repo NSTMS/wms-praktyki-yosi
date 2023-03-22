@@ -45,7 +45,7 @@ export class DataReaderService {
         return product;
       }
 
-      return product.errors[0];
+      return product.Errors[0];
     } catch (ex: unknown) {
       console.error(ex);
     }
