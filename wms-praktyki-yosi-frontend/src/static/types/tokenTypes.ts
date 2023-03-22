@@ -1,4 +1,4 @@
 export type Token = {
-    token: string,
-    role : string;
-}
+  token: string;
+  role: string;
+};

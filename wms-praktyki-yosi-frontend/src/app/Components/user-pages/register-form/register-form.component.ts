@@ -5,34 +5,47 @@ import { AuthenticationService } from '@services/authentication/authentication.s
 import { ErrorService } from '@services/error-handling/error.service';
 
 type errorMessage = {
-  Errors: string[]
-}
+  Errors: string[];
+};
 
 @Component({
   selector: 'app-register-form',
   templateUrl: './register-form.component.html',
-  styleUrls: ['./register-form.component.scss']
+  styleUrls: ['./register-form.component.scss'],
 })
 export class RegisterFormComponent {
-  email = new FormControl("", [Validators.email, Validators.required])
-  password = new FormControl("", Validators.required)
-  confirmPassword = new FormControl("", Validators.required)
+  email = new FormControl('', [Validators.email, Validators.required]);
+  password = new FormControl('', Validators.required);
+  confirmPassword = new FormControl('', Validators.required);
 
-  constructor(private _errorHandler: ErrorService, private router: Router, private _authenticationService: AuthenticationService) { }
+  constructor(
+    private _errorHandler: ErrorService,
+    private router: Router,
+    private _authenticationService: AuthenticationService
+  ) {}
   async handleButtonClick() {
-    const token = this._authenticationService.registerUser(this.email.value as string, this.password.value as string, this.confirmPassword.value as string)
-    token.then(response => response?.json()).then(res => {
-      try {
-        this._errorHandler.errorMessageShow((res as unknown as errorMessage).Errors);
-      }
-      catch {
-        if (res.ok) {
-          this._errorHandler.handleErrorCode(8)
+    const token = this._authenticationService.registerUser(
+      this.email.value as string,
+      this.password.value as string,
+      this.confirmPassword.value as string
+    );
+    token
+      .then((response) => response?.json())
+      .then((res) => {
+        try {
+          this._errorHandler.errorMessageShow(
+            (res as unknown as errorMessage).Errors
+          );
+        } catch {
+          if (res.ok) {
+            this._errorHandler.handleErrorCode(8);
 
-        this.router.navigate(["/login"])
+            this.router.navigate(['/login']);
+          }
         }
-      }
-    }).catch(ex=> { console.log(ex)})
-
+      })
+      .catch((ex) => {
+        console.log(ex);
+      });
   }
 }

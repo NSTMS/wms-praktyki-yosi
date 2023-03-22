@@ -1,0 +1,100 @@
+<mat-grid-list cols="2" rowHeight="75px" gutterSize="20px">
+  <mat-grid-tile>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-subtitle>name</mat-card-subtitle>
+        <mat-card-title>
+          {{ magazine.name }}
+        </mat-card-title>
+      </mat-card-header>
+    </mat-card>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-subtitle>address</mat-card-subtitle>
+        <mat-card-title>
+          {{ magazine.address }}
+        </mat-card-title>
+      </mat-card-header>
+    </mat-card>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="2">
+    <mat-card style="width: 90%">
+      <mat-card-header>
+        <mat-card-title style="text-align: center"> Products </mat-card-title>
+      </mat-card-header>
+      <mat-card-content></mat-card-content>
+    </mat-card>
+  </mat-grid-tile>
+</mat-grid-list>
+
+<mat-table class="mat-table" #table [dataSource]="dataSource">
+  <ng-container matColumnDef="id">
+    <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>
+    <mat-cell *matCellDef="let product">{{ product.id }}</mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="productName">
+    <mat-header-cell *matHeaderCellDef>Product Name</mat-header-cell>
+    <mat-cell *matCellDef="let product">{{ product.productName }}</mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="ean">
+    <mat-header-cell *matHeaderCellDef>Ean</mat-header-cell>
+    <mat-cell *matCellDef="let product">{{ product.ean }}</mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="price">
+    <mat-header-cell *matHeaderCellDef>Price</mat-header-cell>
+    <mat-cell *matCellDef="let product">{{ product.price }}</mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="quantity">
+    <mat-header-cell *matHeaderCellDef>Quantity</mat-header-cell>
+    <mat-cell *matCellDef="let product">{{ product.quantity }}</mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="edit" *ngIf="canAddAndDel">
+    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+    <mat-cell *matCellDef="let product"
+      ><a
+        mat-stroked-button
+        color="accent"
+        routerLink="/edit/{{ product.id }}"
+        >Edit</a
+      ></mat-cell
+    >
+  </ng-container>
+
+  <ng-container matColumnDef="info" *ngIf="canAddAndDel">
+    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+    <mat-cell *matCellDef="let product"
+      ><a mat-stroked-button routerLink="/magazines/info/{{id}}/product/{{ product.id }}"
+        >Info</a
+      ></mat-cell
+    >
+  </ng-container>
+
+  <ng-container matColumnDef="delete" *ngIf="canAddAndDel">
+    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+    <mat-cell *matCellDef="let product"
+      ><button mat-flat-button color="warn" (click)="handleDelete(product.id)">
+        Delete
+      </button></mat-cell
+    >
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+</mat-table>
+
+<mat-paginator
+  [length]="100"
+  [pageSize]="5"
+  [pageSizeOptions]="[5, 10, 20]"
+  showFirstLastButtons
+  aria-label="Select page"
+  #paginator
+>
+</mat-paginator>

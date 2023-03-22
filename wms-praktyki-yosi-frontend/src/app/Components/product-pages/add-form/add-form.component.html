@@ -2,23 +2,22 @@
   <mat-grid-tile>
     <mat-form-field appearance="fill">
       <mat-label>Product Name</mat-label>
-      <input matInput [formControl]="name" >
+      <input matInput [formControl]="name" />
     </mat-form-field>
   </mat-grid-tile>
   <mat-grid-tile>
     <mat-form-field appearance="fill">
       <mat-label>EAN</mat-label>
-      <input matInput [formControl]="ean" ngModel>
+      <input matInput [formControl]="ean" ngModel />
     </mat-form-field>
   </mat-grid-tile>
   <mat-grid-tile>
     <mat-form-field appearance="fill">
       <mat-label>Price</mat-label>
-      <input matInput [formControl]="price" ngModel>
+      <input matInput [formControl]="price" ngModel />
     </mat-form-field>
   </mat-grid-tile>
   <mat-grid-tile>
     <button mat-raised-button (click)="handleSubmit()">Submit</button>
   </mat-grid-tile>
 </mat-grid-list>
-

@@ -6,66 +6,73 @@ import { DataReaderService } from '@services/fetching-services/data-reader.servi
 import { ErrorService } from '@services/error-handling/error.service';
 import { product } from '@static/types/productTypes';
 import { productLocation } from '@static/types/locationTypes';
+import { MagazineService } from '@app/Services/fetching-services/magazine.service';
 
 @Component({
   selector: 'app-product-info',
   templateUrl: './product-info.component.html',
-  styleUrls: ['./product-info.component.scss']
+  styleUrls: ['./product-info.component.scss'],
 })
 export class ProductInfoComponent {
-  id: number
-  product: product = {} as product
-  dataSource = new MatTableDataSource<productLocation>()
-  displayedColumns: string[]
-  canAddAndDel: boolean
+  id: number;
+  product: product = {} as product;
+  dataSource = new MatTableDataSource<productLocation>();
+  displayedColumns: string[];
+  canAddAndDel: boolean;
+  magazineId: number;
 
   constructor(
     private route: ActivatedRoute,
     private _reader: DataReaderService,
     private _locationService: LocationService,
+    private _magazineService: MagazineService,
     private router: Router,
     private _errorHandler: ErrorService
-    ) {
-    if(localStorage.getItem("token") == null) this.router.navigate(["/login"])
+  ) {
+    if (localStorage.getItem('token') == null) this.router.navigate(['/login']);
 
+    this.magazineId = this.route.snapshot.params['magazineId'];
     this.id = this.route.snapshot.params['id'];
 
-    this.canAddAndDel = localStorage.getItem("role") != "User"
+    this.canAddAndDel = localStorage.getItem('role') != 'User';
     if (this.canAddAndDel)
-      this.displayedColumns = [..._locationService.columns, "edit", "delete"]
+      this.displayedColumns = [..._locationService.columns, 'edit', 'delete'];
+    else this.displayedColumns = _locationService.columns;
+
+    this.loadData();
+  }
+
+  loadData() {
+    let productPromise
+    if(!this.magazineId)
+      productPromise = this._reader.GetById(this.id)
     else
-      this.displayedColumns = _locationService.columns
+      productPromise = this._magazineService.GetLocations(this.id, this.magazineId)
 
-    this.loadData()
-
-  }
-
-  loadData(){
-    this._reader
-      .GetById(this.id)
-      .then((prod: product) => {
-        if (typeof prod === 'number') {
-          this.router.navigate(['/table']);
-          this._errorHandler.handleErrorCode(prod);
-        }
-        this.product = prod
-        this.dataSource = new MatTableDataSource<productLocation>(prod.locations)
-
-      })
-      .catch((ex) => {
-        console.log(ex);
+    productPromise.then((prod: product) => {
+      if (typeof prod === 'number') {
         this.router.navigate(['/table']);
-      });
+        this._errorHandler.handleErrorCode(prod);
+      }
+      this.product = prod;
+      this.dataSource = new MatTableDataSource<productLocation>(
+        prod.locations
+      );
+    })
+    .catch((ex) => {
+      console.log('err');
+      this.router.navigate(['/table']);
+    });
+    return;
+
   }
 
-
-  async handleDelete(id : number) {
+  async handleDelete(id: number) {
     const deleted = await this._locationService.Delete(id);
-    if (!deleted)
-      return;
+    if (!deleted) return;
 
-    this.loadData()
+    this.loadData();
 
-    this._errorHandler.errorMessageShow(["Pomyślnie usunieto", "ok"])
+    this._errorHandler.errorMessageShow(['Pomyślnie usunieto', 'ok']);
   }
 }

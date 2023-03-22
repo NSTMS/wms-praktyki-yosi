@@ -30,7 +30,8 @@ export class EditFormComponent {
     private _errorHandler: ErrorService
   ) {
     if (localStorage.getItem('token') == null) this.router.navigate(['/login']);
-    if (localStorage.getItem('role') == 'User') this.router.navigate(['/table']);
+    if (localStorage.getItem('role') == 'User')
+      this.router.navigate(['/table']);
     this.id = this.route.snapshot.params['id'];
     _reader
       .GetById(this.id)
@@ -51,17 +52,13 @@ export class EditFormComponent {
   }
 
   handleSubmit() {
-    if (
-      this.name.invalid ||
-      this.ean.invalid ||
-      this.price.invalid
-    ) {
+    if (this.name.invalid || this.ean.invalid || this.price.invalid) {
       this._errorHandler.handleErrorCode(2);
     } else {
       this._reader.Put(this.id, {
         productName: this.name.value,
         ean: this.ean.value,
-        price: this.price.value
+        price: this.price.value,
       } as productToAdd);
       this.router.navigate(['/table']);
     }
