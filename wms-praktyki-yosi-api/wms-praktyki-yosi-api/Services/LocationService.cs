@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.Identity.Client;
 using wms_praktyki_yosi_api.Enitities;
 using wms_praktyki_yosi_api.Exceptions;
 using wms_praktyki_yosi_api.Models;

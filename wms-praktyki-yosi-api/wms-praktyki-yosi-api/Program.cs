@@ -47,6 +47,8 @@ builder.Services.AddIdentity<User, IdentityRole>()
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
+builder.Services.AddScoped<IMagazineService, MagazineService>();
+builder.Services.AddScoped<ICustomAuthorizationService, CustomAuthorizationService>();
 
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();

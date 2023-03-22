@@ -29,6 +29,7 @@ namespace wms_praktyki_yosi_api.Controllers
             return Ok(result);
         }
         [HttpPost]
+        [Authorize(Roles = "Admin,Moderator")]
         public ActionResult AddProductToLocation([FromBody] ProductLocationDto dto)
         {
             try
@@ -43,12 +44,15 @@ namespace wms_praktyki_yosi_api.Controllers
             }
           
         }
-        [HttpGet("{id}")] public ActionResult GetById([FromRoute] int id)
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Admin,Moderator")] public ActionResult GetById([FromRoute] int id)
         {
             var result = _locationService.GetLocationById(id);
             return Ok(result);
         }
-        [HttpPut("{id}")] public ActionResult Edit([FromRoute] int id, [FromBody] ProductLocationDto dto) {
+        [HttpPut("{id}")]
+        [Authorize(Roles = "Admin,Moderator")]
+        public ActionResult Edit([FromRoute] int id, [FromBody] ProductLocationDto dto) {
             var result = _locationService.UpdateLocation(id, dto);
             if (!result)
             {
@@ -56,7 +60,9 @@ namespace wms_praktyki_yosi_api.Controllers
             }
             return Ok();
         }
-        [HttpDelete("{id}")] public ActionResult Delete([FromRoute] int id) {
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin,Moderator")]
+        public ActionResult Delete([FromRoute] int id) {
             var result = _locationService.DeleteLocation(id);
             if (!result)
             {
