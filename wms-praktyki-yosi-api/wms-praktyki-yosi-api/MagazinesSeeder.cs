@@ -24,6 +24,47 @@ namespace wms_praktyki_yosi_api
                     _dbContext.Products.AddRange(restaurants);
                     _dbContext.SaveChanges();
                 }
+                if (!_dbContext.Shelves.Any())
+                {
+                    var regalNames = new List<string>() { "A", "B", "C", "D", "E" };
+                    var shelves = new List<Shelf>();
+                    foreach (string name in regalNames)
+                    {
+                        for (int i = 1; i <= 10; i++)
+                        {
+                            for (int j = 1; j <= 2; j++)
+                            {
+                                Shelf shelf = new Shelf();
+                                shelf.MagazineId = 1;
+                                shelf.Position = $"{name}{i}/{j}";
+                                shelves.Add(shelf);
+                            }
+                        }
+                    }
+                    _dbContext.Shelves.AddRange(shelves);
+                    _dbContext.SaveChanges();
+
+
+
+                }
+                if (!_dbContext.ProductLocations.Any())
+                {
+                    List<ProductLocations> productLocationsList = new List<ProductLocations>();
+
+                    // Generujemy 40 obiektów ProductLocations z losowymi wartościami
+                    Random random = new Random();
+                    for (int i = 1; i <= 100; i++)
+                    {
+                        ProductLocations productLocations = new ProductLocations();
+                        productLocations.ProductId = random.Next(1, 41);
+                        productLocations.ShelfId = random.Next(1, 101);
+                        productLocations.Quantity = random.Next(1, 50);
+                        productLocationsList.Add(productLocations);
+                    }
+                    _dbContext.ProductLocations.AddRange(productLocationsList);
+                    _dbContext.SaveChanges();
+                }
+         
 
             }
 
@@ -31,192 +72,250 @@ namespace wms_praktyki_yosi_api
 
         private List<Product> GetProducts()
         {
-            List<Product> _products = new List<Product>() {
-        new Product {
-            ProductName = "Laptop Lenovo ThinkPad",
-            EAN = "471385936",
-            Price = 1499.99,
-        },
-        new Product {
-            ProductName = "Smartphone Samsung Galaxy",
-            EAN = "231487969",
-            Price = 799.99,
-        },
-        new Product {
-            ProductName = "Monitor LG UltraFine",
-            EAN = "547918379",
-            Price = 1299.00,
-        },
-        new Product {
-            ProductName = "Tablet Apple iPad",
-            EAN = "728149239",
-            Price = 599.99,
-        },
-        new Product {
-            ProductName = "Głośnik Bluetooth JBL",
-            EAN = "889452367",
-            Price = 249.99,
-        },
-        new Product {
-            ProductName = "Klawiatura Mechaniczna Corsair",
-            EAN = "124576892",
-            Price = 199.99,
-        },
-        new Product {
-            ProductName = "Mysz Bezprzewodowa Logitech",
-            EAN = "436789564",
-            Price = 89.99,
-        },
-        new Product {
-            ProductName = "Karta Graficzna Nvidia GeForce",
-            EAN = "237894610",
-            Price = 699.99,
-        },
-        new Product {
-            ProductName = "Router WiFi TP-Link",
-            EAN = "901238474",
-            Price = 119.99,
-        },
-        new Product {
-            ProductName = "Słuchawki Bezprzewodowe Sony",
-            EAN = "568274901",
-            Price = 299.99,
-        },
-        new Product {
-            ProductName = "Kamera internetowa Logitech",
-            EAN = "471385937",
-            Price = 99.99,
-        },
-
-        new Product {
-            ProductName = "Klawiatura i mysz bezprzewodowa Microsoft",
-            EAN = "231487970",
-            Price = 69.99,
-        }
-
-        ,
-        new Product {
-            ProductName = "Smartwatch Samsung Galaxy",
-            EAN = "547918380",
-            Price = 329.99,
-        }
-
-        ,
-        new Product {
-            ProductName = "Słuchawki Beats by Dr. Dre",
-            EAN = "728149240",
-            Price = 199.99,
-        }
-
-        ,
-        new Product {
-            ProductName = "Laptop Dell Inspiron",
-            EAN = "889452368",
-            Price = 849.99,
-        }
-
-        ,
-        new Product {
-            ProductName = "Konsola do gier Sony PlayStation",
-            EAN = "124576893",
-            Price = 499.99,
-        }
-
-        ,
-        new Product {
-            ProductName = "Oprogramowanie Microsoft Office",
-            EAN = "436789565",
-            Price = 149.99,
-        }
-
-        ,
-        new Product {
-            ProductName = "Telewizor LG OLED",
-            EAN = "237894611",
-            Price = 2499.99,
-        }
-
-        ,
-        new Product {
-            ProductName = "Drukarka HP OfficeJet",
-            EAN = "901238475",
-            Price = 149.99,
-        }
-
-        ,
-        new Product {
-            ProductName = "Głośniki Logitech Surround Sound",
-            EAN = "568274902",
-            Price = 199.99,
-        }
-
-        ,
-        new Product {
-            ProductName = "Smartfon Apple iPhone",
-            EAN = "456321789",
-            Price = 1099.99,
-        }
-
-        ,
-        new Product {
-            ProductName = "Karta dźwiękowa Asus Xonar",
-            EAN = "786543290",
-            Price = 129.99,
-        }
-
-        ,
-        new Product {
-            ProductName = "Mysz gamingowa Razer DeathAdder",
-            EAN = "127894356",
-            Price = 79.99,
-        }
-
-        ,
-        new Product {
-            ProductName = "Router WiFi Netgear",
-            EAN = "674832190",
-            Price = 199.99,
-        }
-
-        ,
-        new Product {
-            ProductName = "Tablet Samsung Galaxy Tab",
-            EAN = "972341658",
-            Price = 449.99,
-        }
-        ,
-        new Product {
-            ProductName = "Klawiatura Logitech Illuminated",
-            EAN = "137854209",
-            Price = 79.99,
-        },
-        new Product {
-            ProductName = "Monitor Dell UltraSharp",
-            EAN = "732145987",
-            Price = 699.99,
-        }
-
-        ,
-        new Product {
-            ProductName = "Karta graficzna Nvidia GeForce",
-            EAN = "876549013",
-            Price = 399.99,
-        }
-
-        ,
-        new Product {
-            ProductName = "Słuchawki Sony WH-1000XM4",
-            EAN = "290437561",
-            Price = 349.99,
-        }
-
-        ,
-        new Product {
-            ProductName = "Oprogramowanie Adobe Creative Cloud",
-            EAN = "658943120",
-            Price = 599.99,
-        }
-      };
+            List<Product> _products = new List<Product>
+            {
+                new Product
+                {
+                    ProductName = "Microsoft Surface Pro 7",
+                    EAN = "889842512167",
+                    Price = 7899.99
+                },
+                new Product
+                {
+                    ProductName = "Apple MacBook Pro 16",
+                    EAN = "190199096057",
+                    Price = 17999.99
+                },
+                new Product
+                {
+                    ProductName = "Dell XPS 13",
+                    EAN = "884116362545",
+                    Price = 7199.99
+                },
+                new Product
+                {
+                    ProductName = "Asus ROG Strix Scar 17",
+                    EAN = "192876861434",
+                    Price = 10999.99
+                },
+                new Product
+                {
+                    ProductName = "Razer Blade 15",
+                    EAN = "811659034008",
+                    Price = 9999.99
+                },
+                    new Product
+                {
+                    ProductName = "HP Spectre x360",
+                    EAN = "193424024798",
+                    Price = 8999.99
+                },
+                new Product
+                {
+                    ProductName = "Lenovo Legion 5",
+                    EAN = "195042640108",
+                    Price = 8499.99
+                },
+                new Product
+                {
+                    ProductName = "Samsung Galaxy Book Pro",
+                    EAN = "887276540087",
+                    Price = 7999.99
+                },
+                new Product
+                {
+                    ProductName = "LG Gram 17",
+                    EAN = "195174006302",
+                    Price = 8499.99
+                },
+                new Product
+                {
+                    ProductName = "Acer Nitro 5",
+                    EAN = "193199948864",
+                    Price = 7499.99
+                },
+                new Product
+                {
+                    ProductName = "Apple iPad Pro",
+                    EAN = "190198859818",
+                    Price = 5499.99
+                },
+                new Product
+                {
+                    ProductName = "Microsoft Surface Laptop 4",
+                    EAN = "889842682558",
+                    Price = 5999.99
+                },
+                new Product
+                {
+                    ProductName = "Logitech G502 HERO",
+                    EAN = "097855146338",
+                    Price = 329.99
+                },
+                new Product
+                {
+                    ProductName = "Bose QuietComfort 35 II",
+                    EAN = "178177700250",
+                    Price = 1699.99
+                },
+                new Product
+                {
+                    ProductName = "Samsung 860 EVO SSD",
+                    EAN = "887276246206",
+                    Price = 699.99
+                },
+                new Product
+                {
+                    ProductName = "Seagate Backup Plus Slim",
+                    EAN = "763649128389",
+                    Price = 449.99
+                },
+                new Product
+                {
+                    ProductName = "Apple AirPods Pro",
+                    EAN = "190199246850",
+                    Price = 1299.99
+                },
+                new Product
+                {
+                    ProductName = "HyperX Cloud II",
+                    EAN = "740617235692",
+                    Price = 599.99
+                },
+                new Product
+                {
+                    ProductName = "Logitech C920s HD Pro Webcam",
+                    EAN = "097855143244",
+                    Price = 549.99
+                },
+                new Product
+                {
+                    ProductName = "Samsung 4K Smart TV",
+                    EAN = "765983427129",
+                    Price = 5499.99
+                },
+                new Product
+                {
+                    ProductName = "Sony WH-1000XM4",
+                    EAN = "741776489932",
+                    Price = 1599.99
+                },
+                new Product
+                {
+                    ProductName = "Bose Soundbar 700",
+                    EAN = "178177458392",
+                    Price = 2999.99
+                },
+                new Product
+                {
+                    ProductName = "Corsair K95 RGB Platinum XT",
+                    EAN = "843591084719",
+                    Price = 1299.99
+                },
+                new Product
+                {
+                    ProductName = "Philips Hue Starter Kit",
+                    EAN = "784984293516",
+                    Price = 799.99
+                },
+                new Product
+                {
+                    ProductName = "Dell Ultrasharp U2720Q",
+                    EAN = "884116366407",
+                    Price = 2799.99
+                },
+                new Product
+                {
+                    ProductName = "Sennheiser HD 660 S",
+                    EAN = "615104312129",
+                    Price = 2299.99
+                },
+                new Product
+                {
+                    ProductName = "Samsung Galaxy Buds Pro",
+                    EAN = "8806092128374",
+                    Price = 799.99
+                },
+                new Product
+                {
+                    ProductName = "Logitech G Pro X Mechanical Gaming Keyboard",
+                    EAN = "5099206086209",
+                    Price = 799.99
+                },
+                new Product
+                {
+                    ProductName = "Razer DeathAdder V2 Gaming Mouse",
+                    EAN = "811659032788",
+                    Price = 399.99
+                },
+                new Product
+                {
+                    ProductName = "Samsung Odyssey G7 Gaming Monitor",
+                    EAN = "8806090428569",
+                    Price = 4599.99
+                },
+                new Product
+                {
+                    ProductName = "LG UltraFine 4K Display",
+                    EAN = "8806098220782",
+                    Price = 3399.99
+                },
+                new Product
+                {
+                    ProductName = "Jabra Elite 85t True Wireless Earbuds",
+                    EAN = "5707055060858",
+                    Price = 899.99
+                },
+                new Product
+                {
+                    ProductName = "LG UltraWide 34-inch Gaming Monitor",
+                    EAN = "719192617107",
+                    Price = 2699.99
+                },
+                new Product
+                {
+                    ProductName = "Logitech MX Master 3 Wireless Mouse",
+                    EAN = "097855148267",
+                    Price = 499.99
+                },
+                new Product
+                {
+                    ProductName = "Razer BlackWidow Elite Mechanical Gaming Keyboard",
+                    EAN = "811659030954",
+                    Price = 1099.99
+                },
+                new Product
+                {
+                    ProductName = "Sonos Beam Soundbar",
+                    EAN = "878269009879",
+                    Price = 1999.99
+                },
+                new Product
+                {
+                    ProductName = "Canon EOS Rebel T7 DSLR Camera",
+                    EAN = "013803301983",
+                    Price = 3499.99
+                },
+                new Product
+                {
+                    ProductName = "Samsung Galaxy Tab S7+",
+                    EAN = "887276438834",
+                    Price = 2799.99
+                },
+                new Product
+                {
+                    ProductName = "Microsoft Surface Pen",
+                    EAN = "889842202700",
+                    Price = 499.99
+                },
+                new Product
+                {
+                    ProductName = "Seagate Backup Plus Slim 2TB Portable Hard Drive",
+                    EAN = "763649129241",
+                    Price = 529.45
+                }
+                // and so on...
+            };
             return _products;
         }
 

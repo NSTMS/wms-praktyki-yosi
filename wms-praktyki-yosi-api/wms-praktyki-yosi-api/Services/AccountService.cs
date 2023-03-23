@@ -101,8 +101,6 @@ namespace wms_praktyki_yosi_api.Services
 
         public async Task<LoginResult> GetToken(UserLoginDto dto)
         {
-
-
             var user = await _userManager.FindByNameAsync(dto.Email);
             if (user is null || !await _userManager.CheckPasswordAsync(user, dto.Password))
                 throw new BadRequestException("3");
@@ -172,6 +170,7 @@ namespace wms_praktyki_yosi_api.Services
             if (user is null)
                 throw new BadRequestException("1");
             var result = await _userManager.DeleteAsync(user);
+
             if (!result.Succeeded)
                 throw new Exception();
         }

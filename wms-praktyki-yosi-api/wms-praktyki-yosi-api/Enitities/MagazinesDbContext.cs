@@ -11,7 +11,8 @@ namespace wms_praktyki_yosi_api.Enitities
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductLocations> ProductLocations { get; set; }
 
-        public DbSet<Shelf> Shelves { get; set; } 
+        public DbSet<Shelf> Shelves { get; set; }
+        public DbSet<Magazine> Magazines { get; set; }
         private readonly ConnectionsStrings _connectionStrings;
         public MagazinesDbContext(DbContextOptions<MagazinesDbContext> options, ConnectionsStrings connectionStrings) : base(options)
         {

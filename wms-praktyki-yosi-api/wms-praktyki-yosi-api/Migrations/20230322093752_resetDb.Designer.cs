@@ -12,7 +12,7 @@ using wms_praktyki_yosi_api.Enitities;
 namespace wms_praktyki_yosi_api.Migrations
 {
     [DbContext(typeof(MagazinesDbContext))]
-    [Migration("20230321080837_resetDb")]
+    [Migration("20230322093752_resetDb")]
     partial class resetDb
     {
         /// <inheritdoc />
@@ -156,6 +156,27 @@ namespace wms_praktyki_yosi_api.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("wms_praktyki_yosi_api.Enitities.Magazine", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Magazines");
                 });
 
             modelBuilder.Entity("wms_praktyki_yosi_api.Enitities.Product", b =>

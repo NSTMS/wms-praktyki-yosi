@@ -14,13 +14,18 @@ namespace wms_praktyki_yosi_api.Controllers
     {
 
         private readonly ILocationService _locationService;
+        private readonly ICustomAuthorizationService _authorizationService;
 
-        public LocationController(ILocationService locationService)
+        public LocationController(ILocationService locationService, ICustomAuthorizationService authorizationService)
         {
             _locationService = locationService;
+            _authorizationService = authorizationService;
         }
 
-        [HttpGet] public ActionResult GetAll() {
+        [HttpGet] public async Task<ActionResult> GetAll() {
+            if (!await _authorizationService.UserIsAuthorized(User))
+                return Unauthorized();
+
             var result = _locationService.GetAllLocations();
             if (result == null)
             {
@@ -29,12 +34,15 @@ namespace wms_praktyki_yosi_api.Controllers
             return Ok(result);
         }
         [HttpPost]
-        public ActionResult AddProductToLocation([FromBody] ProductLocationDto dto)
+        [Authorize(Roles = "Admin,Moderator")]
+        public async Task<ActionResult> AddProductToLocation([FromBody] ProductLocationDto dto)
         {
+            if (!await _authorizationService.UserIsAuthorized(User))
+                return Unauthorized();
             try
             {
                 var result = _locationService.AddProductToLocation(dto);
-                return Ok();
+                return Ok(result);
             }
             catch(BadRequestException ex)
             {
@@ -43,12 +51,20 @@ namespace wms_praktyki_yosi_api.Controllers
             }
           
         }
-        [HttpGet("{id}")] public ActionResult GetById([FromRoute] int id)
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Admin,Moderator")] public async Task<ActionResult> GetById([FromRoute] int id)
         {
+            if (!await _authorizationService.UserIsAuthorized(User))
+                return Unauthorized();
             var result = _locationService.GetLocationById(id);
             return Ok(result);
         }
-        [HttpPut("{id}")] public ActionResult Edit([FromRoute] int id, [FromBody] ProductLocationDto dto) {
+        [HttpPut("{id}")]
+        [Authorize(Roles = "Admin,Moderator")]
+        public async Task<ActionResult> Edit([FromRoute] int id, [FromBody] ProductLocationDto dto) {
+            if (!await _authorizationService.UserIsAuthorized(User))
+                return Unauthorized();
+
             var result = _locationService.UpdateLocation(id, dto);
             if (!result)
             {
@@ -56,7 +72,12 @@ namespace wms_praktyki_yosi_api.Controllers
             }
             return Ok();
         }
-        [HttpDelete("{id}")] public ActionResult Delete([FromRoute] int id) {
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin,Moderator")]
+        public async Task<ActionResult> Delete([FromRoute] int id) {
+            if (!await _authorizationService.UserIsAuthorized(User))
+                return Unauthorized();
+
             var result = _locationService.DeleteLocation(id);
             if (!result)
             {

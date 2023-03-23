@@ -19,18 +19,20 @@ namespace wms_praktyki_yosi_api.Controllers
     {
         private readonly IAccountService _service;
         private readonly IValidator<RegisterUserDto> _validator;
+        private readonly ICustomAuthorizationService _authorizationService;
 
-        public AccountControler(IAccountService service, IValidator<RegisterUserDto> validator)
+        public AccountControler(IAccountService service, IValidator<RegisterUserDto> validator, ICustomAuthorizationService authorizationService)
         {
             _service = service;
             _validator = validator;
+            _authorizationService = authorizationService;
         }
 
         [HttpGet("users")]
         [Authorize(Roles = "Admin,Moderator")]
         public async Task<ActionResult<List<UserDto>>> GetAll()
         {
-            if (!await UserIsAuthorized(User))
+            if (!await _authorizationService.UserIsAuthorized(User))
                 return Forbid();
 
             return await _service.GetAll();
@@ -40,7 +42,7 @@ namespace wms_praktyki_yosi_api.Controllers
         [Authorize]
         public async Task<ActionResult<User>> Get([FromRoute] string id)
         {
-            if (!await UserIsAuthorized(User))
+            if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
 
             try
@@ -90,7 +92,7 @@ namespace wms_praktyki_yosi_api.Controllers
 
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<IActionResult> Login([FromBody]UserLoginDto dto)
+        public async Task<ActionResult> Login([FromBody]UserLoginDto dto)
         {
             try
             {
@@ -114,7 +116,7 @@ namespace wms_praktyki_yosi_api.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> UpdateUserRole([FromRoute]string id, [FromBody] string newRole)
         {
-            if (!await UserIsAuthorized(User))
+            if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
 
             try
@@ -138,7 +140,7 @@ namespace wms_praktyki_yosi_api.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteUser([FromRoute]string id)
         {
-            if (!await UserIsAuthorized(User))
+            if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
 
             try
@@ -162,7 +164,7 @@ namespace wms_praktyki_yosi_api.Controllers
         [Authorize]
         public async Task<ActionResult<UserDto>> GetUserInfo()
         {
-            if (!await UserIsAuthorized(User))
+            if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
 
             var userEmail = User.FindFirst(ClaimTypes.Name);
@@ -180,21 +182,7 @@ namespace wms_praktyki_yosi_api.Controllers
             }
         }
 
-        private async Task<bool> UserIsAuthorized(ClaimsPrincipal user)
-        {
-            var userEmail = user.FindFirst(ClaimTypes.Name);
-            if (userEmail is null)
-                return false;
-            try
-            {
-                var userInfo = await _service.GetUserInfo(userEmail.Value);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
+
 
 
 
