@@ -1,0 +1,27 @@
+<mat-grid-list cols="1" rowHeight="75px" (keyup.enter)="handleSubmit()">
+  <mat-grid-tile>
+    <mat-form-field appearance="fill">
+      <mat-label>Id</mat-label>
+      <input matInput [formControl]="Id" />
+    </mat-form-field>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-form-field appearance="fill">
+      <mat-label>Email</mat-label>
+      <input matInput [formControl]="Email" />
+    </mat-form-field>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-form-field appearance="fill">
+      <mat-label>Role</mat-label>
+      <mat-select [(ngModel)]="selected" (ngModelChange)="handleSelectChange()">
+        <mat-option value="User">User</mat-option>
+        <mat-option value="Moderator">Moderator</mat-option>
+        <mat-option value="Admin">Admin</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <button mat-raised-button (click)="handleSubmit()">Submit</button>
+  </mat-grid-tile>
+</mat-grid-list>

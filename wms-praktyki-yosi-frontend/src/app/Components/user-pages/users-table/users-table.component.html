@@ -1,0 +1,40 @@
+<mat-table class="mat-table" #table [dataSource]="dataSource">
+  <ng-container matColumnDef="Id">
+    <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>
+    <mat-cell *matCellDef="let user">{{ user.id }}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="Email">
+    <mat-header-cell *matHeaderCellDef>Email</mat-header-cell>
+    <mat-cell *matCellDef="let user">{{ user.email }}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="PasswordHash">
+    <mat-header-cell *matHeaderCellDef>PasswordHash</mat-header-cell>
+    <mat-cell *matCellDef="let user">{{ user.passwordHash }}</mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="Role">
+    <mat-header-cell *matHeaderCellDef>Role</mat-header-cell>
+    <mat-cell *matCellDef="let user">{{ user.role }}</mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="edit">
+    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+    <mat-cell *matCellDef="let user"
+      ><a mat-stroked-button color="accent" routerLink="edit/{{ user.id }}"
+        >Edit</a
+      ></mat-cell
+    >
+  </ng-container>
+  <ng-container matColumnDef="delete">
+    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+    <mat-cell *matCellDef="let user"
+      ><button mat-flat-button color="warn" (click)="handleDelete(user.id)">
+        Delete
+      </button></mat-cell
+    >
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+</mat-table>
+<div *ngIf="length === 0">No data</div>
