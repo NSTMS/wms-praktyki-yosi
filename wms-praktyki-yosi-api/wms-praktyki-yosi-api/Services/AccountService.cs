@@ -170,6 +170,7 @@ namespace wms_praktyki_yosi_api.Services
             if (user is null)
                 throw new BadRequestException("1");
             var result = await _userManager.DeleteAsync(user);
+
             if (!result.Succeeded)
                 throw new Exception();
         }

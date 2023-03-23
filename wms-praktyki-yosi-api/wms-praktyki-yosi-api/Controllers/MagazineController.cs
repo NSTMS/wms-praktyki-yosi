@@ -95,14 +95,17 @@ namespace wms_praktyki_yosi_api.Controllers
         {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
-
-            var res = _magazineService.AddMagzine(dto);
-            if(res == null)
+            try
             {
-                ModelState.AddModelError("Errors", "Internal Server error");
+                var res = _magazineService.AddMagzine(dto);
+                return Created(res.ToString(), null);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("Errors", ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, ModelState);
             }
-            return Created(res.ToString(),null);
+
         }
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin,Moderator")]

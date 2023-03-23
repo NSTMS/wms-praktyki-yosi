@@ -20,7 +20,6 @@ namespace wms_praktyki_yosi_api.Controllers
         {
             _locationService = locationService;
             _authorizationService = authorizationService;
-
         }
 
         [HttpGet] public async Task<ActionResult> GetAll() {

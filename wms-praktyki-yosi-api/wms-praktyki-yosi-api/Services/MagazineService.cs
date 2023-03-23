@@ -19,12 +19,18 @@ namespace wms_praktyki_yosi_api.Services
 
         public List<Magazine> GetAll()
         {
-            var res = _context.Magazines.ToList();
+            var res = _context
+                .Magazines
+                .Include(m => m.Shelves)
+                .ToList();
             return res;
         }
         public MagazineDto GetById(int id)
         {
-            var magazine = _context.Magazines.FirstOrDefault(x => x.Id == id);
+            var magazine = _context
+                .Magazines
+                .Include(s => s.Shelves)
+                .FirstOrDefault(x => x.Id == id);
             if (magazine == null)
                 return null;
             var res = _mapper.Map<MagazineDto>(magazine);
@@ -114,10 +120,43 @@ namespace wms_praktyki_yosi_api.Services
         }
         public int AddMagzine(MagazineDto dto)
         {
-            var res = _mapper.Map<Magazine>(dto);
-            _context.Magazines.Add(res);
-            _context.SaveChanges();
-            return res.Id;
+            try
+            {
+                var res = _mapper.Map<Magazine>(dto);
+                var shelvesList = new List<Shelf>();
+
+                var regalNames = new List<string>() { "A", "B", "C", "D", "E" ,"F","G","H","I","J","K","L","M","N","O","P","R","S","T","U","W","Y","Z"};
+                if (dto.Dimentions == null)
+                    throw new NullReferenceException("Dimentions were invalid");
+                var dimentions = dto.Dimentions.Split("x");
+
+
+                foreach (string name in regalNames)
+                {
+                    for (int i = 1; i <= Convert.ToInt32(dimentions[0]); i++)
+                    {
+                        for (int j = 1; j <= Convert.ToInt32(dimentions[1]); j++)
+                        {
+                            Shelf shelf = new Shelf();
+                            shelf.MagazineId = res.Id;
+                            shelf.Position = $"{name}{i}/{j}";
+                            shelvesList.Add(shelf);
+                        }
+                    }
+                }
+                res.Shelves = new List<Shelf>();
+                res.Shelves.AddRange(shelvesList);
+
+                _context.Shelves.AddRange(shelvesList);
+                _context.Magazines.Add(res);
+                _context.SaveChanges();
+                return res.Id;
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
         }
         public bool UpdateMagazine(int id, MagazineDto dto)
         {
