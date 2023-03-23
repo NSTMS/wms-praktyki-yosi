@@ -4,7 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataReaderService } from '@app/Services/fetching-services/data-reader.service';
 import { MagazineService } from '@app/Services/fetching-services/magazine.service';
-import { magazine, magazineToAdd } from '@static/types/magazineTypes';
+import { magazine, magazineToAdd, magazineToEdit } from '@static/types/magazineTypes';
 import { product } from '@static/types/productTypes';
 
 @Component({
@@ -23,6 +23,8 @@ export class InfoMagazineComponent {
   magazine: magazineToAdd = {
     name: '',
     address: '',
+    dimentions: '',
+    shelvesPerRow: 0
   };
 
   constructor(
@@ -51,7 +53,7 @@ export class InfoMagazineComponent {
         this.router.navigate(['/magazines']);
       }
 
-      this.magazine = magazine;
+      // this.magazine = magazine;
     });
   }
 

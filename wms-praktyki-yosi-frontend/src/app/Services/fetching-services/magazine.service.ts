@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ErrorService } from '../error-handling/error.service';
-import { magazineToAdd } from '@static/types/magazineTypes';
+import { magazineToAdd, magazineToEdit } from '@static/types/magazineTypes';
 
 declare var require: any;
 const connection = require('@static/connection.json');
@@ -57,7 +57,7 @@ export class MagazineService {
     this._errorHandler.HandleBadResponse(response);
   }
 
-  async Edit(id: number, newMagazine: magazineToAdd) {
+  async Edit(id: number, newMagazine: magazineToEdit) {
     const response = await fetch(`${this.link}/${id}`, {
       method: 'PUT',
       headers: this.headers,

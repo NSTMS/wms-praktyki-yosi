@@ -3,7 +3,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ErrorService } from '@app/Services/error-handling/error.service';
 import { MagazineService } from '@app/Services/fetching-services/magazine.service';
-import { magazine, magazineToAdd } from '@static/types/magazineTypes';
+import { magazine, magazineToAdd, magazineToEdit } from '@static/types/magazineTypes';
 
 @Component({
   selector: 'app-edit-magazine',
@@ -46,7 +46,7 @@ export class EditMagazineComponent {
       return;
     }
 
-    const newMagazine: magazineToAdd = {
+    const newMagazine: magazineToEdit = {
       name: this.name.value || '',
       address: this.address.value || '',
     };

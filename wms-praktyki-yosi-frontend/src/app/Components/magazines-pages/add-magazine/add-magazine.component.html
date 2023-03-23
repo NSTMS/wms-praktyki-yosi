@@ -11,6 +11,18 @@
       <input matInput [formControl]="address" />
     </mat-form-field>
   </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-form-field appearance="fill">
+      <mat-label>Dimentions (AxB) for A &lt;= 24</mat-label>
+      <input matInput [formControl]="dimentions" />
+    </mat-form-field>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-form-field appearance="fill">
+      <mat-label>Shelves per regal</mat-label>
+      <input matInput [formControl]="shelvesPerRow" />
+    </mat-form-field>
+  </mat-grid-tile>
 
   <mat-grid-tile>
     <button mat-raised-button (click)="handleSubmit()">Submit</button>

@@ -17,6 +17,15 @@ export class AddMagazineComponent {
 
   address = new FormControl('', [Validators.required]);
 
+  dimentions = new FormControl('', [
+    Validators.required,
+    Validators.pattern("^[0-9]{1,2}x[0-9]+$")
+  ]);
+
+  shelvesPerRow = new FormControl(0, [
+    Validators.required,
+    Validators.pattern("^[0-9]+$")
+  ]);
   constructor(
     private router: Router,
     private _magazineService: MagazineService,
@@ -32,6 +41,8 @@ export class AddMagazineComponent {
     const newMagazine: magazineToAdd = {
       name: this.name.value || '',
       address: this.address.value || '',
+      shelvesPerRow: this.shelvesPerRow.value || -1,
+      dimentions: this.dimentions.value || ''
     };
 
     const added = await this._magazineService.Add(newMagazine);
