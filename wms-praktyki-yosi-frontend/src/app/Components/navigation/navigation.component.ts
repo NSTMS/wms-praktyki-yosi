@@ -44,7 +44,11 @@ export class NavigationComponent {
     this.globalSrv.role.subscribe((nextValue) => {
       this.isModeratorOrAdmin =
         nextValue == 'Admin' || nextValue == 'Moderator';
-      this.isAdmin = nextValue == 'Admin'
+      this.isAdmin = nextValue == 'Admin';
     });
+  }
+
+  ngOnDestroy(): void {
+    this.globalSrv.role.unsubscribe();
   }
 }

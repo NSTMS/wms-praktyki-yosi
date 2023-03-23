@@ -96,10 +96,13 @@ export class MagazineService {
     this._errorHandler.HandleBadResponse(response);
   }
 
-  async GetLocations(productId: number, magazineId:number){
-    const response = await fetch(`${this.link}/${magazineId}/products/${productId}`, {
-      headers: this.headers,
-    });
+  async GetLocations(productId: number, magazineId: number) {
+    const response = await fetch(
+      `${this.link}/${magazineId}/products/${productId}`,
+      {
+        headers: this.headers,
+      }
+    );
 
     if (response.ok) return await response.json();
 

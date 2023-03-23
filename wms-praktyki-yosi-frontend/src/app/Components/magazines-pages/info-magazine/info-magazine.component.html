@@ -58,10 +58,7 @@
   <ng-container matColumnDef="edit" *ngIf="canAddAndDel">
     <mat-header-cell *matHeaderCellDef></mat-header-cell>
     <mat-cell *matCellDef="let product"
-      ><a
-        mat-stroked-button
-        color="accent"
-        routerLink="/edit/{{ product.id }}"
+      ><a mat-stroked-button color="accent" routerLink="/edit/{{ product.id }}"
         >Edit</a
       ></mat-cell
     >
@@ -70,7 +67,9 @@
   <ng-container matColumnDef="info" *ngIf="canAddAndDel">
     <mat-header-cell *matHeaderCellDef></mat-header-cell>
     <mat-cell *matCellDef="let product"
-      ><a mat-stroked-button routerLink="/magazines/info/{{id}}/product/{{ product.id }}"
+      ><a
+        mat-stroked-button
+        routerLink="/magazines/info/{{ id }}/product/{{ product.id }}"
         >Info</a
       ></mat-cell
     >

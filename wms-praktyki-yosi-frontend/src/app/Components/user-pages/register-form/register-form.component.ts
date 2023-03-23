@@ -23,32 +23,26 @@ export class RegisterFormComponent {
     private router: Router,
     private _authenticationService: AuthenticationService
   ) {}
+
   async handleButtonClick() {
-    this._authenticationService.registerUser(
+    const response = await this._authenticationService.registerUser(
       this.email.value as string,
       this.password.value as string,
       this.confirmPassword.value as string
-    ).then((response: Response | null) => {
-      if(response == null)
-        return;
+    );
 
-      if(!response.ok)
-        response?.json()
+    if (response == null) return;
 
-    }).then((res: any) => {
-          if (res && res.Errors){
-            this._errorHandler.errorMessageShow(
-              res.Errors
-            );
-            return;
-          }
+    if (response.ok) {
+      this._errorHandler.handleErrorCode(8);
+      this.router.navigate(['/login']);
+      return;
+    }
 
-          this._errorHandler.handleErrorCode(8);
-          this.router.navigate(['/login']);
+    const res = await response.json();
 
-      })
-      // .catch((ex) => {
-      //   console.log(ex);
-      // });
+    if (res && res.Errors) {
+      this._errorHandler.errorMessageShow(res.Errors);
+    }
   }
 }

@@ -43,28 +43,30 @@ export class ProductInfoComponent {
   }
 
   loadData() {
-    let productPromise
-    if(!this.magazineId)
-      productPromise = this._reader.GetById(this.id)
+    let productPromise;
+    if (!this.magazineId) productPromise = this._reader.GetById(this.id);
     else
-      productPromise = this._magazineService.GetLocations(this.id, this.magazineId)
-
-    productPromise.then((prod: product) => {
-      if (typeof prod === 'number') {
-        this.router.navigate(['/table']);
-        this._errorHandler.handleErrorCode(prod);
-      }
-      this.product = prod;
-      this.dataSource = new MatTableDataSource<productLocation>(
-        prod.locations
+      productPromise = this._magazineService.GetLocations(
+        this.id,
+        this.magazineId
       );
-    })
-    .catch((ex) => {
-      console.log('err');
-      this.router.navigate(['/table']);
-    });
-    return;
 
+    productPromise
+      .then((prod: product) => {
+        if (typeof prod === 'number') {
+          this.router.navigate(['/table']);
+          this._errorHandler.handleErrorCode(prod);
+        }
+        this.product = prod;
+        this.dataSource = new MatTableDataSource<productLocation>(
+          prod.locations
+        );
+      })
+      .catch((ex) => {
+        console.log('err');
+        this.router.navigate(['/table']);
+      });
+    return;
   }
 
   async handleDelete(id: number) {

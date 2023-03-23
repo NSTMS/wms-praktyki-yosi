@@ -25,7 +25,10 @@ const routes: Routes = [
   { path: 'magazines/add', component: AddMagazineComponent },
   { path: 'magazines/edit/:id', component: EditMagazineComponent },
   { path: 'magazines/info/:id', component: InfoMagazineComponent },
-  { path: 'magazines/info/:magazineId/product/:id', component: ProductInfoComponent },
+  {
+    path: 'magazines/info/:magazineId/product/:id',
+    component: ProductInfoComponent,
+  },
   { path: 'magazines', component: MagazineListComponent },
   { path: 'add', component: AddFormComponent },
   { path: 'login', component: LoginFormComponent },

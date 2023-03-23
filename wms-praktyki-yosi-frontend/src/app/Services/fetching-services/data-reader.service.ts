@@ -105,5 +105,4 @@ export class DataReaderService {
     const product = await response.json();
     return product;
   }
-
 }
