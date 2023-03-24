@@ -13,6 +13,9 @@ namespace wms_praktyki_yosi_api.Enitities
 
         public DbSet<Shelf> Shelves { get; set; }
         public DbSet<Magazine> Magazines { get; set; }
+        public DbSet<Document> Documents { get; set; }
+        public DbSet<DocumentItem> DocumentItems { get; set; }
+
         private readonly ConnectionsStrings _connectionStrings;
         public MagazinesDbContext(DbContextOptions<MagazinesDbContext> options, ConnectionsStrings connectionStrings) : base(options)
         {
@@ -31,16 +34,24 @@ namespace wms_praktyki_yosi_api.Enitities
                 .IsRequired()
                 .HasMaxLength(13);
 
+            modelBuilder.Entity<Document>()
+                .Property(d => d.Date)
+                .IsRequired();
+
+            modelBuilder.Entity<Document>()
+                .Property(d => d.Client)
+                .IsRequired();
+            
+            modelBuilder.Entity<DocumentItem>()
+                .Property(di => di.DocumentId)
+                .IsRequired();
+
+            modelBuilder.Entity<DocumentItem>()
+                .Property(di => di.Quantityplaned)
+                .IsRequired();
+
 
             base.OnModelCreating(modelBuilder);
-            /* modelBuilder.Entity<User>()
-                 .Property(u => u.Email)
-                 .IsRequired();
-
-             modelBuilder.Entity<Role>()
-                 .Property(u => u.Name)
-                 .IsRequired();*/
-
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -31,9 +31,8 @@ namespace wms_praktyki_yosi_api.Services
             var magazine = _context
                 .Magazines
                 .Include(s => s.Shelves)
-                .FirstOrDefault(x => x.Id == id);
-            if (magazine == null)
-                throw new NotFoundException("Magazine not found"); // TODO: Add Error Codes
+                .FirstOrDefault(x => x.Id == id)
+                ?? throw new NotFoundException("153");
             var res = _mapper.Map<MagazineDto>(magazine);
             return res;
         }
@@ -49,23 +48,31 @@ namespace wms_praktyki_yosi_api.Services
         }
         public ProductDto GetProductInMagazine(int id, int productId)
         {
+
+            var magazine = _context
+                .Magazines
+                .Include(s => s.Shelves)
+                .FirstOrDefault(x => x.Id == id)
+                ?? throw new NotFoundException("153");
+
             var locations = _context
               .ProductLocations
               .Include(s => s.Shelf)
               .Include(s => s.Product)
-              .Where(r => r.Shelf.MagazineId == id);
-            if (locations == null)
-                throw new NotFoundException("No locations found"); // TODO: Add Error Codes
+              .Where(r => r.Shelf.MagazineId == id)
+              .Where(r => r.ProductId == productId)
+              ?? throw new NotFoundException("152");
 
             var firstProdLocation =
                 locations
-                .FirstOrDefault(p => p.ProductId == id);
-            if (firstProdLocation == null)
-                throw new NotFoundException("Location not found"); // TODO: Add Error Codess
+                .FirstOrDefault()
+                ?? throw new NotFoundException("152");
+                 
             var product = firstProdLocation.Product;
 
             var res = new ProductDto()
             {
+                Id = productId,
                 ProductName = product.ProductName,
                 EAN = product.EAN,
                 Price = product.Price,
@@ -78,6 +85,7 @@ namespace wms_praktyki_yosi_api.Services
 
         public List<ProductDto> GetProductsInMagazine(int id)
         {
+
             var prodIds = _context
                 .ProductLocations
                 .Include(s => s.Shelf)
@@ -110,12 +118,12 @@ namespace wms_praktyki_yosi_api.Services
                 .Include(s => s.Shelf)
                 .Where(p => p.Shelf.MagazineId == id);
             if (magzaine == null)
-                throw new NotFoundException("Magazine not found"); // TODO: Add Error Codes
+                throw new NotFoundException("153");
 
             var locations = magzaine
                 .Where(p => p.ProductId == productId).ToList();
             if (locations == null)
-                throw new NotFoundException("No locations found"); // TODO: Add Error Codes
+                throw new NotFoundException("152");
             var res = _mapper.Map<List<ReturnProductLocationDto>>(locations);
             return res;
         }
@@ -124,30 +132,42 @@ namespace wms_praktyki_yosi_api.Services
             var magazine = _mapper.Map<Magazine>(dto);
             var shelvesList = new List<Shelf>();
 
-            var regalNames = new List<string>() { "A", "B", "C", "D", "E" ,"F","G","H","I","J","K","L","M","N","O","P","R","S","T","U","W","Y","Z"};
             if (dto.Dimentions == null)
-                throw new BadRequestException("Dimentions were invalid"); // TODO: Add Error Codes
+                throw new BadRequestException("117");
+
             var dimentions = dto.Dimentions.Split("x");
-
-
-            foreach (string name in regalNames)
+            var shelvesPR = dto.ShelvesPerRow;
+            _context.Magazines.Add(magazine);
+            _context.SaveChanges();
+            try
             {
-                for (int i = 1; i <= Convert.ToInt32(dimentions[0]); i++)
+                
+                var regalNames = GetRegalNames(Convert.ToInt32(dimentions[0]));
+            
+                foreach (string name in regalNames)
                 {
-                    for (int j = 1; j <= Convert.ToInt32(dimentions[1]); j++)
+                    for (int i = 1; i <= Convert.ToInt32(dimentions[1]); i++)
                     {
-                        Shelf shelf = new Shelf();
-                        shelf.MagazineId = magazine.Id;
-                        shelf.Position = $"{name}{i}/{j}";
-                        shelvesList.Add(shelf);
+                        for (int j = 1; j <= Convert.ToInt32(shelvesPR); j++)
+                        {
+                            Shelf shelf = new Shelf();
+                            shelf.MagazineId = magazine.Id;
+                            shelf.Position = $"{name}{i}/{j}";
+                            shelvesList.Add(shelf);
+                        }
                     }
                 }
+                
             }
-            magazine.Shelves = new List<Shelf>();
-            magazine.Shelves.AddRange(shelvesList);
+            catch
+            {
+                _context.Magazines.Remove(magazine);
+                _context.SaveChanges();
+                throw new BadRequestException("117");
+            }
 
+            
             _context.Shelves.AddRange(shelvesList);
-            _context.Magazines.Add(magazine);
             _context.SaveChanges();
             return magazine.Id;
 
@@ -173,7 +193,44 @@ namespace wms_praktyki_yosi_api.Services
             _context.Magazines.Remove(magazine);
             _context.SaveChanges();
         }
-       
+
+        public List<string> GetRegalNames(int count)
+        {
+            var num = Convert.ToInt32(count);
+            var NUM = num;
+            var smallest = num % 26;
+            var regalNames = new List<string>();
+
+            while (num > 0)
+            {
+                int digit = num % 26;
+                num /= 26;
+                if (num > 0) continue;
+
+                for (int i = 0; i < NUM && i < 26; i++)
+                {
+                    regalNames.Add((char)(i + 'A') + "");
+                }
+                if (NUM > 26)
+                {
+                    for (int i = 0; i < digit - 1; i++)
+                    {
+                        for (int j = 0; j < 26; j++)
+                        {
+                            regalNames.Add((char)(i + 'A') + "" + (char)(j + 'A'));
+                        }
+                    }
+
+                    for (int j = 0; j < 26 && j < smallest; j++)
+                    {
+                        regalNames.Add((char)(digit - 1 + 'A') + "" + (char)(j + 'A'));
+                    }
+                }
+                
+
+            }
+            return regalNames;
+        }
 
     }
 }

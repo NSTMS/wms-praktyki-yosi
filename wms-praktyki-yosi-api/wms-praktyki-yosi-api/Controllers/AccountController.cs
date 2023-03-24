@@ -15,13 +15,13 @@ namespace wms_praktyki_yosi_api.Controllers
 {
     [Route("api/account")]
     [ApiController]
-    public class AccountControler: ControllerBase
+    public class AccountController: ControllerBase
     {
         private readonly IAccountService _service;
         private readonly IValidator<RegisterUserDto> _validator;
         private readonly ICustomAuthorizationService _authorizationService;
 
-        public AccountControler(IAccountService service, IValidator<RegisterUserDto> validator, ICustomAuthorizationService authorizationService)
+        public AccountController(IAccountService service, IValidator<RegisterUserDto> validator, ICustomAuthorizationService authorizationService)
         {
             _service = service;
             _validator = validator;

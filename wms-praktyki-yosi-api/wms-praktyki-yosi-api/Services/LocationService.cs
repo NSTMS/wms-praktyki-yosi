@@ -29,25 +29,12 @@ namespace wms_praktyki_yosi_api.Services
                 .FirstOrDefault(s => s.Position == location.Position)
                 ?? throw new NotFoundException("150"); //czy półka istnieje 
 
-            var prodLoc = _context
-                .ProductLocations
-                .Include(l => l.Shelf)
-                .Where(l => location.Position == l.Shelf.Position)
-                .FirstOrDefault(l => l.ProductId == location.ProductId);//czy prod znajduje sie na półce
 
+            var mappedProd = _mapper.Map<ProductLocations>(location);
+            mappedProd.ShelfId = shelf.Id;
+            _context.ProductLocations.Add(mappedProd);
+            _context.SaveChanges();
 
-            if (prodLoc != null)
-            {
-                prodLoc.Quantity += location.Quantity;
-                _context.SaveChanges();
-            }
-            else
-            {
-                var mappedProd = _mapper.Map<ProductLocations>(location);
-                mappedProd.ShelfId = shelf.Id;
-                _context.ProductLocations.Add(mappedProd);
-                _context.SaveChanges();
-            }
             return product.Id;
         }
 
