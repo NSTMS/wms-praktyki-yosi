@@ -24,6 +24,7 @@ using FluentValidation;
 using wms_praktyki_yosi_api.Models;
 using wms_praktyki_yosi_api.Models.Validators;
 using Microsoft.EntityFrameworkCore;
+using wms_praktyki_yosi_api.Middleweare;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
@@ -49,10 +50,18 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IMagazineService, MagazineService>();
 builder.Services.AddScoped<ICustomAuthorizationService, CustomAuthorizationService>();
-
-builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
+
+builder.Services.AddScoped<ValidationFilterAttribute>();
+builder.Services.AddScoped<ErrorHandlingMiddleweare>();
+
+
+builder.Services.AddAutoMapper(typeof(Program));
+
+builder.Services.AddSwaggerGen();
+builder.Services.Configure<ApiBehaviorOptions>(options
+    => options.SuppressModelStateInvalidFilter = true);
 
 //            Authentication loading
 var authenticationSettings = new AuthenticationSettings();
@@ -85,6 +94,13 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseMiddleware<ErrorHandlingMiddleweare>();
 
 app.UseHttpsRedirection();
 app.UseCors(builder => builder

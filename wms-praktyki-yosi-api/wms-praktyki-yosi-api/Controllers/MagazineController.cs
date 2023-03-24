@@ -10,6 +10,8 @@ namespace wms_praktyki_yosi_api.Controllers
 {
     [Route("api/magazines")]
     [Authorize]
+    [ApiController]
+    [ServiceFilter(typeof(ValidationFilterAttribute))]
     public class MagazineController : ControllerBase
     {
         private readonly IMagazineService _magazineService;
@@ -26,11 +28,8 @@ namespace wms_praktyki_yosi_api.Controllers
         {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
-            // list of magazines with id name address 
+
             var res = _magazineService.GetAll();
-            // name address list of locations 
-            if (res == null)
-                return NotFound();
             return Ok(res);
         }
         [HttpGet("{id}")]
@@ -41,8 +40,6 @@ namespace wms_praktyki_yosi_api.Controllers
 
             var res =  _magazineService.GetById(id);
             // name address list of locations 
-            if (res == null)
-                return BadRequest(1);
             return Ok(res);
         }
         [HttpGet("{id}/locations")]
@@ -52,8 +49,6 @@ namespace wms_praktyki_yosi_api.Controllers
                 return Unauthorized();
 
             var res = _magazineService.GetLocationsInMagazine(id);
-            if (res == null)
-                return NotFound();
             return Ok(res);
         }
         [HttpGet("{id}/locations/{prodId}")]
@@ -62,10 +57,7 @@ namespace wms_praktyki_yosi_api.Controllers
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
 
-
             var res = _magazineService.GetLocationsOfProduct(id, prodId);
-            if (res == null)
-                return NotFound();
             return Ok(res);
         }
         [HttpGet("{id}/products")]
@@ -73,9 +65,8 @@ namespace wms_praktyki_yosi_api.Controllers
         {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
+
             var res = _magazineService.GetProductsInMagazine(id);
-            if (res == null)
-                return NotFound();
             return Ok(res);
         }
         [HttpGet("{id}/products/{prodId}")]
@@ -85,8 +76,6 @@ namespace wms_praktyki_yosi_api.Controllers
                 return Unauthorized();
 
             var res = _magazineService.GetProductInMagazine(id, prodId);
-            if (res == null)
-                return NotFound();
             return Ok(res);
         }
         [HttpPost]
@@ -95,17 +84,9 @@ namespace wms_praktyki_yosi_api.Controllers
         {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
-            try
-            {
-                var res = _magazineService.AddMagzine(dto);
-                return Created(res.ToString(), null);
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("Errors", ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, ModelState);
-            }
 
+            var res = _magazineService.AddMagzine(dto);
+            return Created(res.ToString(), null);
         }
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin,Moderator")]
@@ -113,14 +94,8 @@ namespace wms_praktyki_yosi_api.Controllers
         {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
-
-            // name and address 
-            var res = _magazineService.UpdateMagazine(id,dto);
-            if (!res)
-            {
-                ModelState.AddModelError("Errors", "Internal Server error");
-                return StatusCode(StatusCodes.Status500InternalServerError, ModelState);
-            }
+ 
+            _magazineService.UpdateMagazine(id,dto);
             return Ok();
         }
         [HttpDelete("{id}")]
@@ -130,13 +105,7 @@ namespace wms_praktyki_yosi_api.Controllers
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
 
-            var res = _magazineService.DeleteMagazine(id);
-            if (!res)
-            {
-                ModelState.AddModelError("Errors", "Internal Server error");
-                return StatusCode(StatusCodes.Status500InternalServerError, ModelState);
-            }
-
+            _magazineService.DeleteMagazine(id);
             return Ok();
         }
 

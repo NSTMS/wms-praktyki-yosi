@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Security.Cryptography;
 using wms_praktyki_yosi_api.Enitities;
+using wms_praktyki_yosi_api.Exceptions;
 using wms_praktyki_yosi_api.Models;
 namespace wms_praktyki_yosi_api.Services
 {
@@ -26,41 +27,34 @@ namespace wms_praktyki_yosi_api.Services
             return product.Id;
             
         }
-        public bool RemoveProduct(int id) {
-            var prod =_context
-                .Products.
-                FirstOrDefault(r => r.Id == id);
-            if (prod == null)
-            {
-                return false;
-            }
+        public void RemoveProduct(int id) {
+            var prod = _context.Products
+                .FirstOrDefault(r => r.Id == id)
+                ?? throw new NotFoundException("151");
 
             _context
                  .Products
                  .Remove(prod);
 
             _context.SaveChanges();
-            return true;
         }
-        public bool UpdateProduct(int id, ProductDto dto) {
-            var prod = _context.Products.FirstOrDefault(r => r.Id == id);
-    
-            if(prod == null) {
-                return false;
-            }
+        public void UpdateProduct(int id, ProductDto dto) {
+            var prod = _context.Products
+                .FirstOrDefault(r => r.Id == id)
+                ?? throw new NotFoundException("151");
 
             prod.ProductName = dto.ProductName;
             prod.EAN = dto.EAN;
             prod.Price = dto.Price;
             _context.SaveChanges();
-
-            return true;
         }
         public IEnumerable<ProductDto> GetAll()
         {
             var seeder = new MagazinesSeeder(_context);
             seeder.Seed();
-            var products = _context.Products.Include(p => p.Locations).ToList();
+            var products = _context.Products
+                .Include(p => p.Locations);
+
             var dtos = products.Select(p => new ProductDto
             {
                 Id = p.Id,
@@ -69,6 +63,7 @@ namespace wms_praktyki_yosi_api.Services
                 Price = p.Price,
                 Quantity = p.Locations.Sum(l => l.Quantity)
             });
+
             return dtos;
         }
 
@@ -76,30 +71,24 @@ namespace wms_praktyki_yosi_api.Services
         {
             var product = _context.Products
                 .Include(p => p.Locations)
-                .FirstOrDefault(r => r.Id == id);
-
-            if (product == null)
-                return null;
+                .FirstOrDefault(r => r.Id == id)
+                ?? throw new NotFoundException("151");
 
             var loc = _context
                 .ProductLocations
                 .Include(s => s.Shelf)
-                .Where(s => s.ProductId == id).ToList();
-
-
+                .Where(s => s.ProductId == id);
 
             var res = new ProductDto()
             {
                 ProductName = product.ProductName,
                 EAN = product.EAN,
                 Price = product.Price,
-                Locations = _mapper.Map<List<ReturnProductLocationDto>>(loc),
+                Locations = _mapper.Map<List<ReturnProductLocationDto>>(loc.ToList()),
                 Quantity = loc.Sum(l => l.Quantity)
             };
 
             return res;
-
-
         }
     }
 }

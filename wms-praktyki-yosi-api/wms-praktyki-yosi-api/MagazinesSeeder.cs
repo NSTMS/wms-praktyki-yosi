@@ -24,6 +24,19 @@ namespace wms_praktyki_yosi_api
                     _dbContext.Products.AddRange(restaurants);
                     _dbContext.SaveChanges();
                 }
+
+                if (!_dbContext.Magazines.Any())
+                {
+                    var magazine = new Magazine()
+                    {
+                        Name = "AlfaBeta",
+                        Address = "ulica Woronicza 7A, Kraków",
+                        Dimentions = "5x10"
+                    };
+                    _dbContext.Add(magazine);
+                    _dbContext.SaveChanges();
+                }
+
                 if (!_dbContext.Shelves.Any())
                 {
                     var regalNames = new List<string>() { "A", "B", "C", "D", "E" };

@@ -21,7 +21,10 @@
     "116": "Hasła są różne",
 
     "150": "Nie ma tekiej półki",
-    "151": "Nie ma produktu o takim id"
+    "151": "Nie ma produktu o takim id",
+    "152": "Nie ma tekiej lokalozacji",
+    "153": "Nie ma takiego magazynu",
+    "154": "Nie ma urzytkownika o takim Id"
   },
   "en": {
     "1": "id not found",

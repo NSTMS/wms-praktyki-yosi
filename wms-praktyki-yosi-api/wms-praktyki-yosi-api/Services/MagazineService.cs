@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Metadata.Ecma335;
 using wms_praktyki_yosi_api.Enitities;
+using wms_praktyki_yosi_api.Exceptions;
 using wms_praktyki_yosi_api.Models;
 
 namespace wms_praktyki_yosi_api.Services
@@ -32,18 +33,18 @@ namespace wms_praktyki_yosi_api.Services
                 .Include(s => s.Shelves)
                 .FirstOrDefault(x => x.Id == id);
             if (magazine == null)
-                return null;
+                throw new NotFoundException("Magazine not found"); // TODO: Add Error Codes
             var res = _mapper.Map<MagazineDto>(magazine);
             return res;
         }
         public List<ProductLocationDto> GetLocationsInMagazine(int id)
         {
-            var magazines = _context
+            var locations = _context
                 .ProductLocations
                 .Include(s => s.Shelf)
                 .Where(r => r.Shelf.MagazineId == id)
                 .ToList();
-            var res = _mapper.Map<List<ProductLocationDto>>(magazines);
+            var res = _mapper.Map<List<ProductLocationDto>>(locations);
             return res;
         }
         public ProductDto GetProductInMagazine(int id, int productId)
@@ -54,13 +55,13 @@ namespace wms_praktyki_yosi_api.Services
               .Include(s => s.Product)
               .Where(r => r.Shelf.MagazineId == id);
             if (locations == null)
-                return null;
+                throw new NotFoundException("No locations found"); // TODO: Add Error Codes
 
             var firstProdLocation =
                 locations
                 .FirstOrDefault(p => p.ProductId == id);
             if (firstProdLocation == null)
-                return null;
+                throw new NotFoundException("Location not found"); // TODO: Add Error Codess
             var product = firstProdLocation.Product;
 
             var res = new ProductDto()
@@ -85,7 +86,7 @@ namespace wms_praktyki_yosi_api.Services
                 .Select(l => l.ProductId);
 
             if (prodIds == null)
-                return null;
+                throw new NotFoundException("no locations found"); // TODO: Add Error Codes
 
             var products = _context
                 .Products
@@ -109,78 +110,70 @@ namespace wms_praktyki_yosi_api.Services
                 .Include(s => s.Shelf)
                 .Where(p => p.Shelf.MagazineId == id);
             if (magzaine == null)
-                return null;
+                throw new NotFoundException("Magazine not found"); // TODO: Add Error Codes
 
             var locations = magzaine
                 .Where(p => p.ProductId == productId).ToList();
             if (locations == null)
-                return null;
+                throw new NotFoundException("No locations found"); // TODO: Add Error Codes
             var res = _mapper.Map<List<ReturnProductLocationDto>>(locations);
             return res;
         }
         public int AddMagzine(MagazineDto dto)
         {
-            try
+            var magazine = _mapper.Map<Magazine>(dto);
+            var shelvesList = new List<Shelf>();
+
+            var regalNames = new List<string>() { "A", "B", "C", "D", "E" ,"F","G","H","I","J","K","L","M","N","O","P","R","S","T","U","W","Y","Z"};
+            if (dto.Dimentions == null)
+                throw new BadRequestException("Dimentions were invalid"); // TODO: Add Error Codes
+            var dimentions = dto.Dimentions.Split("x");
+
+
+            foreach (string name in regalNames)
             {
-                var res = _mapper.Map<Magazine>(dto);
-                var shelvesList = new List<Shelf>();
-
-                var regalNames = new List<string>() { "A", "B", "C", "D", "E" ,"F","G","H","I","J","K","L","M","N","O","P","R","S","T","U","W","Y","Z"};
-                if (dto.Dimentions == null)
-                    throw new NullReferenceException("Dimentions were invalid");
-                var dimentions = dto.Dimentions.Split("x");
-
-
-                foreach (string name in regalNames)
+                for (int i = 1; i <= Convert.ToInt32(dimentions[0]); i++)
                 {
-                    for (int i = 1; i <= Convert.ToInt32(dimentions[0]); i++)
+                    for (int j = 1; j <= Convert.ToInt32(dimentions[1]); j++)
                     {
-                        for (int j = 1; j <= Convert.ToInt32(dimentions[1]); j++)
-                        {
-                            Shelf shelf = new Shelf();
-                            shelf.MagazineId = res.Id;
-                            shelf.Position = $"{name}{i}/{j}";
-                            shelvesList.Add(shelf);
-                        }
+                        Shelf shelf = new Shelf();
+                        shelf.MagazineId = magazine.Id;
+                        shelf.Position = $"{name}{i}/{j}";
+                        shelvesList.Add(shelf);
                     }
                 }
-                res.Shelves = new List<Shelf>();
-                res.Shelves.AddRange(shelvesList);
+            }
+            magazine.Shelves = new List<Shelf>();
+            magazine.Shelves.AddRange(shelvesList);
 
-                _context.Shelves.AddRange(shelvesList);
-                _context.Magazines.Add(res);
-                _context.SaveChanges();
-                return res.Id;
-            }
-            catch(Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            _context.Shelves.AddRange(shelvesList);
+            _context.Magazines.Add(magazine);
+            _context.SaveChanges();
+            return magazine.Id;
 
         }
-        public bool UpdateMagazine(int id, MagazineDto dto)
+        public void UpdateMagazine(int id, MagazineDto dto)
         {
-            var magazine = _context.Magazines.FirstOrDefault(m => m.Id == id);
-            if (magazine == null)
-                return false;
+            var magazine = _context.Magazines
+                .FirstOrDefault(m => m.Id == id)
+                ?? throw new NotFoundException("1");
+
 
             magazine.Address = dto.Address;
             magazine.Name = dto.Name;
             _context.SaveChanges();
-            return true;
         }
 
-        public bool DeleteMagazine(int id)
+        public void DeleteMagazine(int id)
         {
-            var magazine = _context.Magazines.FirstOrDefault(m => m.Id == id);
-            if (magazine == null)
-                return false;
+            var magazine = _context.Magazines
+                .FirstOrDefault(m => m.Id == id)
+                ?? throw new NotFoundException("1");
 
             _context.Magazines.Remove(magazine);
             _context.SaveChanges();
-            return true;
         }
-
+       
 
     }
 }

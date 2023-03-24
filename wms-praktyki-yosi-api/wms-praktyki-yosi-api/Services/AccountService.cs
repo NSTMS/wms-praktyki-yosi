@@ -16,7 +16,7 @@ namespace wms_praktyki_yosi_api.Services
 {
     public interface IAccountService
     {
-        Task<bool> RegisterUser(RegisterUserDto dto);
+        Task RegisterUser(RegisterUserDto dto);
         Task<List<UserDto>> GetAll();
         Task<LoginResult> GetToken(UserLoginDto dto);
         Task ModifyUserRole(string id, string newrole);
@@ -66,11 +66,10 @@ namespace wms_praktyki_yosi_api.Services
         public async Task<User> Get(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-
-            return user == null ? throw new BadRequestException("1") : user;
+            return user ?? throw new NotFoundException("154");
         }
 
-        public async Task<bool> RegisterUser(RegisterUserDto dto)
+        public async Task RegisterUser(RegisterUserDto dto)
         {
              var seeder = new MagazinesSeeder(_context, _roleManager);
              await seeder.SeedRoles();
@@ -95,8 +94,6 @@ namespace wms_praktyki_yosi_api.Services
 
             if (!result.Succeeded)
                 throw new Exception();
-
-            return true;
         }
 
         public async Task<LoginResult> GetToken(UserLoginDto dto)
@@ -141,11 +138,9 @@ namespace wms_praktyki_yosi_api.Services
         public async Task ModifyUserRole(string id, string newrole)
         {
 
-            var user = await _userManager.FindByIdAsync(id);
-            if (user is null)
-            {
-                throw new BadRequestException("1");
-            }
+            var user = await _userManager
+                .FindByIdAsync(id)
+                ?? throw new BadRequestException("154");
 
             var oldRole = (await _userManager.GetRolesAsync(user))[0];
             var result = await _userManager.RemoveFromRoleAsync(user, oldRole);
@@ -166,9 +161,9 @@ namespace wms_praktyki_yosi_api.Services
 
         public async Task DeleteUser(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user is null)
-                throw new BadRequestException("1");
+            var user = await _userManager
+                .FindByIdAsync(id)
+                ?? throw new BadRequestException("154");
             var result = await _userManager.DeleteAsync(user);
 
             if (!result.Succeeded)
