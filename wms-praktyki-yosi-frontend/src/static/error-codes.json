@@ -19,9 +19,16 @@
     "114": "Hasło musi zawierać znaki specjalne",
     "115": "Twoje hasło zwiera niedozwolone znaki",
     "116": "Hasła są różne",
+    "117": "Nieprawidłowe wymiary",
 
     "150": "Nie ma tekiej półki",
-    "151": "Nie ma produktu o takim id"
+    "151": "Nie ma produktu o takim id",
+    "152" :"Nie ma takiej lokacji produktu",
+    "153":"Nie ma takiego magazynu",
+    "154":"Nie ma użytkownika o takim id",
+
+    "180":"Półka pełna",
+    "181":"Nie ma wystarczającej ilości jednego z produktów w magazynie"
   },
   "en": {
     "1": "id not found",
@@ -43,8 +50,16 @@
     "114": "Password must contain special characters",
     "115": "Your password contains illegal characters",
     "116": "The passwords are different",
+    "117":"Dimentions invalid",
 
     "150": "There is no shelf of that position",
-    "151": "Product of this id don't exist"
+    "151": "Product of this id don't exist",
+    "152" :"This location of product doesn't exist",
+    "153":"This magazine doesn't exist",
+    "154": "There is no users with this Id",
+    
+    "180":"Półka pełna",
+    "181":"Nie ma wystarczającej ilości jednego z produktów w magazynie"
+
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 declare var require: any;
-const errorCodes = require('src/static/error-codes.json');
+const errorCodes = require('static/error-codes.json');
 
 @Injectable({
   providedIn: 'root',

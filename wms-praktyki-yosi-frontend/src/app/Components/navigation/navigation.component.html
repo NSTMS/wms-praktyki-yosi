@@ -1,34 +1,22 @@
 <mat-toolbar color="primary">
-  <button
-    *ngIf="isLoggedIn"
-    mat-icon-button
-    [matMenuTriggerFor]="menu"
-    class="example-icon"
-    aria-label="Example icon-button with menu icon"
-  >
+  <button *ngIf="isLoggedIn" mat-icon-button [matMenuTriggerFor]="menu" class="example-icon"
+    aria-label="Example icon-button with menu icon">
     <mat-icon>menu</mat-icon>
   </button>
   <mat-menu #menu="matMenu">
-    <a mat-menu-item routerLink="/add" *ngIf="isModeratorOrAdmin"
-      >add product</a
-    >
-    <a mat-menu-item routerLink="/locations/add" *ngIf="isModeratorOrAdmin"
-      >add to location</a
-    >
-    <a mat-menu-item routerLink="/magazines" *ngIf="isModeratorOrAdmin"
-      >Magazine List</a
-    >
-    <a mat-menu-item routerLink="/magazines/add">Add Magazine</a>
-    <a mat-menu-item routerLink="/table">product list</a>
-    <a mat-menu-item routerLink="/users" *ngIf="isAdmin">users</a>
+    <a mat-menu-item routerLink="/table">product List</a>
+    <a mat-menu-item routerLink="/magazines" *ngIf="isModeratorOrAdmin">magazine List</a>
+    <a mat-menu-item routerLink="/users" *ngIf="isAdmin">users List</a>
+    <a mat-menu-item routerLink="/add" *ngIf="isModeratorOrAdmin">add Product</a>
+    <a mat-menu-item routerLink="/locations/add" *ngIf="isModeratorOrAdmin">add to Location</a>
+    <a mat-menu-item routerLink="/magazines/add" *ngIf="isModeratorOrAdmin">add Magazine</a>
+    <a mat-menu-item routerLink="/magazines/addShelf" *ngIf="isModeratorOrAdmin">add Shelf</a>
     <button mat-menu-item (click)="handleLogOut()">log out</button>
   </mat-menu>
   <span>WMS JJ</span>
   <span class="toolbar-spacer"></span>
   <span>
-    <mat-form-field
-      style="width: 80px; height: fit-content; position: relative; top: 10px"
-    >
+    <mat-form-field style="width: 80px; height: fit-content; position: relative; top: 10px">
       <mat-select [(ngModel)]="selected" (ngModelChange)="saveToLocalStorage()">
         <mat-option value="PL">PL</mat-option>
         <mat-option value="EN">EN</mat-option>

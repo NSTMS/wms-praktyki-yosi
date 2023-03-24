@@ -48,6 +48,9 @@ export class InfoMagazineComponent {
 
     this.id = this.route.snapshot.params['id'];
 
+
+    
+
     _magazineService.GetById(this.id).then((magazine: magazine) => {
       if (!magazine) {
         this.router.navigate(['/magazines']);
@@ -58,15 +61,16 @@ export class InfoMagazineComponent {
   }
 
   loadData() {
-    this._magazineService.GetAllProducts(this.id).then((res) => {
-      if (res) this.length = res.length || 0;
-      else this.length = 0;
+    this._magazineService.GetAllProducts(this.id).subscribe((data) => {
+      if (data != null) 
+        this.length = data.length || 0; 
+      else 
+        this.length = 0;
 
-      this.dataSource = new MatTableDataSource(res);
-
+      this.dataSource = new MatTableDataSource(data);
       if (this.paginator != undefined)
         this.dataSource.paginator = this.paginator;
-    });
+      });
   }
 
   ngAfterContentInit() {

@@ -23,7 +23,12 @@
       <input matInput [formControl]="quantity" />
     </mat-form-field>
   </mat-grid-tile>
-
+  <mat-grid-tile>
+    <mat-form-field appearance="fill">
+      <mat-label>Tag</mat-label>
+      <input matInput [formControl]="tag" />
+    </mat-form-field>
+  </mat-grid-tile>
   <mat-grid-tile>
     <button mat-raised-button (click)="handleSubmit()">Submit</button>
   </mat-grid-tile>

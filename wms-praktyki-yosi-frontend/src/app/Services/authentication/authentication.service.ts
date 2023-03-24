@@ -9,11 +9,11 @@ export class AuthenticationService {
 
   async logIn(email: string, password: string): Promise<any> {
     const response = await fetch(this.link + '/login', {
-      headers: {
+      method: 'POST',
+      headers:{
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      method: 'POST',
       body: JSON.stringify({ email: email, password: password }),
     });
     if (response.ok) {
@@ -27,11 +27,11 @@ export class AuthenticationService {
   async registerUser(email: string, password: string, confirmPassword: string) {
     try {
       const response = await fetch(this.link + '/register', {
-        headers: {
+        method: 'POST',
+        headers:{
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
-        method: 'POST',
         body: JSON.stringify({
           email: email,
           password: password,

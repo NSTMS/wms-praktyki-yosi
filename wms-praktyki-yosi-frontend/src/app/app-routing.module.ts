@@ -14,6 +14,7 @@ import { MagazineListComponent } from './Components/magazines-pages/magazine-lis
 import { AddMagazineComponent } from './Components/magazines-pages/add-magazine/add-magazine.component';
 import { EditMagazineComponent } from './Components/magazines-pages/edit-magazine/edit-magazine.component';
 import { InfoMagazineComponent } from './Components/magazines-pages/info-magazine/info-magazine.component';
+import { AddShelfComponent } from './Components/magazines-pages/add-shelf/add-shelf.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/table', pathMatch: 'full' },
@@ -23,6 +24,7 @@ const routes: Routes = [
   { path: 'locations/edit/:id', component: EditLocationComponent },
   { path: 'locations/add', component: AddLocationComponent },
   { path: 'magazines/add', component: AddMagazineComponent },
+  { path: 'magazines/addShelf', component: AddShelfComponent },
   { path: 'magazines/edit/:id', component: EditMagazineComponent },
   { path: 'magazines/info/:id', component: InfoMagazineComponent },
   {

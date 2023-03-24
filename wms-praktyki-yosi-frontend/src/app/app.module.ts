@@ -10,19 +10,26 @@ import { NavigationComponent } from './Components/navigation/navigation.componen
 import { CompomponentsModule } from './Modules/compomponents.module';
 import { CommonModule } from '@angular/common';
 import { InfoMagazineComponent } from './Components/magazines-pages/info-magazine/info-magazine.component';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { ErrorInterceptor } from './Interceptors/error-interceptor.interceptor';
+import { AddShelfComponent } from './Components/magazines-pages/add-shelf/add-shelf.component';
 
 @NgModule({
-  declarations: [AppComponent, NavigationComponent, InfoMagazineComponent],
+  declarations: [AppComponent, NavigationComponent, InfoMagazineComponent, AddShelfComponent],
   imports: [
     CommonModule,
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
     CompomponentsModule,
+    HttpClientModule,
     AppMaterialModule,
     FormsModule,
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

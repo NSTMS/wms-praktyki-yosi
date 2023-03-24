@@ -5,10 +5,12 @@ import {
   MatTable,
   MatTableModule,
 } from '@angular/material/table';
-import { Router } from '@angular/router';
+import { Router, withDebugTracing } from '@angular/router';
 
 import { DataReaderService } from '@services/fetching-services/data-reader.service';
 import type { product } from '@static/types/productTypes';
+import { tap,catchError,throwError } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-data-table',
@@ -23,7 +25,7 @@ export class DataTableComponent {
   length: number = 0;
   canAddAndDel: boolean;
 
-  constructor(private _reader: DataReaderService, private router: Router) {
+  constructor(private _reader: DataReaderService, private router: Router, private http: HttpClient) {
     if (localStorage.getItem('token') == null) this.router.navigate(['/login']);
 
     this.canAddAndDel = localStorage.getItem('role') != 'User';
@@ -39,15 +41,17 @@ export class DataTableComponent {
   }
 
   loadData() {
-    this._reader.GetAll().then((res) => {
-      if (res) this.length = res.length || 0;
-      else this.length = 0;
+    this._reader.GetAll().subscribe((data) => {
+      if (data != null) 
+        this.length = data.length || 0; 
+      else 
+        this.length = 0;
 
-      this.dataSource = new MatTableDataSource(res);
+      this.dataSource = new MatTableDataSource(data);
 
       if (this.paginator != undefined)
         this.dataSource.paginator = this.paginator;
-    });
+      });
   }
 
   ngAfterContentInit() {
@@ -55,9 +59,13 @@ export class DataTableComponent {
   }
 
   handleDelete(id: number) {
-    this._reader.Delete(id);
-    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-      this.router.navigate(['/table']);
-    });
+    this._reader.Delete(id).pipe(
+      tap(() => {
+          window.location.reload();
+      }),
+      catchError((error) => {
+        return throwError(() => new Error(error));
+      })
+    ).subscribe();
   }
 }

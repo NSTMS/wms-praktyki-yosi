@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 import { ErrorService } from '../error-handling/error.service';
 import { magazineToAdd, magazineToEdit } from '@static/types/magazineTypes';
+import { HttpClient } from '@angular/common/http';
+import { catchError, map } from 'rxjs';
+import { product } from '@static/types/productTypes';
+import { productLocation } from '@static/types/locationTypes';
 
 declare var require: any;
 const connection = require('@static/connection.json');
@@ -11,20 +15,18 @@ const connection = require('@static/connection.json');
 export class MagazineService {
   columns = ['id', 'name', 'address'];
 
-  headers = {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${localStorage.getItem('token')}`,
-  };
+  // headers = {
+  //   Accept: 'application/json',
+  //   'Content-Type': 'application/json',
+  //   Authorization: `Bearer ${localStorage.getItem('token')}`,
+  // };
 
   link = `${connection.protocole}://${connection.ip}:${connection.port}/api/magazines`;
 
-  constructor(private _errorHandler: ErrorService) {}
+  constructor(private _errorHandler: ErrorService, private http: HttpClient) {}
 
   async GetAll() {
-    const response = await fetch(this.link, {
-      headers: this.headers,
-    });
+    const response = await fetch(this.link);
 
     if (response.ok) return await response.json();
 
@@ -34,7 +36,6 @@ export class MagazineService {
   async Add(newMagazine: magazineToAdd) {
     const response = await fetch(this.link, {
       method: 'POST',
-      headers: this.headers,
       body: JSON.stringify({
         ...newMagazine,
       }),
@@ -49,7 +50,6 @@ export class MagazineService {
 
   async GetById(id: number) {
     const response = await fetch(`${this.link}/${id}`, {
-      headers: this.headers,
     });
 
     if (response.ok) return await response.json();
@@ -60,7 +60,6 @@ export class MagazineService {
   async Edit(id: number, newMagazine: magazineToEdit) {
     const response = await fetch(`${this.link}/${id}`, {
       method: 'PUT',
-      headers: this.headers,
       body: JSON.stringify({
         ...newMagazine,
       }),
@@ -75,7 +74,6 @@ export class MagazineService {
 
   async Delete(id: number) {
     const response = await fetch(this.link + '/' + id, {
-      headers: this.headers,
       method: 'DELETE',
     });
 
@@ -86,26 +84,27 @@ export class MagazineService {
     return false;
   }
 
-  async GetAllProducts(id: number) {
-    const response = await fetch(`${this.link}/${id}/products`, {
-      headers: this.headers,
-    });
-
-    if (response.ok) return await response.json();
-
-    this._errorHandler.HandleBadResponse(response);
+  GetAllProducts(id: number) {
+    return this.http.get(`${this.link}/${id}/products`).pipe(
+      map((data) =>{
+        return data as product[]
+      }),
+      catchError((error : any)=>{
+        this._errorHandler.HandleBadResponse(error);
+        throw error;
+      })
+    )
   }
 
-  async GetLocations(productId: number, magazineId: number) {
-    const response = await fetch(
-      `${this.link}/${magazineId}/products/${productId}`,
-      {
-        headers: this.headers,
-      }
-    );
-
-    if (response.ok) return await response.json();
-
-    this._errorHandler.HandleBadResponse(response);
+  GetLocations(productId: number, magazineId: number) {
+    return this.http.get(`${this.link}/${magazineId}/products/${productId}`).pipe(
+      map((data) =>{
+        return data as product[]
+      }),
+      catchError((error : any)=>{
+        this._errorHandler.HandleBadResponse(error);
+        throw error;
+      })
+    )
   }
 }

@@ -8,6 +8,7 @@ import {
   locationToEdit,
   productLocation,
 } from '@static/types/locationTypes';
+import { catchError, map,tap, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-edit-location',
@@ -38,23 +39,23 @@ export class EditLocationComponent {
     private _errorHandler: ErrorService
   ) {
     this.id = this.route.snapshot.params['id'];
-    _service
-      .GetById(this.id)
-      .then((location: productLocation | undefined) => {
-        if (location == undefined) {
-          this.router.navigate(['/table']);
-          return;
-        }
-        this.position.setValue(location.position);
-        this.quantity.setValue(location.quantity);
-      })
-      .catch((ex) => {
-        console.error(`edit location ex`, ex);
+    _service.GetById(this.id).pipe(
+      catchError((error)=>{
         this.router.navigate(['/table']);
-      });
+        throw error;
+      })
+    ).subscribe((location: productLocation | undefined)=>{
+      if (location == undefined) {
+        this.router.navigate(['/table']);
+        return;
+      }
+      this.position.setValue(location.position);
+      this.quantity.setValue(location.quantity)
+      this.magazineId.setValue(location.magazineId)
+    })
   }
 
-  async handleSubmit() {
+  handleSubmit() {
     if (
       this.position.invalid ||
       this.quantity.invalid ||
@@ -69,9 +70,12 @@ export class EditLocationComponent {
       quantity: this.quantity.value || 0,
       magazineId: this.magazineId.value || -1,
     };
-
-    const edited = await this._service.EditLocation(this.id, newLocation);
-
-    if (edited) this.router.navigate(['/table']);
+    
+    this._service.EditLocation(this.id, newLocation).pipe(
+      tap(() => this.router.navigate(['/table'])),
+      catchError((error) => {
+        return throwError(() => new Error(error));
+      })
+    ).subscribe();  
   }
 }

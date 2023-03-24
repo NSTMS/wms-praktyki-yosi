@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { user } from '@static/types/userTypes';
 declare var require: any;
-const connection = require('src/static/connection.json');
+const connection = require('static/connection.json');
 @Injectable({
   providedIn: 'root',
 })
@@ -13,11 +13,7 @@ export class AdminPanelService {
 
   async GetAll() {
     try {
-      const response = await fetch(this.link + '/users', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
+      const response = await fetch(this.link + '/users');
       const users = await response.json();
       return users;
     } catch (ex: unknown) {
