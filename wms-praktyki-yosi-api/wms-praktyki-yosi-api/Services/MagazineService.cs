@@ -141,23 +141,22 @@ namespace wms_praktyki_yosi_api.Services
             _context.SaveChanges();
             try
             {
-                
-                var regalNames = GetRegalNames(Convert.ToInt32(dimentions[0]));
-            
-                foreach (string name in regalNames)
+                var positions = GetAllPositions(
+                        Convert.ToInt32(dimentions[0]),
+                        Convert.ToInt32(dimentions[1]),
+                        Convert.ToInt32(shelvesPR)
+                    );
+
+                foreach (var pos in positions)
                 {
-                    for (int i = 1; i <= Convert.ToInt32(dimentions[1]); i++)
+                    Shelf shelf = new()
                     {
-                        for (int j = 1; j <= Convert.ToInt32(shelvesPR); j++)
-                        {
-                            Shelf shelf = new Shelf();
-                            shelf.MagazineId = magazine.Id;
-                            shelf.Position = $"{name}{i}/{j}";
-                            shelvesList.Add(shelf);
-                        }
-                    }
+                        MagazineId = magazine.Id,
+                        Position = pos,
+                        MaxLoad = dto.MaxShelfQuantity
+                    };
+                    shelvesList.Add(shelf);
                 }
-                
             }
             catch
             {
@@ -230,6 +229,23 @@ namespace wms_praktyki_yosi_api.Services
 
             }
             return regalNames;
+        }
+        private List<string> GetAllPositions(int x, int y, int z)
+        {
+            var positions = new List<string>();
+            var regalNames = GetRegalNames(Convert.ToInt32(x));
+
+            foreach (string name in regalNames)
+            {
+                for (int i = 1; i <= Convert.ToInt32(y); i++)
+                {
+                    for (int j = 1; j <= Convert.ToInt32(z); j++)
+                    {
+                        positions.Add($"{name}{i}/{j}");
+                    }
+                }
+            }
+            return positions;
         }
 
     }

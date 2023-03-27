@@ -21,7 +21,6 @@ namespace wms_praktyki_yosi_api.Middleweare
         {
             try
             {
-                
                 await next.Invoke(context);
             }
             catch (NotFoundException ex)
@@ -49,11 +48,11 @@ namespace wms_praktyki_yosi_api.Middleweare
                     Errors = new List<string> { ex.Message }
                 });
             }
-            catch (Exception ex)
+            /*catch (Exception ex)
             {
                 context.Response.StatusCode = 500;
                 await context.Response.WriteAsync("Internal server error");
-            }
+            }*/
         }
 
         private async Task<bool> IsUserAuthorized(ClaimsPrincipal user)

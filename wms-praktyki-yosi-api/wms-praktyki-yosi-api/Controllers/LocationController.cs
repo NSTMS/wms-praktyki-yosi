@@ -54,7 +54,7 @@ namespace wms_praktyki_yosi_api.Controllers
         }
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin,Moderator")]
-        public async Task<ActionResult> Edit([FromRoute] int id, [FromBody] ProductLocationDto dto) {
+        public async Task<ActionResult> Edit([FromRoute] int id, [FromBody] EditProductLocationDto dto) {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
 

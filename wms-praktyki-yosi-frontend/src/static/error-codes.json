@@ -25,7 +25,12 @@
     "151": "Nie ma produktu o takim id",
     "152": "Nie ma tekiej lokalozacji",
     "153": "Nie ma takiego magazynu",
-    "154": "Nie ma urzytkownika o takim Id"
+    "154": "Nie ma użtkownika o takim Id",
+    "155": "Nie ma takiego Dokumentu",
+
+    "180": "Półka pełna",
+    "181": "Nie ma wystarczajacej ilości jednego z produktów w magazynie",
+    "182": "Za mało miejsca w Magzynie"
   },
   "en": {
     "1": "id not found",

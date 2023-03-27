@@ -26,9 +26,16 @@ namespace wms_praktyki_yosi_api.Services
                 ?? throw new NotFoundException("151");
             var shelf = _context
                 .Shelves
+                .Include(s => s.Locations)
                 .FirstOrDefault(s => s.Position == location.Position)
                 ?? throw new NotFoundException("150"); //czy półka istnieje 
 
+            var quantityOnShelf = shelf
+                .Locations
+                .Sum(r => r.Quantity);
+
+            if (quantityOnShelf + location.Quantity > shelf.MaxLoad)
+                throw new BadRequestException("180");
 
             var mappedProd = _mapper.Map<ProductLocations>(location);
             mappedProd.ShelfId = shelf.Id;
@@ -66,7 +73,7 @@ namespace wms_praktyki_yosi_api.Services
             return res;
         }
 
-        public void UpdateLocation(int id, ProductLocationDto location)
+        public void UpdateLocation(int id, EditProductLocationDto location)
         {
             var loc = _context
                 .ProductLocations
@@ -76,10 +83,19 @@ namespace wms_praktyki_yosi_api.Services
             
             var shelf = _context
                 .Shelves
-                .FirstOrDefault(s => s.Position == location.Position)
+                .Include(s => s.Locations)
+                .FirstOrDefault(s => s.Position == location.Position && s.MagazineId == location.MagazineId)
                 ?? throw new NotFoundException("150");
+            
+            var quantityOnShelf = shelf
+                .Locations
+                .Where(r => r.Id != id)
+                .Sum(r => r.Quantity);
 
-            loc.ShelfId= shelf.Id;
+            if (quantityOnShelf + location.Quantity > shelf.MaxLoad)
+                throw new BadRequestException("180");
+
+            loc.ShelfId = shelf.Id;
             loc.Quantity = location.Quantity;
 
             _context.SaveChanges();

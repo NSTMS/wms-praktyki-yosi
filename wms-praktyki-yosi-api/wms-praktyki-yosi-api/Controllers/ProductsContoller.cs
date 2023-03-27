@@ -17,23 +17,32 @@ namespace wms_praktyki_yosi_api.Controllers
 
         public readonly IProductService _productService;
         private readonly IAccountService _accountService;
+        private readonly ICustomAuthorizationService _authorizationService;
 
-        public ProductsController(IProductService productService, IAccountService accountService)
+        public ProductsController(IProductService productService, IAccountService accountService, ICustomAuthorizationService authorizationService)
         {
+
             _productService = productService;
             _accountService = accountService;
+            _authorizationService = authorizationService;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Product>> GetAll()
+        public async Task<ActionResult<IEnumerable<Product>>> GetAll()
         {
+            if (!await _authorizationService.UserIsAuthorized(User))
+                return Unauthorized();
+
             var productList = _productService.GetAll();
             return Ok(productList);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Product> Get([FromRoute] int id)
+        public async Task<ActionResult<Product>> GetAsync([FromRoute] int id)
         {
+            if (!await _authorizationService.UserIsAuthorized(User))
+                return Unauthorized();
+
             var product = _productService.GetById(id);
             return Ok(product);
         }
@@ -41,23 +50,32 @@ namespace wms_praktyki_yosi_api.Controllers
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin,Moderator")]
 
-        public ActionResult Update([FromRoute] int id, [FromBody] ProductDto dto)
+        public async Task<ActionResult> UpdateAsync([FromRoute] int id, [FromBody] ProductDto dto)
         {
+            if (!await _authorizationService.UserIsAuthorized(User))
+                return Unauthorized();
+
             _productService.UpdateProduct(id, dto);
             return Ok();
         }
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin,Moderator")]
-        public ActionResult DeleteProduct([FromRoute] int id)
+        public async Task<ActionResult> DeleteProductAsync([FromRoute] int id)
         {
+            if (!await _authorizationService.UserIsAuthorized(User))
+                return Unauthorized();
+
             _productService.RemoveProduct(id);
             return Ok();
         }
         [HttpPost]
         [Authorize(Roles = "Admin,Moderator")]
-        public ActionResult AddProduct([FromBody] ProductDto dto)
+        public async Task<ActionResult> AddProductAsync([FromBody] ProductDto dto)
         {
+            if (!await _authorizationService.UserIsAuthorized(User))
+                return Unauthorized();
+
             var productId = _productService.AddNewProduct(dto);
             return Created("/api/products/" + productId, null);
         }

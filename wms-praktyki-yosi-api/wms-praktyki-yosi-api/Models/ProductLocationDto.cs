@@ -8,6 +8,7 @@ namespace wms_praktyki_yosi_api.Models
         public int ProductId { get; set; }
         public int MagazineId { get; set; }
         public string Position { get; set; }
+        public string Tag { get; set; }
         public int Quantity { get; set; } // na sztywno
     }
 }

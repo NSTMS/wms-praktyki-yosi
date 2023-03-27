@@ -34,6 +34,9 @@ namespace wms_praktyki_yosi_api.Enitities
                 .IsRequired()
                 .HasMaxLength(13);
 
+            /*modelBuilder.Entity<ProductLocations>()
+                .Property()*/
+
             modelBuilder.Entity<Document>()
                 .Property(d => d.Date)
                 .IsRequired();

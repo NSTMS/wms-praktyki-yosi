@@ -6,7 +6,7 @@
         public bool Arriving { get; set; }
         public string Tag { get; set; }
         public int Quantityplaned { get; set; }
-        public int QuantityReal { get; set; }
+        public int QuantityDone { get; set; }
         public int MagzineId { get; set; }
         public string Position { get; set; }
         public Guid DocumentId { get; set; }

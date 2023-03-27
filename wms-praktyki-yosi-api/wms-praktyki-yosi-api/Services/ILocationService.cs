@@ -9,6 +9,6 @@ namespace wms_praktyki_yosi_api.Services
         void DeleteLocation(int id);
         IEnumerable<ProductLocationDto> GetAllLocations();
         ReturnProductLocationDto GetLocationById(int id);
-        void UpdateLocation(int id, ProductLocationDto location);
+        void UpdateLocation(int id, EditProductLocationDto location);
     }
 }   

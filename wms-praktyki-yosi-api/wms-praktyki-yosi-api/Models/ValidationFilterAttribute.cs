@@ -12,7 +12,7 @@ namespace wms_praktyki_yosi_api.Models
         {
             if (!context.ModelState.IsValid)
             {
-                context.Result = new BadRequestObjectResult("2");
+                context.Result = new BadRequestObjectResult(new {Errors = new List<string>() { "2" } });
             }
 
 

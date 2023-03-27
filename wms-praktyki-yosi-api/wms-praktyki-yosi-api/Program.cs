@@ -49,6 +49,8 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IMagazineService, MagazineService>();
+builder.Services.AddScoped<IDocumentService, DocumentService>();
+
 builder.Services.AddScoped<ICustomAuthorizationService, CustomAuthorizationService>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
@@ -103,6 +105,7 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<ErrorHandlingMiddleweare>();
 
 app.UseHttpsRedirection();
+
 app.UseCors(builder => builder
     .AllowAnyOrigin()
     .AllowAnyMethod()
