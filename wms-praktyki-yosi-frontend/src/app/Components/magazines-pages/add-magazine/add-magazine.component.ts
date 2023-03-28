@@ -6,6 +6,7 @@ import { LocationService } from '@app/Services/fetching-services/location.servic
 import { MagazineService } from '@app/Services/fetching-services/magazine.service';
 import { locationToAdd } from '@static/types/locationTypes';
 import { magazineToAdd } from '@static/types/magazineTypes';
+import { tap,catchError,throwError, map } from 'rxjs';
 
 @Component({
   selector: 'app-add-magazine',
@@ -26,13 +27,17 @@ export class AddMagazineComponent {
     Validators.required,
     Validators.pattern("^[0-9]+$")
   ]);
+    maxShelfQuantity= new FormControl(0, [
+    Validators.required,
+    Validators.pattern("^[0-9]+$")
+  ]);
   constructor(
     private router: Router,
     private _magazineService: MagazineService,
     private _errorHandler: ErrorService
   ) {}
 
-  async handleSubmit() {
+  handleSubmit() {
     if (this.name.invalid || this.address.invalid) {
       this._errorHandler.handleErrorCode(2);
       return;
@@ -42,13 +47,19 @@ export class AddMagazineComponent {
       name: this.name.value || '',
       address: this.address.value || '',
       shelvesPerRow: this.shelvesPerRow.value || -1,
-      dimentions: this.dimentions.value || ''
+      dimentions: this.dimentions.value || '',
+      maxShelfQuantity : this.maxShelfQuantity.value || 0,
     };
 
-    const added = await this._magazineService.Add(newMagazine);
 
-    if (!added) return;
-
-    this.router.navigate([`/magazines`]);
+    this._magazineService.Add(newMagazine).pipe(
+      map((res) => {
+        if (!res) return;
+        this.router.navigate([`/magazines`]);
+      }),
+      catchError((error) => {
+        return throwError(() => new Error(error));
+      })
+    ).subscribe();
   }
 }

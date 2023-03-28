@@ -1,4 +1,4 @@
-{
+ {
   "pl": {
     "1": "nie znaleziono id",
     "2": "coś nie tak w formularzu",
@@ -19,18 +19,20 @@
     "114": "Hasło musi zawierać znaki specjalne",
     "115": "Twoje hasło zwiera niedozwolone znaki",
     "116": "Hasła są różne",
-    "117": "Wymiary są nieprawidlowe",
 
-    "150": "Nie ma tekiej półki",
+    "117": "Nieprawidłowe wymiary",
+
+    "150": "Nie ma takiej półki",
     "151": "Nie ma produktu o takim id",
-    "152": "Nie ma tekiej lokalozacji",
+    "152" :"Nie ma takiej lokacji produktu",
     "153": "Nie ma takiego magazynu",
-    "154": "Nie ma użtkownika o takim Id",
-    "155": "Nie ma takiego Dokumentu",
+    "154": "Nie ma użytkownika o takim id",
+    "155": "Nie ma takiego dokumentu",
+    "156" : "Nie ma tego produktu na liście ",
 
     "180": "Półka pełna",
-    "181": "Nie ma wystarczajacej ilości jednego z produktów w magazynie",
-    "182": "Za mało miejsca w Magzynie"
+    "181": "Nie ma wystarczającej ilości jednego z produktów w magazynie",
+    "182" : "W tej lokazlizacji nie ma wystarczającej ilości produktu"
   },
   "en": {
     "1": "id not found",
@@ -52,8 +54,19 @@
     "114": "Password must contain special characters",
     "115": "Your password contains illegal characters",
     "116": "The passwords are different",
+    "117": "Dimentions invalid",
 
     "150": "There is no shelf of that position",
-    "151": "Product of this id don't exist"
+    "151": "Product of this id don't exist",
+    "152": "This location of product doesn't exist",
+    "153": "This magazine doesn't exist",
+    "154": "There is no users with this Id",
+    "155": "This document doesn't exist",
+    "156" : "Nie ma tego produktu na liście ",
+
+    "180": "Shelf id full",
+    "181": "There is no enough quantity of the one of products in your order",
+    "182" : "W tej lokazlizacji nie ma wystarczającej ilości produktu"
+
   }
 }

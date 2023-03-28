@@ -1,4 +1,4 @@
-<mat-grid-list cols="2" rowHeight="75px" gutterSize="20px">
+<mat-grid-list cols="5" rowHeight="75px" gutterSize="20px">
   <mat-grid-tile>
     <mat-card>
       <mat-card-header>
@@ -10,16 +10,50 @@
     </mat-card>
   </mat-grid-tile>
   <mat-grid-tile>
-    <mat-card>
-      <mat-card-header>
+    <mat-card style="width:100% !important">
+      <mat-card-header  style="width:100% !important">
         <mat-card-subtitle>address</mat-card-subtitle>
-        <mat-card-title>
+        <mat-card-title style="width:100% !important">
+          <span style="width:65% !important;display:flex;overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;">
           {{ magazine.address }}
+          </span>
         </mat-card-title>
       </mat-card-header>
     </mat-card>
   </mat-grid-tile>
-  <mat-grid-tile colspan="2">
+  <mat-grid-tile>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-subtitle>dimentions</mat-card-subtitle>
+        <mat-card-title>
+          {{ magazine.dimentions }}
+        </mat-card-title>
+      </mat-card-header>
+    </mat-card>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-subtitle>shelves per row</mat-card-subtitle>
+        <mat-card-title>
+          {{ magazine.shelvesPerRow }}
+        </mat-card-title>
+      </mat-card-header>
+    </mat-card>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-subtitle>shelf capacity</mat-card-subtitle>
+        <mat-card-title>
+          {{ magazine.maxShelfQuantity }}
+        </mat-card-title>
+      </mat-card-header>
+    </mat-card>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="5">
     <mat-card style="width: 90%">
       <mat-card-header>
         <mat-card-title style="text-align: center"> Products </mat-card-title>

@@ -6,6 +6,7 @@ import { DataReaderService } from '@app/Services/fetching-services/data-reader.s
 import { MagazineService } from '@services/fetching-services/magazine.service';
 import { magazine } from '@static/types/magazineTypes';
 import { product } from '@static/types/productTypes';
+import { catchError, tap, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-magazine-list',
@@ -39,19 +40,18 @@ export class MagazineListComponent {
   }
 
   private loadData() {
-    this._magazineService.GetAll().then((res: magazine[]) => {
-      if (!res) {
+
+    return this._magazineService.GetAll().subscribe((data) => {
+      if (data != null) 
+        this.length = data.length || 0; 
+      else 
         this.length = 0;
-        return;
-      }
 
-      this.length = res.length || 0;
-
-      this.dataSource = new MatTableDataSource(res);
+      this.dataSource = new MatTableDataSource(data);
 
       if (this.paginator != undefined)
         this.dataSource.paginator = this.paginator;
-    });
+      });
   }
 
   ngAfterContentInit() {
@@ -59,7 +59,13 @@ export class MagazineListComponent {
   }
 
   handleDelete(id: number) {
-    this._magazineService.Delete(id);
-    setTimeout(this.loadData, 1000);
+    return this._magazineService.Delete(id).pipe(
+      tap(() => {
+        setTimeout(this.loadData, 1000);
+      }),
+      catchError((error) => {
+        return throwError(() => new Error(error));
+      })
+    ).subscribe();
   }
 }

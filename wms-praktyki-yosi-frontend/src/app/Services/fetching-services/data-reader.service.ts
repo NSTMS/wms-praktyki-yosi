@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import type { product, productToAdd } from '@static/types/productTypes';
 import { ErrorService } from '@services/error-handling/error.service';
+import { HttpClient } from '@angular/common/http';
+import { Observable,map,catchError,tap,throwError } from 'rxjs';
 declare var require: any;
-const connection = require('src/static/connection.json');
+const connection = require('static/connection.json');
 
 @Injectable({
   providedIn: 'root',
@@ -11,98 +13,63 @@ export class DataReaderService {
   link: string = `${connection.protocole}://${connection.ip}:${connection.port}/api/products`;
   columns = ['id', 'productName', 'ean', 'price', 'quantity'];
 
-  constructor(private _errorService: ErrorService) {}
+  constructor(private http: HttpClient,private _errorHandler : ErrorService) {}
 
-  async GetAll() {
-    try {
-      const response = await fetch(this.link, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      if (response.ok) {
-        const products = await response.json();
-        return products;
-      } else {
-        return null;
-      }
-    } catch (ex: unknown) {
-      console.error(ex);
-    }
+  
+  GetAll(): Observable<any> {
+    return this.http.get(this.link).pipe(
+      map((data) =>{
+        return data
+      })
+    );
   }
 
-  async GetById(id: number) {
-    try {
-      const response = await fetch(this.link + '/' + id, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-
-      const product = await response.json();
-
-      if (response.ok) {
-        return product;
-      }
-
-      return product.Errors[0];
-    } catch (ex: unknown) {
-      console.error(ex);
-    }
+  GetById(id: number) : Observable<any> {
+    return this.http.get(this.link + '/' + id).pipe(
+      map((data) => {
+        return data
+      }),
+      catchError((error) => {
+        console.error(error);
+        throw error[0];
+      })
+    );
   }
 
-  async Put(id: number, newProduct: productToAdd) {
-    try {
-      const response = await fetch(this.link + '/' + id, {
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-        method: 'PUT',
-        body: JSON.stringify(newProduct),
-      });
-      if (response.ok) return true;
 
-      const json = await response.json();
-      json?.Errors.forEach((errCode: number) => {
-        this._errorService.handleErrorCode(errCode);
-      });
-      return false;
-    } catch (ex: unknown) {
-      console.error(ex);
-      return false;
-    }
+  Put(id: number, newProduct: productToAdd) : Observable<any>{
+   return this.http.put(`${this.link}/${id}`,{...newProduct, ...{"locations":[]}}).pipe(
+      map((data)=>{
+        return data
+      }),
+      catchError((error:any)=>{
+        this._errorHandler.errorMessageShow(error)
+        throw error;
+      })
+    )
   }
 
-  async Post(newProduct: productToAdd) {
-    try {
-      const response = await fetch(this.link, {
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-        method: 'POST',
-        body: JSON.stringify(newProduct),
-      });
-      const product = await response.json();
-      return product;
-    } catch (ex: unknown) {
-      console.error(ex);
-    }
+  Post(newProduct: productToAdd):  Observable<any>{
+    return this.http.post(this.link, { ...newProduct, ...{ "locations": [] } }).pipe(
+      map((data) => {
+        return data
+      }),
+      catchError((error: any) => {
+        this._errorHandler.errorMessageShow(error)
+        throw error;
+      })
+    )
   }
 
-  async Delete(id: number) {
-    const response = await fetch(this.link + '/' + id, {
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-      method: 'DELETE',
-    });
-    const product = await response.json();
-    return product;
+  Delete(id: number) : Observable<any> {
+    return this.http.delete(this.link + '/' + id).pipe(
+      map((data) => {
+        return data
+      }),
+      catchError((error) => {
+        console.error(error);
+        throw error[0];
+      })
+    );
   }
 }

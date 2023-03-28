@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -6,6 +7,7 @@ import { DataReaderService } from '@app/Services/fetching-services/data-reader.s
 import { MagazineService } from '@app/Services/fetching-services/magazine.service';
 import { magazine, magazineToAdd, magazineToEdit } from '@static/types/magazineTypes';
 import { product } from '@static/types/productTypes';
+import { catchError, tap,map, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-info-magazine',
@@ -24,7 +26,8 @@ export class InfoMagazineComponent {
     name: '',
     address: '',
     dimentions: '',
-    shelvesPerRow: 0
+    shelvesPerRow: 0,
+    maxShelfQuantity:0
   };
 
   constructor(
@@ -48,25 +51,29 @@ export class InfoMagazineComponent {
 
     this.id = this.route.snapshot.params['id'];
 
-    _magazineService.GetById(this.id).then((magazine: magazine) => {
-      if (!magazine) {
-        this.router.navigate(['/magazines']);
-      }
 
-      // this.magazine = magazine;
-    });
+    this._magazineService.GetById(this.id).pipe(
+      map((magazine : magazineToAdd)=>{      
+        this.magazine = magazine
+        if (!magazine) {
+          this.router.navigate(['/magazines']);
+        }
+      }),
+      catchError(()=>this.router.navigate(['/magazines']))
+    ).subscribe()
   }
 
   loadData() {
-    this._magazineService.GetAllProducts(this.id).then((res) => {
-      if (res) this.length = res.length || 0;
-      else this.length = 0;
+    return this._magazineService.GetAllProducts(this.id).subscribe((data) => {
+      if (data != null) 
+        this.length = data.length || 0; 
+      else 
+        this.length = 0;
 
-      this.dataSource = new MatTableDataSource(res);
-
+      this.dataSource = new MatTableDataSource(data);
       if (this.paginator != undefined)
         this.dataSource.paginator = this.paginator;
-    });
+      });
   }
 
   ngAfterContentInit() {
@@ -74,7 +81,14 @@ export class InfoMagazineComponent {
   }
 
   handleDelete(productId: number) {
-    this._reader.Delete(productId);
-    this.loadData();
+    return this._reader.Delete(productId).subscribe(
+      tap(() =>{
+        this.loadData();
+      }),
+      (error)=>{
+        console.log(error); 
+      }
+    )
   }
 }
+

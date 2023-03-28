@@ -5,6 +5,8 @@ import { ErrorService } from '@services/error-handling/error.service';
 import { Router } from '@angular/router';
 import type { Token } from '@static/types/tokenTypes';
 import { GlobalService } from '@services/global/global.service';
+import { catchError, map } from 'rxjs';
+
 @Component({
   selector: 'app-login-form',
   templateUrl: './login-form.component.html',
@@ -23,22 +25,25 @@ export class LoginFormComponent {
     if (localStorage.getItem('token') == null) this.router.navigate(['/login']);
     if (localStorage.getItem('token')) this.router.navigate(['/table']);
   }
-  async handleSubmit() {
-    const token = await this._authenticationService.logIn(
+  handleSubmit() {
+    return this._authenticationService.logIn(      
       this.email.value as string,
       this.password.value as string
-    );
-
-    if (token == null) {
-      this._errorHandler.handleErrorCode(3);
-    } else {
-      localStorage.setItem('token', (token as Token).token);
-      this.router.navigate(['/table']);
-      // window.location.reload()
-      console.log('logged');
-      this.globalSrv.theRole = (token as Token).role;
-
-      this._errorHandler.handleSuccesLoginIn();
-    }
+    ).pipe(
+      map((token)=>{
+        if (token == null) {
+          this._errorHandler.handleErrorCode(3);
+        } else {
+          localStorage.setItem('token', (token as Token).token);
+          this.router.navigate(['/table']);
+          this.globalSrv.theRole = (token as Token).role;
+          this._errorHandler.handleSuccesLoginIn();
+        }
+      }),
+      catchError((error)=>{
+        this._errorHandler.HandleBadResponse(error);
+        throw error;
+      })
+    )   
   }
 }

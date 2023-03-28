@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { locationToEdit, locationToAdd } from '@static/types/locationTypes';
 import { ErrorService } from '@services/error-handling/error.service';
+import { HttpClient } from '@angular/common/http';
+import { catchError,map,Observable,tap } from 'rxjs';
 
 declare var require: any;
 const connection = require('@static/connection.json');
@@ -11,81 +13,58 @@ const connection = require('@static/connection.json');
 export class LocationService {
   columns = ['id', 'magazineId', 'position', 'quantity'];
 
-  headers = {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${localStorage.getItem('token')}`,
-  };
-
   link = `${connection.protocole}://${connection.ip}:${connection.port}/api/locations`;
-  constructor(private _errorHandler: ErrorService) {}
+  constructor(private _errorHandler: ErrorService, private http: HttpClient) {}
 
-  async EditLocation(id: number, newLocation: locationToEdit) {
-    const response = await fetch(`${this.link}/${id}`, {
-      method: 'PUT',
-      headers: this.headers,
-      body: JSON.stringify({
-        ...newLocation,
+  EditLocation(id: number, newLocation: locationToEdit): Observable<any>  {
+    return this.http.put(`${this.link}/${id}`, newLocation).pipe(
+      map((data)=>{
+        return data        
       }),
-    });
-
-    if (response.ok) return true;
-
-    const json = await response.json();
-
-    json?.Errors.forEach((errCode: number) => {
-      this._errorHandler.handleErrorCode(errCode);
-    });
-    return false;
+      catchError((error:any)=>{
+        this._errorHandler.errorMessageShow(error)
+        throw false;
+      })
+    )
   }
 
-  async AddLocation(newLocation: locationToAdd) {
-    const response = await fetch(this.link, {
-      method: 'POST',
-      headers: this.headers,
-      body: JSON.stringify({
-        ...newLocation,
+  AddLocation(newLocation: locationToAdd): Observable<any> {
+    return this.http.post(this.link, {
+     ...newLocation
+    }).pipe(
+      tap(() => {
+        return true;
       }),
-    });
-
-    if (response.ok) return true;
-
-    const json = await response.json();
-
-    json?.Errors.forEach((errCode: number) => {
-      this._errorHandler.handleErrorCode(errCode);
-    });
-
-    return false;
+      catchError((error) => {
+        error.forEach((errCode: number) => {
+          this._errorHandler.handleErrorCode(errCode);
+        });
+        throw (error)
+      })
+    )
   }
 
-  async GetById(id: number) {
-    const response = await fetch(this.link + '/' + id, {
-      headers: this.headers,
-    });
-
-    if (response.ok) return await response.json();
-
-    const json = await response.json();
-
-    json.Errors.forEach((errCode: number) => {
-      this._errorHandler.handleErrorCode(errCode);
-    });
+  GetById(id: number): Observable<any> {
+    return this.http.get(this.link + '/' + id).pipe(
+      map((data) => {
+        return data
+      }),
+      catchError((error) => {
+        throw this._errorHandler.handleErrorCode(error);
+      })
+    );
   }
-
-  async Delete(id: number) {
-    const response = await fetch(this.link + '/' + id, {
-      headers: this.headers,
-      method: 'DELETE',
-    });
-
-    if (response.ok) return true;
-
-    const json = await response.json();
-
-    json.Errors.forEach((errCode: number) => {
-      this._errorHandler.handleErrorCode(errCode);
-    });
-    return false;
+  Delete(id: number): Observable<any>  {
+    return this.http.delete(this.link + '/' + id).pipe(
+      map((data) => {
+        return true
+      }),
+      catchError((error) => {
+        error.forEach((errCode: number) => {
+          this._errorHandler.handleErrorCode(errCode);
+        });
+        throw (error)
+      })
+    );
   }
 }

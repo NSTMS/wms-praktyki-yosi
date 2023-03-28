@@ -3,6 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { AdminPanelService } from '@services/admin-panel/admin-panel.service';
 import { Form, FormControl, Validators } from '@angular/forms';
 import { user } from '@static/types/userTypes';
+import { catchError, map, retryWhen } from 'rxjs';
+import { ErrorService } from '@app/Services/error-handling/error.service';
 
 @Component({
   selector: 'app-users-edit',
@@ -17,28 +19,51 @@ export class UsersEditComponent implements OnInit {
   role: FormControl;
   constructor(
     private _reader: AdminPanelService,
-    private route: ActivatedRoute
+    private _errorHandler: ErrorService
   ) {
-    const temp = this.data;
-
     this.selected = this.data?.id;
-    this.Id = new FormControl(
-      { value: this.route.snapshot.paramMap.get('id'), disabled: true },
+    this.Id = new FormControl({value: '', disabled: true },
       Validators.required
     );
-    this.Email = new FormControl(this.data?.email, Validators.required);
+    this.Email = new FormControl('', Validators.required);
     this.role = new FormControl('', Validators.required);
   }
-  async ngOnInit() {
-    this.data = await this._reader.GetInfoFromToken();
-    // console.log(this.data);
+  ngOnInit() {
+    this._reader.GetInfoFromToken().pipe(
+      map((data) => {
+        this.Id.setValue(data.id)
+        this.Email.setValue(data.email)
+        return;
+      }),
+      catchError((error) => {
+        this._errorHandler.HandleBadResponse(error)
+        throw error;
+      })
+    ).subscribe()
+  }
+
+  ngAfterContentInit(){
+
   }
 
   handleSubmit() {
-    // let tempUser = this._reader.GetById()
-    // this._reader.Put()
-  }
-  handleSelectChange() {
-    console.log(this.selected);
+    this._reader.GetById(this.Id.value).pipe(
+      map((usr: user) => {
+        if (this.Id.invalid || this.Email.invalid) {
+          this._errorHandler.handleErrorCode(2)
+          return;
+        }
+        const user : user = {
+          Id: this.Id.value,
+          Email: this.Email.value,
+          PasswordHash: usr.PasswordHash,
+          Role: this.selected
+        }
+        return this._reader.Put(this.Id.value,user)
+      }),
+      catchError((error) => {
+        throw error;
+      })
+    )
   }
 }

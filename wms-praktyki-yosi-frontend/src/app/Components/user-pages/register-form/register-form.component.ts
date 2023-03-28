@@ -3,7 +3,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '@services/authentication/authentication.service';
 import { ErrorService } from '@services/error-handling/error.service';
-
+import { catchError, map } from 'rxjs';
 type errorMessage = {
   Errors: string[];
 };
@@ -24,25 +24,23 @@ export class RegisterFormComponent {
     private _authenticationService: AuthenticationService
   ) {}
 
-  async handleButtonClick() {
-    const response = await this._authenticationService.registerUser(
+  handleButtonClick() {
+    return this._authenticationService.registerUser(
       this.email.value as string,
       this.password.value as string,
       this.confirmPassword.value as string
-    );
-
-    if (response == null) return;
-
-    if (response.ok) {
-      this._errorHandler.handleErrorCode(8);
-      this.router.navigate(['/login']);
-      return;
-    }
-
-    const res = await response.json();
-
-    if (res && res.Errors) {
-      this._errorHandler.errorMessageShow(res.Errors);
-    }
+    ).pipe(
+      map((response)=>{
+        if (response == null) return;
+        this._errorHandler.handleErrorCode(8);
+        this.router.navigate(['/login']);
+        return;
+      }),
+      catchError((error)=>{
+        if(error && error.Errors)
+          this._errorHandler.errorMessageShow(error.Errors);
+        throw error
+      })
+    )
   }
 }

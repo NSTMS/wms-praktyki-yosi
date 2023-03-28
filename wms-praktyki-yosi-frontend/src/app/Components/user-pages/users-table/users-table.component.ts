@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { user } from '@static/types/userTypes';
 import { AdminPanelService } from '@services/admin-panel/admin-panel.service';
 import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-users-table',
@@ -14,6 +15,7 @@ export class UsersTableComponent {
   dataSource: MatTableDataSource<user> = new MatTableDataSource();
   displayedColumns: string[];
   length: number = 0;
+  @ViewChild('paginator') paginator: MatPaginator | undefined;
 
   constructor(
     private _reader: AdminPanelService,
@@ -23,17 +25,19 @@ export class UsersTableComponent {
     if (localStorage.getItem('token') == null) this.router.navigate(['/login']);
     if (localStorage.getItem('role') != 'Admin')
       this.router.navigate(['/table']);
-
-    this._reader.GetAll().then((res) => {
-      try {
-        this.length = res.length;
-      } catch {
+    this._reader.GetAll().subscribe((data) => {
+      if (data != null)
+        this.length = data.length || 0;
+      else
         this.length = 0;
-      }
-      this.dataSource = new MatTableDataSource(res);
-    });
 
+      this.dataSource = new MatTableDataSource(data);
+
+      if (this.paginator != undefined)
+        this.dataSource.paginator = this.paginator;
+    });
     this.displayedColumns = [...this._reader.columns, 'edit', 'delete'];
+
   }
 
   handleDelete(id: number) {

@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ErrorService } from '@app/Services/error-handling/error.service';
 import { MagazineService } from '@app/Services/fetching-services/magazine.service';
 import { magazine, magazineToAdd, magazineToEdit } from '@static/types/magazineTypes';
+import { catchError, map,tap, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-edit-magazine',
@@ -24,37 +25,35 @@ export class EditMagazineComponent {
     private _errorHandler: ErrorService
   ) {
     this.id = this.route.snapshot.params['id'];
-    _magazineService
-      .GetById(this.id)
-      .then((location: magazine | undefined) => {
+    _magazineService.GetById(this.id)
+      .pipe(map((location: magazineToEdit | undefined)=>{
         if (location == undefined) {
           this.router.navigate(['/magazines']);
           return;
         }
         this.name.setValue(location.name);
         this.address.setValue(location.address);
-      })
-      .catch((ex) => {
-        console.error(`edit magazine ex`, ex);
+      }),
+      catchError((error) => {
         this.router.navigate(['/table']);
-      });
+        _errorHandler.handleErrorCode(error)
+        return error;
+      })).subscribe();
   }
 
-  async handleSubmit() {
+  handleSubmit() {
     if (this.name.invalid || this.address.invalid) {
       this._errorHandler.handleErrorCode(2);
       return;
     }
-
     const newMagazine: magazineToEdit = {
       name: this.name.value || '',
       address: this.address.value || '',
     };
-
-    const added = await this._magazineService.Edit(this.id, newMagazine);
-
-    if (!added) return;
-
-    this.router.navigate([`/magazines`]);
+    this._magazineService.Edit(this.id, newMagazine).pipe(
+      tap(()=>{
+        this.router.navigate(['/magazines']);
+      })
+    ).subscribe();  
   }
 }

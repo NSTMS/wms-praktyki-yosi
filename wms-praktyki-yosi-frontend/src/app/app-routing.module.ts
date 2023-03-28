@@ -14,6 +14,12 @@ import { MagazineListComponent } from './Components/magazines-pages/magazine-lis
 import { AddMagazineComponent } from './Components/magazines-pages/add-magazine/add-magazine.component';
 import { EditMagazineComponent } from './Components/magazines-pages/edit-magazine/edit-magazine.component';
 import { InfoMagazineComponent } from './Components/magazines-pages/info-magazine/info-magazine.component';
+import { AddShelfComponent } from './Components/magazines-pages/add-shelf/add-shelf.component';
+import { EditDocumentComponent } from './Components/document-pages/edit-document/edit-document.component';
+import { AddDocumentComponent } from './Components/document-pages/add-document/add-document.component';
+import { InfoDocumentComponent } from './Components/document-pages/info-document/info-document.component';
+import { DocumentsListComponent } from './Components/document-pages/documents-list/documents-list.component';
+import { DocumentsInMagazineComponent } from './Components/document-pages/documents-in-magazine/documents-in-magazine.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/table', pathMatch: 'full' },
@@ -23,18 +29,22 @@ const routes: Routes = [
   { path: 'locations/edit/:id', component: EditLocationComponent },
   { path: 'locations/add', component: AddLocationComponent },
   { path: 'magazines/add', component: AddMagazineComponent },
+  { path: 'magazines/addShelf', component: AddShelfComponent },
   { path: 'magazines/edit/:id', component: EditMagazineComponent },
   { path: 'magazines/info/:id', component: InfoMagazineComponent },
-  {
-    path: 'magazines/info/:magazineId/product/:id',
-    component: ProductInfoComponent,
-  },
+  { path: 'magazines/info/:magazineId/product/:id', component: ProductInfoComponent },
   { path: 'magazines', component: MagazineListComponent },
   { path: 'add', component: AddFormComponent },
   { path: 'login', component: LoginFormComponent },
   { path: 'register', component: RegisterFormComponent },
   { path: 'users', component: UsersTableComponent },
   { path: 'users/edit/:id', component: UsersEditComponent },
+  { path: 'documents', component: DocumentsListComponent },
+  { path: 'documents/add', component: AddDocumentComponent },
+  { path: 'magazines/:magazineId/documents', component: DocumentsInMagazineComponent },
+  { path: 'documents/info/:id', pathMatch:'full', component: InfoDocumentComponent },
+  { path: 'documents/edit/:id', pathMatch:'full', component: EditDocumentComponent },
+
   { path: '**', redirectTo: '/table' },
 ];
 
@@ -42,4 +52,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
