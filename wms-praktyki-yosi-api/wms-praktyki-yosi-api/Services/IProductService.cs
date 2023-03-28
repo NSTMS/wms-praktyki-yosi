@@ -8,7 +8,7 @@ namespace wms_praktyki_yosi_api.Services
         int AddNewProduct(ProductDto dto);
         void RemoveProduct(int id);
         void UpdateProduct(int id, ProductDto dto);
-        IEnumerable<ProductDto> GetAll();
+        IEnumerable<ProductDto> GetAll(GetRequestQuery query);
         ProductDto GetById(int id);
     }
 }

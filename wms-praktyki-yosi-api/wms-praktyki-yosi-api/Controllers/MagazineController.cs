@@ -5,6 +5,7 @@ using wms_praktyki_yosi_api.Models;
 using Microsoft.EntityFrameworkCore;
 using wms_praktyki_yosi_api.Enitities;
 using AutoMapper.Configuration.Conventions;
+using wms_praktyki_yosi_api.Models.Validators;
 
 namespace wms_praktyki_yosi_api.Controllers
 {
@@ -24,12 +25,12 @@ namespace wms_praktyki_yosi_api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetAllMagazines()
+        public async Task<ActionResult> GetAllMagazines([FromQuery]GetRequestQuery query)
         {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
 
-            var res = _magazineService.GetAll();
+            var res = _magazineService.GetAll(query);
             return Ok(res);
         }
         [HttpGet("{id}")]
@@ -90,12 +91,12 @@ namespace wms_praktyki_yosi_api.Controllers
         }
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin,Moderator")]
-        public async Task<ActionResult> UpdateMagazine([FromRoute] int id, [FromBody] MagazineDto dto)
+        public async Task<ActionResult> UpdateMagazine([FromRoute] int id, [FromBody] EditMagazineDto dto)
         {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
  
-            _magazineService.UpdateMagazine(id,dto);
+            _magazineService.UpdateMagazine(id, dto);
             return Ok();
         }
         [HttpDelete("{id}")]

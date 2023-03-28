@@ -7,12 +7,12 @@ namespace wms_praktyki_yosi_api.Services
     {
         int AddMagzine(MagazineDto dto);
         void DeleteMagazine(int id);
-        List<Magazine> GetAll();
-        MagazineDto GetById(int id);
+        IEnumerable<ReturnMagazineDto> GetAll(GetRequestQuery query);
+        ReturnMagazineDto GetById(int id);
         List<ProductLocationDto> GetLocationsInMagazine(int id);
         public ProductDto GetProductInMagazine(int id, int productId);
         List<ProductDto> GetProductsInMagazine(int id);
-        void UpdateMagazine(int id, MagazineDto dto);
+        void UpdateMagazine(int id, EditMagazineDto dto);
         public List<ReturnProductLocationDto> GetLocationsOfProduct(int id, int productId);
     }
 }

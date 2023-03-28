@@ -24,6 +24,7 @@ namespace wms_praktyki_yosi_api.Services
                 .Products
                 .FirstOrDefault(p => p.Id == location.ProductId) 
                 ?? throw new NotFoundException("151");
+
             var shelf = _context
                 .Shelves
                 .Include(s => s.Locations)

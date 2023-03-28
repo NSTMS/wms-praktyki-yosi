@@ -1,9 +1,11 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Security.Claims;
 using wms_praktyki_yosi_api.Enitities;
 using wms_praktyki_yosi_api.Models;
+using wms_praktyki_yosi_api.Models.Validators;
 using wms_praktyki_yosi_api.Services;
 
 namespace wms_praktyki_yosi_api.Controllers
@@ -19,7 +21,10 @@ namespace wms_praktyki_yosi_api.Controllers
         private readonly IAccountService _accountService;
         private readonly ICustomAuthorizationService _authorizationService;
 
-        public ProductsController(IProductService productService, IAccountService accountService, ICustomAuthorizationService authorizationService)
+        public ProductsController(
+            IProductService productService,
+            IAccountService accountService,
+            ICustomAuthorizationService authorizationService)
         {
 
             _productService = productService;
@@ -28,12 +33,12 @@ namespace wms_praktyki_yosi_api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetAll()
+        public async Task<ActionResult<IEnumerable<Product>>> GetAll([FromQuery]GetRequestQuery query)
         {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
 
-            var productList = _productService.GetAll();
+            var productList = _productService.GetAll(query);
             return Ok(productList);
         }
 

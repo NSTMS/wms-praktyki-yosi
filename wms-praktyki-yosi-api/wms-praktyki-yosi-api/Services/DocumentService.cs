@@ -59,20 +59,18 @@ namespace wms_praktyki_yosi_api.Services
 
             _context.Documents.Add(doc);
             _context.SaveChanges();
-            /*try
-            {*/
+            try
+            {
                 var docItems = GetDocumentItems(doc.Id, dto.ItemList, dto.MagazineId);
                 _context.DocumentItems.AddRange(docItems);
                 _context.SaveChanges();
-/*            }
+        }
             catch
             {
                 _context.Documents.Remove(doc);
                 _context.SaveChanges();
                 throw;
             }
-*/
-
 
             return doc.Id.ToString();
         }
@@ -190,7 +188,7 @@ namespace wms_praktyki_yosi_api.Services
                     di.Product.ProductName == location.ProductName &&
                     di.Position == location.Position &&
                     (location.Tag == null || location.Tag == di.Tag)
-                ) ?? throw new NotFoundException("Nie ma takiego czegos na dokumentcie"); // TODO: Add error codes
+                ) ?? throw new NotFoundException("156");
 
             if (documentItem.Arriving)
                 PutProductOnShelf(document.MagazineId, location);
@@ -424,17 +422,16 @@ namespace wms_praktyki_yosi_api.Services
                     pl.Shelf.Position == location.Position &&
                     pl.Shelf.MagazineId == magazineId &&
                     (location.Tag == null || location.Tag == pl.Tag)
-                ) ?? throw new NotFoundException("nie ma takij lokacji take"); // TODO: Add error codes
+                ) ?? throw new NotFoundException("152");
 
             if (itemLocation.Quantity < location.Quantity)
-                throw new BadRequestException("niewystarczajaco produktu"); // TODO: Add error codes
+                throw new BadRequestException("182");
 
             if (itemLocation.Quantity != location.Quantity)
                 itemLocation.Quantity -= location.Quantity;
             else
                 _context.Remove(itemLocation);
         }
-
 
     }
 

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using wms_praktyki_yosi_api.Models;
 using wms_praktyki_yosi_api.Models.DocumentModels;
+using wms_praktyki_yosi_api.Models.Validators;
 using wms_praktyki_yosi_api.Services;
 
 namespace wms_praktyki_yosi_api.Controllers
@@ -47,13 +47,6 @@ namespace wms_praktyki_yosi_api.Controllers
             return Ok();
         }
 
-        [HttpPost("{id}")]
-        public async Task<ActionResult> AddItemToDocument([FromRoute] string id, [FromBody] AddDocumentItemDto item)
-        {
-            _service.AddItemToDocument(id, item);
-            return Ok();
-        }
-
         [HttpPost("{id}/markasfinished")]
         public async Task<ActionResult> MarkDocumentAsFinished([FromRoute] string id, [FromBody] bool finished)
         {
@@ -67,6 +60,13 @@ namespace wms_praktyki_yosi_api.Controllers
             [FromBody] DocumentVisitLocationDto location)
         {
             _service.VisitLocation(id, location);
+            return Ok();
+        }
+
+        [HttpPost("{id}/items")]
+        public async Task<ActionResult> AddItemToDocument([FromRoute] string id, [FromBody] AddDocumentItemDto item)
+        {
+            _service.AddItemToDocument(id, item);
             return Ok();
         }
 
