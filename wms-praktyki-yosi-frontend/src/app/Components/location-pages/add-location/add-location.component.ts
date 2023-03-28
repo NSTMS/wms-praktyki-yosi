@@ -63,9 +63,6 @@ export class AddLocationComponent {
       tag : this.tag.value || ""
     };
 
-
-
-
     this._service.AddLocation(newLocation).pipe(
       tap(() => {
         const productId = this.productId.value;

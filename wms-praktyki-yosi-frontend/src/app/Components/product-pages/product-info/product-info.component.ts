@@ -7,7 +7,7 @@ import { ErrorService } from '@services/error-handling/error.service';
 import { product } from '@static/types/productTypes';
 import { productLocation } from '@static/types/locationTypes';
 import { MagazineService } from '@app/Services/fetching-services/magazine.service';
-import { catchError, from, map, Observable, of } from 'rxjs';
+import { catchError, from, map, Observable, tap,throwError } from 'rxjs';
 @Component({
   selector: 'app-product-info',
   templateUrl: './product-info.component.html',
@@ -64,12 +64,14 @@ export class ProductInfoComponent {
     ).subscribe();
   }
 
-  async handleDelete(id: number) {
-    const deleted = await this._locationService.Delete(id);
-    if (!deleted) return;
-
-    this.loadData();
-
-    this._errorHandler.errorMessageShow(['Pomyślnie usunieto', 'ok']);
+   handleDelete(id: number) {
+    this._locationService.Delete(id).pipe(
+      tap(() => {
+          this.loadData();
+      }),
+      catchError((error) => {
+        return throwError(() => new Error(error));
+      })
+    ).subscribe();
   }
 }

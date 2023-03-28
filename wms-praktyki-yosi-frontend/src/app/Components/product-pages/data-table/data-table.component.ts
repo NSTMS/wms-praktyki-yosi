@@ -1,11 +1,9 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import {
   MatTableDataSource,
-  MatTable,
-  MatTableModule,
 } from '@angular/material/table';
-import { Router, withDebugTracing } from '@angular/router';
+import { Router } from '@angular/router';
 
 import { DataReaderService } from '@services/fetching-services/data-reader.service';
 import type { product } from '@static/types/productTypes';
@@ -24,8 +22,9 @@ export class DataTableComponent {
   displayedColumns: string[];
   length: number = 0;
   canAddAndDel: boolean;
+  searchTerm: string = "";
 
-  constructor(private _reader: DataReaderService, private router: Router, private http: HttpClient) {
+  constructor(private _reader: DataReaderService, private router: Router) {
     if (localStorage.getItem('token') == null) this.router.navigate(['/login']);
 
     this.canAddAndDel = localStorage.getItem('role') != 'User';
@@ -41,7 +40,7 @@ export class DataTableComponent {
   }
 
   loadData() {
-    this._reader.GetAll().subscribe((data) => {
+   return this._reader.GetAll().subscribe((data) => {
       if (data != null) 
         this.length = data.length || 0; 
       else 
@@ -59,7 +58,7 @@ export class DataTableComponent {
   }
 
   handleDelete(id: number) {
-    this._reader.Delete(id).pipe(
+    return this._reader.Delete(id).pipe(
       tap(() => {
           window.location.reload();
       }),
@@ -68,4 +67,8 @@ export class DataTableComponent {
       })
     ).subscribe();
   }
+  applyFilter() {
+    // this.dataSource.filter = this.searchTerm.trim().toLowerCase();
+  }
+
 }

@@ -64,14 +64,10 @@ export class EditFormComponent {
         catchError((error) => {
           return throwError(() => new Error(error));
         })
-      ).subscribe(  data => {
-        // obsługa poprawnej odpowiedzi z serwera
-        // ...
-      },
+      ).subscribe(
       error => {
         // obsługa błędu - wyświetlenie snackbar z kodem błędu
         console.log(error);
-        
       });
     }
   }

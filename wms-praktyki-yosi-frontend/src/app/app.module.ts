@@ -6,22 +6,20 @@ import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NavigationComponent } from './Components/navigation/navigation.component';
-import { CompomponentsModule } from './Modules/compomponents.module';
+import { ComponentsModule } from './Modules/components.module';
 import { CommonModule } from '@angular/common';
-import { InfoMagazineComponent } from './Components/magazines-pages/info-magazine/info-magazine.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ErrorInterceptor } from './Interceptors/error-interceptor.interceptor';
-import { AddShelfComponent } from './Components/magazines-pages/add-shelf/add-shelf.component';
+import { NavigationComponent } from './Components/navigation/navigation.component';
 
 @NgModule({
-  declarations: [AppComponent, NavigationComponent, InfoMagazineComponent, AddShelfComponent],
+  declarations: [AppComponent,NavigationComponent],
   imports: [
     CommonModule,
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
-    CompomponentsModule,
+    ComponentsModule,
     HttpClientModule,
     AppMaterialModule,
     FormsModule,

@@ -7,10 +7,14 @@
     <a mat-menu-item routerLink="/table">product List</a>
     <a mat-menu-item routerLink="/magazines" *ngIf="isModeratorOrAdmin">magazine List</a>
     <a mat-menu-item routerLink="/users" *ngIf="isAdmin">users List</a>
+    <a mat-menu-item routerLink="/documents" *ngIf="isModeratorOrAdmin">document List</a>
     <a mat-menu-item routerLink="/add" *ngIf="isModeratorOrAdmin">add Product</a>
-    <a mat-menu-item routerLink="/locations/add" *ngIf="isModeratorOrAdmin">add to Location</a>
-    <a mat-menu-item routerLink="/magazines/add" *ngIf="isModeratorOrAdmin">add Magazine</a>
+    <a mat-menu-item routerLink="/locations/add" *ngIf="isModeratorOrAdmin">add Location</a>
+    <a mat-menu-item routerLink="/documents/add" *ngIf="isModeratorOrAdmin">add Document</a>
+    <a mat-menu-item routerLink="/magazines/add" *ngIf="isModeratorOrAdmin">add Magazine </a>
     <a mat-menu-item routerLink="/magazines/addShelf" *ngIf="isModeratorOrAdmin">add Shelf</a>
+    
+    
     <button mat-menu-item (click)="handleLogOut()">log out</button>
   </mat-menu>
   <span>WMS JJ</span>

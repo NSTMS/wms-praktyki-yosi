@@ -17,6 +17,13 @@ import { AppRoutingModule } from '@app/app-routing.module';
 import { AddMagazineComponent } from '@app/Components/magazines-pages/add-magazine/add-magazine.component';
 import { EditMagazineComponent } from '@app/Components/magazines-pages/edit-magazine/edit-magazine.component';
 import { MagazineListComponent } from '@app/Components/magazines-pages/magazine-list/magazine-list.component';
+import { AddShelfComponent } from '@app/Components/magazines-pages/add-shelf/add-shelf.component';
+import { AddDocumentComponent } from '@app/Components/document-pages/add-document/add-document.component';
+import { InfoMagazineComponent } from '@app/Components/magazines-pages/info-magazine/info-magazine.component';
+import { EditDocumentComponent } from '@app/Components/document-pages/edit-document/edit-document.component';
+import { InfoDocumentComponent } from '@app/Components/document-pages/info-document/info-document.component';
+import { DocumentsListComponent } from '@app/Components/document-pages/documents-list/documents-list.component';
+import { DocumentsInMagazineComponent } from '@app/Components/document-pages/documents-in-magazine/documents-in-magazine.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +40,13 @@ import { MagazineListComponent } from '@app/Components/magazines-pages/magazine-
     AddMagazineComponent,
     EditMagazineComponent,
     MagazineListComponent,
+    AddShelfComponent,
+    AddDocumentComponent,
+    InfoMagazineComponent,
+    EditDocumentComponent,
+    InfoDocumentComponent,
+    DocumentsListComponent,
+    DocumentsInMagazineComponent
   ],
   imports: [
     CommonModule,
@@ -42,4 +56,4 @@ import { MagazineListComponent } from '@app/Components/magazines-pages/magazine-
     AppRoutingModule,
   ],
 })
-export class CompomponentsModule {}
+export class ComponentsModule {}

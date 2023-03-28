@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { locationToEdit, locationToAdd } from '@static/types/locationTypes';
 import { ErrorService } from '@services/error-handling/error.service';
 import { HttpClient } from '@angular/common/http';
-import { catchError,map,NotFoundError,Observable,tap } from 'rxjs';
+import { catchError,map,Observable,tap } from 'rxjs';
 
 declare var require: any;
 const connection = require('@static/connection.json');

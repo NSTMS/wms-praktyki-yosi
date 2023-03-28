@@ -2,9 +2,8 @@ import { Injectable } from '@angular/core';
 import { ErrorService } from '../error-handling/error.service';
 import { magazineToAdd, magazineToEdit } from '@static/types/magazineTypes';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map } from 'rxjs';
+import { Observable, map, catchError, tap, throwError } from 'rxjs';
 import { product } from '@static/types/productTypes';
-import { productLocation } from '@static/types/locationTypes';
 
 declare var require: any;
 const connection = require('@static/connection.json');
@@ -23,88 +22,66 @@ export class MagazineService {
 
   link = `${connection.protocole}://${connection.ip}:${connection.port}/api/magazines`;
 
-  constructor(private _errorHandler: ErrorService, private http: HttpClient) {}
+  constructor(private _errorService: ErrorService, private http: HttpClient) { }
 
-  async GetAll() {
-    const response = await fetch(this.link);
-
-    if (response.ok) return await response.json();
-
-    this._errorHandler.HandleBadResponse(response);
-  }
-
-  async Add(newMagazine: magazineToAdd) {
-    const response = await fetch(this.link, {
-      method: 'POST',
-      body: JSON.stringify({
-        ...newMagazine,
+  GetAll(): Observable<any> {
+    return this.http.get(this.link).pipe(
+      map((magazines) => {
+        return magazines
       }),
-    });
-
-    if (response.ok) return true;
-
-    this._errorHandler.HandleBadResponse(response);
-
-    return false;
+    );
   }
 
-  async GetById(id: number) {
-    const response = await fetch(`${this.link}/${id}`, {
-    });
-
-    if (response.ok) return await response.json();
-
-    this._errorHandler.HandleBadResponse(response);
-  }
-
-  async Edit(id: number, newMagazine: magazineToEdit) {
-    const response = await fetch(`${this.link}/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify({
-        ...newMagazine,
+  GetById(id: number): Observable<any> {
+    return this.http.get(this.link + "/" + id).pipe(
+      map((user) => {
+        return user
       }),
-    });
-
-    if (response.ok) return true;
-
-    this._errorHandler.HandleBadResponse(response);
-
-    return false;
+    );
   }
 
-  async Delete(id: number) {
-    const response = await fetch(this.link + '/' + id, {
-      method: 'DELETE',
-    });
-
-    if (response.ok) return true;
-
-    this._errorHandler.HandleBadResponse(response);
-
-    return false;
-  }
-
-  GetAllProducts(id: number) {
+  GetAllProducts(id: number) : Observable<any>{
     return this.http.get(`${this.link}/${id}/products`).pipe(
-      map((data) =>{
+      map((data) => {
         return data as product[]
       }),
-      catchError((error : any)=>{
-        this._errorHandler.HandleBadResponse(error);
+      catchError((error: any) => {
+        this._errorService.HandleBadResponse(error);
         throw error;
       })
     )
   }
 
-  GetLocations(productId: number, magazineId: number) {
+  GetLocations(productId: number, magazineId: number): Observable<any> {
     return this.http.get(`${this.link}/${magazineId}/products/${productId}`).pipe(
-      map((data) =>{
+      map((data) => {
         return data as product[]
       }),
-      catchError((error : any)=>{
-        this._errorHandler.HandleBadResponse(error);
-        throw error;
-      })
     )
   }
+
+  Add(mazgaine: magazineToAdd): Observable<any> {
+    return this.http.post(this.link, JSON.stringify({ ...mazgaine })).pipe(
+      tap(() => {   
+        return true;
+      }),
+    )
+  }
+
+  Edit(id: number, newMagazine: magazineToEdit): Observable<any> {
+    return this.http.put(this.link + "/" + id, JSON.stringify(newMagazine)).pipe(
+      tap(() => {
+        return true;
+      }),
+    );
+  }
+
+  Delete(id: number): Observable<any> {
+    return this.http.delete(this.link + '/' + id).pipe(
+      tap(() => {
+        return true;
+      })
+    );
+  }
+
 }
