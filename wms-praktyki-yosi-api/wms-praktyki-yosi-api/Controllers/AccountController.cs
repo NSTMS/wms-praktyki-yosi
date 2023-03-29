@@ -15,13 +15,13 @@ namespace wms_praktyki_yosi_api.Controllers
 {
     [Route("api/account")]
     [ApiController]
-    public class AccountControler: ControllerBase
+    public class AccountController: ControllerBase
     {
         private readonly IAccountService _service;
         private readonly IValidator<RegisterUserDto> _validator;
         private readonly ICustomAuthorizationService _authorizationService;
 
-        public AccountControler(IAccountService service, IValidator<RegisterUserDto> validator, ICustomAuthorizationService authorizationService)
+        public AccountController(IAccountService service, IValidator<RegisterUserDto> validator, ICustomAuthorizationService authorizationService)
         {
             _service = service;
             _validator = validator;
@@ -45,20 +45,9 @@ namespace wms_praktyki_yosi_api.Controllers
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
 
-            try
-            {
-                var user = await _service.Get(id);
-                return Ok(user);
-            }
-            catch (BadRequestException ex)
-            {
-                ModelState.AddModelError("Errors", ex.Message);
-                return BadRequest(ModelState);
-            }
-            catch {
-                ModelState.AddModelError("Errors", "Internal Server error");
-                return StatusCode(StatusCodes.Status500InternalServerError, ModelState);
-            }
+            var user = await _service.Get(id);
+            return Ok(user);
+
         }
 
         [HttpPost("register")]
@@ -70,23 +59,19 @@ namespace wms_praktyki_yosi_api.Controllers
 
             if (!result.IsValid)
             {
+                var listOfErrors = new List<string>();
+
                 foreach (var error in result.Errors)
                 {
-                    ModelState.AddModelError("Errors", error.ErrorCode);
+                    listOfErrors.Add(error.ErrorCode);
                 }
-                return BadRequest(ModelState);
+                return BadRequest(new
+                {
+                    Errors = listOfErrors
+                }); ;
             }
 
-            try
-            {
-                await _service.RegisterUser(user);
-            }
-            catch (BadRequestException ex)
-            {
-                ModelState.AddModelError("Errors", ex.Message);
-                return BadRequest(ModelState);
-            }
-            
+            await _service.RegisterUser(user);
             return Ok();
         }
 
@@ -94,22 +79,9 @@ namespace wms_praktyki_yosi_api.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> Login([FromBody]UserLoginDto dto)
         {
-            try
-            {
-                var result = await _service.GetToken(dto);
-                return Ok(result);
-
-            }
-            catch (BadRequestException ex)
-            {
-                ModelState.AddModelError("Errors", ex.Message);
-                return BadRequest(ModelState);
-            }
-            catch
-            {
-                ModelState.AddModelError("Errors", "Internal Server error");
-                return StatusCode(StatusCodes.Status500InternalServerError, ModelState);
-            }
+            var result = await _service.GetToken(dto);
+            return Ok(result);
+            
         }
         
         [HttpPut("users/{id}")]
@@ -119,21 +91,9 @@ namespace wms_praktyki_yosi_api.Controllers
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
 
-            try
-            {
+            
                 await _service.ModifyUserRole(id, newRole);
                 return Ok();
-            }
-            catch (BadRequestException ex)
-            {
-                ModelState.AddModelError("Errors", ex.Message);
-                return BadRequest(ModelState);
-            }
-            catch (Exception)
-            {
-                ModelState.AddModelError("Errors", "Internal Server error");
-                return StatusCode(StatusCodes.Status500InternalServerError, ModelState);
-            }
         }
 
         [HttpDelete("users/{id}")]
@@ -143,21 +103,8 @@ namespace wms_praktyki_yosi_api.Controllers
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
 
-            try
-            {
-                await _service.DeleteUser(id);
-                return Ok();
-            }
-            catch (BadRequestException ex)
-            {
-                ModelState.AddModelError("Errors", ex.Message);
-                return BadRequest(ModelState);
-            }
-            catch (Exception)
-            {
-                ModelState.AddModelError("Errors", "Internal Server error");
-                return StatusCode(StatusCodes.Status500InternalServerError, ModelState);
-            }
+            await _service.DeleteUser(id);
+            return Ok();
         }
 
         [HttpGet("info")]
@@ -171,15 +118,10 @@ namespace wms_praktyki_yosi_api.Controllers
             if (userEmail is null)
                 return Unauthorized();
             
-            try
-            {
-                var userInfo = await _service.GetUserInfo(userEmail.Value);
-                return Ok(userInfo);
-            }
-            catch
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Smt went wrong");
-            }
+
+            var userInfo = await _service.GetUserInfo(userEmail.Value);
+            return Ok(userInfo);
+
         }
 
 
