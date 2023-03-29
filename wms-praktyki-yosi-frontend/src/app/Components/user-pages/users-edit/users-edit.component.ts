@@ -22,48 +22,50 @@ export class UsersEditComponent implements OnInit {
     private _errorHandler: ErrorService
   ) {
     this.selected = this.data?.id;
-    this.Id = new FormControl({value: '', disabled: true },
+    this.Id = new FormControl(
+      { value: '', disabled: true },
       Validators.required
     );
     this.Email = new FormControl('', Validators.required);
     this.role = new FormControl('', Validators.required);
   }
   ngOnInit() {
-    this._reader.GetInfoFromToken().pipe(
-      map((data) => {
-        this.Id.setValue(data.id)
-        this.Email.setValue(data.email)
-        return;
-      }),
-      catchError((error) => {
-        this._errorHandler.HandleBadResponse(error)
-        throw error;
-      })
-    ).subscribe()
+    this._reader
+      .GetInfoFromToken()
+      .pipe(
+        map((data) => {
+          this.Id.setValue(data.id);
+          this.Email.setValue(data.email);
+          return;
+        }),
+        catchError((error) => {
+          this._errorHandler.HandleBadResponse(error);
+          throw error;
+        })
+      )
+      .subscribe();
   }
 
-  ngAfterContentInit(){
-
-  }
+  ngAfterContentInit() {}
 
   handleSubmit() {
     this._reader.GetById(this.Id.value).pipe(
       map((usr: user) => {
         if (this.Id.invalid || this.Email.invalid) {
-          this._errorHandler.handleErrorCode(2)
+          this._errorHandler.handleErrorCode(2);
           return;
         }
-        const user : user = {
+        const user: user = {
           Id: this.Id.value,
           Email: this.Email.value,
           PasswordHash: usr.PasswordHash,
-          Role: this.selected
-        }
-        return this._reader.Put(this.Id.value,user)
+          Role: this.selected,
+        };
+        return this._reader.Put(this.Id.value, user);
       }),
       catchError((error) => {
         throw error;
       })
-    )
+    );
   }
 }

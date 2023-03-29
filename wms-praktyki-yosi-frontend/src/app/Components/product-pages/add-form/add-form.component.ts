@@ -21,7 +21,7 @@ export class AddFormComponent {
     Validators.required,
     Validators.pattern('^[0-9]+?(.[0-9]+)?$'),
   ]);
-  tag = new FormControl("")
+  tag = new FormControl('');
 
   constructor(
     private _reader: DataReaderService,
@@ -37,22 +37,22 @@ export class AddFormComponent {
     if (this.name.invalid || this.ean.invalid || this.price.invalid) {
       this._errorHandler.handleErrorCode(2);
     } else {
-
-      this._reader.Post(
-        {
+      this._reader
+        .Post({
           productName: this.name.value,
           ean: this.ean.value,
           price: this.price.value,
-          tag : this.tag.value
-        } as productToAdd
-      ).pipe(
-        tap(() => {
+          tag: this.tag.value,
+        } as productToAdd)
+        .pipe(
+          tap(() => {
             window.location.reload();
-        }),
-        catchError((error) => {
-          return throwError(() => new Error(error));
-        })
-      ).subscribe();
+          }),
+          catchError((error) => {
+            return throwError(() => new Error(error));
+          })
+        )
+        .subscribe();
 
       this.router.navigate(['/table']);
     }

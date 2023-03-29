@@ -8,7 +8,7 @@ import {
   locationToEdit,
   productLocation,
 } from '@static/types/locationTypes';
-import { catchError, map,tap, throwError } from 'rxjs';
+import { catchError, map, tap, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-edit-location',
@@ -39,20 +39,23 @@ export class EditLocationComponent {
     private _errorHandler: ErrorService
   ) {
     this.id = this.route.snapshot.params['id'];
-    _service.GetById(this.id).pipe(
-      catchError((error)=>{
-        this.router.navigate(['/table']);
-        throw error;
-      })
-    ).subscribe((location: productLocation | undefined)=>{
-      if (location == undefined) {
-        this.router.navigate(['/table']);
-        return;
-      }
-      this.position.setValue(location.position);
-      this.quantity.setValue(location.quantity)
-      this.magazineId.setValue(location.magazineId)
-    })
+    _service
+      .GetById(this.id)
+      .pipe(
+        catchError((error) => {
+          this.router.navigate(['/table']);
+          throw error;
+        })
+      )
+      .subscribe((location: productLocation | undefined) => {
+        if (location == undefined) {
+          this.router.navigate(['/table']);
+          return;
+        }
+        this.position.setValue(location.position);
+        this.quantity.setValue(location.quantity);
+        this.magazineId.setValue(location.magazineId);
+      });
   }
 
   handleSubmit() {
@@ -70,12 +73,15 @@ export class EditLocationComponent {
       quantity: this.quantity.value || 0,
       magazineId: this.magazineId.value || -1,
     };
-    
-    this._service.EditLocation(this.id, newLocation).pipe(
-      tap(() => this.router.navigate(['/table'])),
-      catchError((error) => {
-        return throwError(() => new Error(error));
-      })
-    ).subscribe();  
+
+    this._service
+      .EditLocation(this.id, newLocation)
+      .pipe(
+        tap(() => this.router.navigate(['/table'])),
+        catchError((error) => {
+          return throwError(() => new Error(error));
+        })
+      )
+      .subscribe();
   }
 }

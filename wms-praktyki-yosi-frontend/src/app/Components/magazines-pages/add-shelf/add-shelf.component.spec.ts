@@ -8,9 +8,8 @@ describe('AddShelfComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AddShelfComponent ]
-    })
-    .compileComponents();
+      declarations: [AddShelfComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(AddShelfComponent);
     component = fixture.componentInstance;

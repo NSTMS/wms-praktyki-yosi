@@ -9,7 +9,7 @@ export class GlobalService {
 
   set theRole(value) {
     this.role.next(value); // this will make sure to tell every subscriber about the change.
-    localStorage.setItem('role', value || '');
+    localStorage.setItem('role', value as string);
   }
 
   get theRole() {

@@ -1,15 +1,15 @@
-import {  Component, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource,} from '@angular/material/table';
+import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { DocumentsService } from '@app/Services/fetching-services/documents.service';
-import { catchError,tap,throwError ,map} from 'rxjs';
+import { catchError, tap, throwError, map } from 'rxjs';
 
-import { document } from '@static/types/documentTypes';
+import { document, documentItem } from '@static/types/documentTypes';
 @Component({
   selector: 'app-documents-list',
   templateUrl: './documents-list.component.html',
-  styleUrls: ['./documents-list.component.scss']
+  styleUrls: ['./documents-list.component.scss'],
 })
 export class DocumentsListComponent {
   @ViewChild('paginator') paginator: MatPaginator | undefined;
@@ -32,43 +32,27 @@ export class DocumentsListComponent {
       ];
     else this.displayedColumns = [...this._service.columns];
   }
-  
-  loadData() {
-    return this._service.GetAll().subscribe((data) => {
-       if (data != null) 
-         this.length = data.length || 0; 
-       else 
-         this.length = 0;
- 
-       this.dataSource = new MatTableDataSource(data);
- 
-       if (this.paginator != undefined)
-         this.dataSource.paginator = this.paginator;
-       });
-   }
-   
-  ngAfterContentInit() {
-    this.loadData();
-  }
-  handleDelete(guid : string) {
-    return this._service.Delete(guid).pipe(
-      tap(() => {
-          window.location.reload();
-      }),
-      catchError((error) => {
-        return throwError(() => new Error(error));
-      })
-    ).subscribe();
-  }
-  markAsFinished(guid : string,finished: boolean){
-     return this._service.MarkAsFinished(guid,finished).pipe(
-      map((res)=>{
-        console.log(res);
-        window.location.reload();
 
-        return;
-      })
-     ).subscribe()
-    }
+  async loadData() {
+    const data = await this._service.GetAll();
+    console.log(data);
+    if (data != null) this.length = (data as document[]).length || 0;
+    else this.length = 0;
 
+    this.dataSource = new MatTableDataSource(data as document[]);
+
+    if (this.paginator != undefined) this.dataSource.paginator = this.paginator;
+  }
+
+  async ngAfterContentInit() {
+    await this.loadData();
+  }
+  async handleDelete(guid: string) {
+    await this._service.Delete(guid);
+    window.location.reload();
+  }
+  async markAsFinished(guid: string, finished: boolean) {
+    await this._service.MarkAsFinished(guid, finished);
+    window.location.reload();
+  }
 }

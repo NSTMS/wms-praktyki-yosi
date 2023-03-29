@@ -1,5 +1,5 @@
-export type newShelf ={
-    magazineId : number;
-    position : string;
-    maxload : number;
-}
+export type newShelf = {
+  magazineId: number;
+  position: string;
+  maxload: number;
+};

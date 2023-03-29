@@ -24,9 +24,9 @@ export class ErrorService {
   }
 
   errorMessageShow(arr: string[]) {
-    if(!arr) return;
+    if (!arr) return;
     console.log(arr);
-    
+
     let text = '';
     var set = new Set(arr);
 
@@ -39,7 +39,7 @@ export class ErrorService {
     this._snackBar.open(text, 'ok');
   }
 
-   HandleBadResponse(response: HttpErrorResponse) {
+  HandleBadResponse(response: HttpErrorResponse) {
     if (response.status == 404 || response.status >= 500)
       this.handleErrorCode(5);
     const errors = response.error as string[];

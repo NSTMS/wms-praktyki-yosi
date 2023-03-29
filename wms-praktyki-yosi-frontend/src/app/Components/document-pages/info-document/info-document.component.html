@@ -1,57 +1,132 @@
+<mat-grid-list cols="5" rowHeight="75px" gutterSize="20px">
+  <mat-grid-tile>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-subtitle>Id</mat-card-subtitle>
+        <mat-card-title>
+          {{ data.id }}
+        </mat-card-title>
+      </mat-card-header>
+    </mat-card>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-subtitle>magazineId</mat-card-subtitle>
+        <mat-card-title>
+          {{ data.magazineId }}
+        </mat-card-title>
+      </mat-card-header>
+    </mat-card>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-subtitle>client</mat-card-subtitle>
+        <mat-card-title>
+          {{ data.client }}
+        </mat-card-title>
+      </mat-card-header>
+    </mat-card>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-subtitle>totalQuantity</mat-card-subtitle>
+        <mat-card-title>
+          {{ data.totalQuantity }}
+        </mat-card-title>
+      </mat-card-header>
+    </mat-card>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-subtitle>finished</mat-card-subtitle>
+        <mat-card-title>
+          {{ data.finished ? "yes" : "no" }}
+        </mat-card-title>
+      </mat-card-header>
+    </mat-card>
+  </mat-grid-tile>
+</mat-grid-list>
+
 <mat-table class="mat-table" #table [dataSource]="dataSource">
-    <ng-container matColumnDef="id">
-        <mat-header-cell *matHeaderCellDef>Guid</mat-header-cell>
-        <mat-cell *matCellDef="let document">{{ document.id }}</mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="productName">
-        <mat-header-cell *matHeaderCellDef>product name</mat-header-cell>
-        <mat-cell *matCellDef="let document">{{ document.productName }}</mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="position">
-        <mat-header-cell *matHeaderCellDef>position</mat-header-cell>
-        <mat-cell *matCellDef="let document">{{ document.position }}</mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="quantityPlanned">
-        <mat-header-cell *matHeaderCellDef>quantityPlanned</mat-header-cell>
-        <mat-cell *matCellDef="let document">{{ document.quantityPlanned }}</mat-cell>
-    </ng-container>
+  <ng-container matColumnDef="id">
+    <mat-header-cell *matHeaderCellDef>Guid</mat-header-cell>
+    <mat-cell *matCellDef="let document">{{ document.id }}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="productName">
+    <mat-header-cell *matHeaderCellDef>product name</mat-header-cell>
+    <mat-cell *matCellDef="let document">{{ document.productName }}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="position">
+    <mat-header-cell *matHeaderCellDef>position</mat-header-cell>
+    <mat-cell *matCellDef="let document">{{ document.position }}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="quantityPlaned">
+    <mat-header-cell *matHeaderCellDef>quantityPlaned</mat-header-cell>
+    <mat-cell *matCellDef="let document">{{
+      document.quantityPlaned
+    }}</mat-cell>
+  </ng-container>
 
-    <ng-container matColumnDef="quantityDone">
-        <mat-header-cell *matHeaderCellDef>quantityDone</mat-header-cell>
-        <mat-cell *matCellDef="let document">{{ document.quantityDone }}</mat-cell>
-    </ng-container>
+  <ng-container matColumnDef="quantityDone">
+    <mat-header-cell *matHeaderCellDef>quantityDone</mat-header-cell>
+    <mat-cell *matCellDef="let document">{{ document.quantityDone }}</mat-cell>
+  </ng-container>
 
-    <ng-container matColumnDef="status">
-        <mat-header-cell *matHeaderCellDef>status</mat-header-cell>
-        <mat-cell *matCellDef="let document">{{ document.status }}</mat-cell>
-    </ng-container>
+  <ng-container matColumnDef="status">
+    <mat-header-cell *matHeaderCellDef>status</mat-header-cell>
+    <mat-cell *matCellDef="let document">{{ document.status }}</mat-cell>
+  </ng-container>
 
-    <ng-container matColumnDef="tag">
-        <mat-header-cell *matHeaderCellDef>tag</mat-header-cell>
-        <mat-cell *matCellDef="let document">{{ document.tag }}</mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="arriving">
-        <mat-header-cell *matHeaderCellDef>arriving</mat-header-cell>
-        <mat-cell *matCellDef="let document">{{ document.arriving }}</mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="edit">
-        <mat-header-cell *matHeaderCellDef></mat-header-cell>
-        <mat-cell *matCellDef="let document"><a mat-stroked-button
-                routerLink="edit/{{ document.id }}">edit</a></mat-cell>
-    </ng-container>
+  <ng-container matColumnDef="tag">
+    <mat-header-cell *matHeaderCellDef>tag</mat-header-cell>
+    <mat-cell *matCellDef="let document">{{ document.tag }}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="arriving">
+    <mat-header-cell *matHeaderCellDef>arriving</mat-header-cell>
+    <mat-cell *matCellDef="let document">{{
+      document.arriving ? "yes" : "no"
+    }}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="visit" *ngIf="canAddAndDel">
+    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+    <mat-cell *matCellDef="let document"
+      ><button mat-flat-button color="warn" (click)="handleVisit(document.id)">
+        visit
+      </button>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="edit" *ngIf="canAddAndDel">
+    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+    <mat-cell *matCellDef="let document"
+      ><button mat-flat-button color="warn" (click)="handleEdit(document.id)">
+        edit
+      </button>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="delete" *ngIf="canAddAndDel">
+    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+    <mat-cell *matCellDef="let document"
+      ><button mat-flat-button color="warn" (click)="handleDelete(document.id)">
+        delete
+      </button>
+    </mat-cell>
+  </ng-container>
 
-    <ng-container matColumnDef="delete" *ngIf="canAddAndDel">
-        <mat-header-cell *matHeaderCellDef></mat-header-cell>
-        <mat-cell *matCellDef="let document"><button mat-flat-button color="warn" (click)="handleDelete(document.id)">
-                Delete
-            </button></mat-cell>
-    </ng-container>
-
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
 </mat-table>
 <div *ngIf="length === 0">No data</div>
 
-<mat-paginator [length]="100" [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
-    aria-label="Select page" #paginator>
+<mat-paginator
+  [length]="100"
+  [pageSize]="5"
+  [pageSizeOptions]="[5, 10, 20]"
+  showFirstLastButtons
+  aria-label="Select page"
+  #paginator
+>
 </mat-paginator>

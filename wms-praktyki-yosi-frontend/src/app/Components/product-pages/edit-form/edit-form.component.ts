@@ -4,7 +4,7 @@ import { DataReaderService } from '@services/fetching-services/data-reader.servi
 import type { product, productToAdd } from '@static/types/productTypes';
 import { FormControl, Validators } from '@angular/forms';
 import { ErrorService } from '@services/error-handling/error.service';
-import { catchError, map,tap, throwError } from 'rxjs';
+import { catchError, map, tap, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-edit-form',
@@ -34,42 +34,46 @@ export class EditFormComponent {
     if (localStorage.getItem('role') == 'User')
       this.router.navigate(['/table']);
     this.id = this.route.snapshot.params['id'];
-     _reader.GetById(this.id).pipe(
-      map((data)=>{      
-        this.name.setValue(data.productName);
-        this.ean.setValue(data.ean);
-        this.price.setValue(data.price);
-        return data;
-      }),
-      catchError((error) => {
-        this.router.navigate(['/table']);
-        _errorHandler.handleErrorCode(error)
-        return error;
-      })).subscribe();
+    _reader
+      .GetById(this.id)
+      .pipe(
+        map((data) => {
+          this.name.setValue(data.productName);
+          this.ean.setValue(data.ean);
+          this.price.setValue(data.price);
+          return data;
+        }),
+        catchError((error) => {
+          this.router.navigate(['/table']);
+          _errorHandler.handleErrorCode(error);
+          return error;
+        })
+      )
+      .subscribe();
   }
 
-  handleSubmit(){
+  handleSubmit() {
     if (this.name.invalid || this.ean.invalid || this.price.invalid) {
       this._errorHandler.handleErrorCode(2);
     } else {
+      const updatedProduct: productToAdd = {
+        productName: this.name.value || '',
+        ean: this.ean.value || '',
+        price: this.price.value || 0,
+      };
 
-      const updatedProduct : productToAdd = {
-        productName: this.name.value || "",
-        ean: this.ean.value || "",
-        price: this.price.value || 0
-      }
-
-      this._reader.Put(this.id, {...updatedProduct}).pipe(
-        tap(() => this.router.navigate(['/table'])),
-        catchError((error) => {
-          return throwError(() => new Error(error));
-        })
-      ).subscribe(
-      error => {
-        // obsługa błędu - wyświetlenie snackbar z kodem błędu
-        console.log(error);
-      });
+      this._reader
+        .Put(this.id, { ...updatedProduct })
+        .pipe(
+          tap(() => this.router.navigate(['/table'])),
+          catchError((error) => {
+            return throwError(() => new Error(error));
+          })
+        )
+        .subscribe((error) => {
+          // obsługa błędu - wyświetlenie snackbar z kodem błędu
+          console.log(error);
+        });
     }
   }
-  
 }

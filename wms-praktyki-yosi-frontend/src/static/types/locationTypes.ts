@@ -16,5 +16,5 @@ export type locationToAdd = {
   magazineId: number;
   quantity: number;
   productId: number;
-  tag : string;
+  tag: string;
 };

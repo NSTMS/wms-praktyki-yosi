@@ -8,7 +8,7 @@ import {
   locationToEdit,
   locationToAdd,
 } from '@static/types/locationTypes';
-import { catchError,tap, throwError} from 'rxjs';
+import { catchError, tap, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-add-location',
@@ -36,7 +36,7 @@ export class AddLocationComponent {
     Validators.pattern('^[0-9]+$'),
   ]);
 
-  tag = new FormControl("")
+  tag = new FormControl('');
 
   constructor(
     private router: Router,
@@ -44,7 +44,7 @@ export class AddLocationComponent {
     private _errorHandler: ErrorService
   ) {}
 
-   handleSubmit() {
+  handleSubmit() {
     if (
       this.position.invalid ||
       this.quantity.invalid ||
@@ -60,17 +60,20 @@ export class AddLocationComponent {
       magazineId: this.magazineId.value || -1,
       quantity: this.quantity.value || 0,
       productId: this.productId.value || -1,
-      tag : this.tag.value || ""
+      tag: this.tag.value || '',
     };
 
-    this._service.AddLocation(newLocation).pipe(
-      tap(() => {
-        const productId = this.productId.value;
-        this.router.navigate([`/info/${productId}`]);
-      }),
-      catchError((error) => {
-        return throwError(() => new Error(error));
-      })
-    ).subscribe();  
+    this._service
+      .AddLocation(newLocation)
+      .pipe(
+        tap(() => {
+          const productId = this.productId.value;
+          this.router.navigate([`/info/${productId}`]);
+        }),
+        catchError((error) => {
+          return throwError(() => new Error(error));
+        })
+      )
+      .subscribe();
   }
 }

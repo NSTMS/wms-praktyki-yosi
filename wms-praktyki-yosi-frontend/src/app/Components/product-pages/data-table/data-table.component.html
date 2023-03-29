@@ -1,12 +1,18 @@
 <mat-toolbar class="toolbar">
-  <mat-form-field appearance="outline"  class="form-field">
+  <mat-form-field appearance="outline" class="form-field">
     <mat-label>Search</mat-label>
-    <input matInput type="text" [(ngModel)]="searchTerm" (keyup)="applyFilter()" placeholder="Search...">
+    <input
+      matInput
+      type="text"
+      [(ngModel)]="searchTerm"
+      (keyup)="applyFilter()"
+      placeholder="Search..."
+    />
     <mat-icon matSuffix>search</mat-icon>
   </mat-form-field>
 </mat-toolbar>
 
-  <h2>{{searchTerm}}</h2>
+<h2>{{ searchTerm }}</h2>
 <mat-table class="mat-table" #table [dataSource]="dataSource">
   <ng-container matColumnDef="id">
     <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>

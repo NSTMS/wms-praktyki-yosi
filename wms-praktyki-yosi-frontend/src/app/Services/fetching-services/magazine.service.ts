@@ -22,58 +22,62 @@ export class MagazineService {
 
   link = `${connection.protocole}://${connection.ip}:${connection.port}/api/magazines`;
 
-  constructor(private _errorService: ErrorService, private http: HttpClient) { }
+  constructor(private _errorService: ErrorService, private http: HttpClient) {}
 
   GetAll(): Observable<any> {
     return this.http.get(this.link).pipe(
       map((magazines) => {
-        return magazines
-      }),
+        return magazines;
+      })
     );
   }
 
   GetById(id: number): Observable<any> {
-    return this.http.get(this.link + "/" + id).pipe(
+    return this.http.get(this.link + '/' + id).pipe(
       map((user) => {
-        return user
-      }),
+        return user;
+      })
     );
   }
 
-  GetAllProducts(id: number) : Observable<any>{
+  GetAllProducts(id: number): Observable<any> {
     return this.http.get(`${this.link}/${id}/products`).pipe(
       map((data) => {
-        return data as product[]
+        return data as product[];
       }),
       catchError((error: any) => {
         this._errorService.HandleBadResponse(error);
         throw error;
       })
-    )
+    );
   }
 
   GetLocations(productId: number, magazineId: number): Observable<any> {
-    return this.http.get(`${this.link}/${magazineId}/products/${productId}`).pipe(
-      map((data) => {
-        return data as product[]
-      }),
-    )
+    return this.http
+      .get(`${this.link}/${magazineId}/products/${productId}`)
+      .pipe(
+        map((data) => {
+          return data as product[];
+        })
+      );
   }
 
   Add(mazgaine: magazineToAdd): Observable<any> {
     return this.http.post(this.link, JSON.stringify({ ...mazgaine })).pipe(
-      tap(() => {   
+      tap(() => {
         return true;
-      }),
-    )
+      })
+    );
   }
 
   Edit(id: number, newMagazine: magazineToEdit): Observable<any> {
-    return this.http.put(this.link + "/" + id, JSON.stringify(newMagazine)).pipe(
-      tap(() => {
-        return true;
-      }),
-    );
+    return this.http
+      .put(this.link + '/' + id, JSON.stringify(newMagazine))
+      .pipe(
+        tap(() => {
+          return true;
+        })
+      );
   }
 
   Delete(id: number): Observable<any> {
@@ -83,5 +87,4 @@ export class MagazineService {
       })
     );
   }
-
 }

@@ -7,7 +7,7 @@ import { ErrorService } from '@services/error-handling/error.service';
 import { product } from '@static/types/productTypes';
 import { productLocation } from '@static/types/locationTypes';
 import { MagazineService } from '@app/Services/fetching-services/magazine.service';
-import { catchError, from, map, Observable, tap,throwError } from 'rxjs';
+import { catchError, from, map, Observable, tap, throwError } from 'rxjs';
 @Component({
   selector: 'app-product-info',
   templateUrl: './product-info.component.html',
@@ -47,31 +47,41 @@ export class ProductInfoComponent {
     if (!this.magazineId) {
       productPromise = this._reader.GetById(this.id);
     } else {
-      productPromise = this._magazineService.GetLocations(this.id, this.magazineId);
-    }  
+      productPromise = this._magazineService.GetLocations(
+        this.id,
+        this.magazineId
+      );
+    }
     const productObservable: Observable<product> = from(productPromise);
-    productObservable.pipe(
-      map((data: product) => {
-        this.product = data;
-        this.dataSource = new MatTableDataSource<productLocation>(data.locations);
-      }),
-      catchError((error) => {
-        console.error(error);
-        this.router.navigate(['/table']);
-        this._errorHandler.handleErrorCode(error);
-        return [];
-      })
-    ).subscribe();
+    productObservable
+      .pipe(
+        map((data: product) => {
+          this.product = data;
+          this.dataSource = new MatTableDataSource<productLocation>(
+            data.locations
+          );
+        }),
+        catchError((error) => {
+          console.error(error);
+          this.router.navigate(['/table']);
+          this._errorHandler.handleErrorCode(error);
+          return [];
+        })
+      )
+      .subscribe();
   }
 
-   handleDelete(id: number) {
-    this._locationService.Delete(id).pipe(
-      tap(() => {
+  handleDelete(id: number) {
+    this._locationService
+      .Delete(id)
+      .pipe(
+        tap(() => {
           this.loadData();
-      }),
-      catchError((error) => {
-        return throwError(() => new Error(error));
-      })
-    ).subscribe();
+        }),
+        catchError((error) => {
+          return throwError(() => new Error(error));
+        })
+      )
+      .subscribe();
   }
 }

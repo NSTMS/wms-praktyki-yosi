@@ -1,4 +1,4 @@
- {
+{
   "pl": {
     "1": "nie znaleziono id",
     "2": "coś nie tak w formularzu",
@@ -23,15 +23,16 @@
 
     "150": "Nie ma takiej półki",
     "151": "Nie ma produktu o takim id",
-    "152" :"Nie ma takiej lokacji produktu",
+    "152": "Nie ma takiej lokacji produktu",
     "153": "Nie ma takiego magazynu",
     "154": "Nie ma użytkownika o takim id",
     "155": "Nie ma takiego dokumentu",
-    "156" : "Nie ma tego produktu na liście ",
+    "156": "Nie ma tego produktu na liście ",
 
     "180": "Półka pełna",
     "181": "Nie ma wystarczającej ilości jednego z produktów w magazynie",
-    "182" : "W tej lokazlizacji nie ma wystarczającej ilości produktu"
+    "182": "W tej lokazlizacji nie ma wystarczającej ilości produktu",
+    "183": "Za mało produktu w danej lokalizacji"
   },
   "en": {
     "1": "id not found",
@@ -61,11 +62,10 @@
     "153": "This magazine doesn't exist",
     "154": "There is no users with this Id",
     "155": "This document doesn't exist",
-    "156" : "Nie ma tego produktu na liście ",
+    "156": "Nie ma tego produktu na liście ",
 
     "180": "Shelf id full",
     "181": "There is no enough quantity of the one of products in your order",
-    "182" : "W tej lokazlizacji nie ma wystarczającej ilości produktu"
-
+    "182": "W tej lokazlizacji nie ma wystarczającej ilości produktu"
   }
 }

@@ -26,10 +26,8 @@ export class UsersTableComponent {
     if (localStorage.getItem('role') != 'Admin')
       this.router.navigate(['/table']);
     this._reader.GetAll().subscribe((data) => {
-      if (data != null)
-        this.length = data.length || 0;
-      else
-        this.length = 0;
+      if (data != null) this.length = data.length || 0;
+      else this.length = 0;
 
       this.dataSource = new MatTableDataSource(data);
 
@@ -37,7 +35,6 @@ export class UsersTableComponent {
         this.dataSource.paginator = this.paginator;
     });
     this.displayedColumns = [...this._reader.columns, 'edit', 'delete'];
-
   }
 
   handleDelete(id: number) {

@@ -13,7 +13,10 @@ import { ErrorInterceptor } from './Interceptors/error-interceptor.interceptor';
 import { NavigationComponent } from './Components/navigation/navigation.component';
 
 @NgModule({
-  declarations: [AppComponent,NavigationComponent],
+  declarations: [
+    AppComponent,
+    NavigationComponent,
+  ],
   imports: [
     CommonModule,
     BrowserModule,
@@ -26,7 +29,6 @@ import { NavigationComponent } from './Components/navigation/navigation.componen
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-
   ],
   bootstrap: [AppComponent],
 })

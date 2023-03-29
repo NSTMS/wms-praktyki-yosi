@@ -32,7 +32,10 @@ const routes: Routes = [
   { path: 'magazines/addShelf', component: AddShelfComponent },
   { path: 'magazines/edit/:id', component: EditMagazineComponent },
   { path: 'magazines/info/:id', component: InfoMagazineComponent },
-  { path: 'magazines/info/:magazineId/product/:id', component: ProductInfoComponent },
+  {
+    path: 'magazines/info/:magazineId/product/:id',
+    component: ProductInfoComponent,
+  },
   { path: 'magazines', component: MagazineListComponent },
   { path: 'add', component: AddFormComponent },
   { path: 'login', component: LoginFormComponent },
@@ -41,9 +44,20 @@ const routes: Routes = [
   { path: 'users/edit/:id', component: UsersEditComponent },
   { path: 'documents', component: DocumentsListComponent },
   { path: 'documents/add', component: AddDocumentComponent },
-  { path: 'magazines/:magazineId/documents', component: DocumentsInMagazineComponent },
-  { path: 'documents/info/:id', pathMatch:'full', component: InfoDocumentComponent },
-  { path: 'documents/edit/:id', pathMatch:'full', component: EditDocumentComponent },
+  {
+    path: 'magazines/:magazineId/documents',
+    component: DocumentsInMagazineComponent,
+  },
+  {
+    path: 'documents/info/:id',
+    pathMatch: 'full',
+    component: InfoDocumentComponent,
+  },
+  {
+    path: 'documents/edit/:id',
+    pathMatch: 'full',
+    component: EditDocumentComponent,
+  },
 
   { path: '**', redirectTo: '/table' },
 ];
@@ -52,4 +66,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

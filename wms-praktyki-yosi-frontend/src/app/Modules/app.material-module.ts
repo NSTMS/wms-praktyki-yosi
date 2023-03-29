@@ -14,6 +14,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from "@angular/material/form-field";
+import {MatCheckboxModule} from '@angular/material/checkbox';
+
 @NgModule({
   // since we're exporting these modules, add them to export
   exports: [
@@ -32,6 +35,8 @@ import { MatCardModule } from '@angular/material/card';
     MatSnackBarModule,
     MatDialogModule,
     MatCardModule,
+    MatFormFieldModule,
+    MatCheckboxModule
   ],
 })
 export class AppMaterialModule {}

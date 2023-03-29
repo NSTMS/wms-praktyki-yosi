@@ -40,18 +40,15 @@ export class MagazineListComponent {
   }
 
   private loadData() {
-
     return this._magazineService.GetAll().subscribe((data) => {
-      if (data != null) 
-        this.length = data.length || 0; 
-      else 
-        this.length = 0;
+      if (data != null) this.length = data.length || 0;
+      else this.length = 0;
 
       this.dataSource = new MatTableDataSource(data);
 
       if (this.paginator != undefined)
         this.dataSource.paginator = this.paginator;
-      });
+    });
   }
 
   ngAfterContentInit() {
@@ -59,13 +56,16 @@ export class MagazineListComponent {
   }
 
   handleDelete(id: number) {
-    return this._magazineService.Delete(id).pipe(
-      tap(() => {
-        setTimeout(this.loadData, 1000);
-      }),
-      catchError((error) => {
-        return throwError(() => new Error(error));
-      })
-    ).subscribe();
+    return this._magazineService
+      .Delete(id)
+      .pipe(
+        tap(() => {
+          setTimeout(this.loadData, 1000);
+        }),
+        catchError((error) => {
+          return throwError(() => new Error(error));
+        })
+      )
+      .subscribe();
   }
 }
