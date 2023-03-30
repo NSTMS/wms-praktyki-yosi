@@ -13,6 +13,7 @@ using wms_praktyki_yosi_api.Enitities;
 using wms_praktyki_yosi_api.Exceptions;
 using wms_praktyki_yosi_api.Models;
 using wms_praktyki_yosi_api.Results;
+using wms_praktyki_yosi_api.Services.Static;
 
 namespace wms_praktyki_yosi_api.Services
 {
@@ -34,11 +35,7 @@ namespace wms_praktyki_yosi_api.Services
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        private readonly Dictionary<string, Expression<Func<UserDto, object>>> _orderByColumnSelector = new()
-        {
-            {nameof(UserDto.Email).ToLower(), p =>  p.Email},
-            {nameof(UserDto.Role).ToLower(), p => p.Role},
-        };
+        
 
         public AccountService(
             UserManager<User> userManager,
@@ -75,7 +72,7 @@ namespace wms_praktyki_yosi_api.Services
             {
                 try
                 {
-                    var selectedColumn = _orderByColumnSelector[query.OrderBy.ToLower()];
+                    var selectedColumn = OrderByColumnSelectors.Users[query.OrderBy.ToLower()];
                     var userDtoQuery = userDtos.AsQueryable();
                     userDtos = (query.Descending)
                          ? userDtoQuery.OrderBy(selectedColumn).ToList()

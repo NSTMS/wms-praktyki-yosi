@@ -10,5 +10,6 @@ namespace wms_praktyki_yosi_api.Services
         void UpdateProduct(int id, ProductDto dto);
         IEnumerable<ProductDto> GetAll(GetRequestQuery query);
         ProductDto GetById(int id);
+        IEnumerable<ProductLocationDto> GetProductLocations(int id, GetRequestQuery query);
     }
 }

@@ -62,12 +62,12 @@ namespace wms_praktyki_yosi_api.Controllers
             return Ok(res);
         }
         [HttpGet("{id}/products")]
-        public async Task<ActionResult> GetMagazineProductsByID([FromRoute] int id)
+        public async Task<ActionResult> GetMagazineProductsByID([FromRoute] int id, [FromQuery] GetRequestQuery query)
         {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
 
-            var res = _magazineService.GetProductsInMagazine(id);
+            var res = _magazineService.GetProductsInMagazine(id, query);
             return Ok(res);
         }
         [HttpGet("{id}/products/{prodId}")]

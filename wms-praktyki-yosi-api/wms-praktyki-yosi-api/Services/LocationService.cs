@@ -7,6 +7,8 @@ using System.Linq.Expressions;
 using wms_praktyki_yosi_api.Enitities;
 using wms_praktyki_yosi_api.Exceptions;
 using wms_praktyki_yosi_api.Models;
+using wms_praktyki_yosi_api.Services.Static;
+
 namespace wms_praktyki_yosi_api.Services
 {
 
@@ -14,13 +16,6 @@ namespace wms_praktyki_yosi_api.Services
     {
         private readonly IMapper _mapper;
         private MagazinesDbContext _context;
-
-        private readonly Dictionary<string, Expression<Func<ProductLocationDto, object>>> _orderByColumnSelector = new()
-        {
-            {nameof(ProductLocationDto.ProductId).ToLower(), p =>  p.ProductId},
-            {nameof(ProductLocationDto.Quantity).ToLower(), p => p.Quantity},
-            {nameof(ProductLocationDto.Tag).ToLower(), p => p.Tag},
-        };
 
         public LocationService(IMapper mapper, MagazinesDbContext context)
         {
@@ -75,7 +70,7 @@ namespace wms_praktyki_yosi_api.Services
             {
                 try
                 {
-                    var columnSelected = _orderByColumnSelector[query.OrderBy.ToLower()];
+                    var columnSelected = OrderByColumnSelectors.Locations[query.OrderBy.ToLower()];
 
                     dtos = (query.Descending)
                         ? dtos.OrderByDescending(columnSelected)

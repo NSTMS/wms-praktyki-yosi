@@ -11,7 +11,7 @@ namespace wms_praktyki_yosi_api.Services
         ReturnMagazineDto GetById(int id);
         List<ProductLocationDto> GetLocationsInMagazine(int id);
         public ProductDto GetProductInMagazine(int id, int productId);
-        List<ProductDto> GetProductsInMagazine(int id);
+        List<ProductDto> GetProductsInMagazine(int id, GetRequestQuery query);
         void UpdateMagazine(int id, EditMagazineDto dto);
         public List<ReturnProductLocationDto> GetLocationsOfProduct(int id, int productId);
     }

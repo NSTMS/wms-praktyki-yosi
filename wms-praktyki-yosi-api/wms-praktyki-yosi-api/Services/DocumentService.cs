@@ -7,6 +7,7 @@ using wms_praktyki_yosi_api.Enitities;
 using wms_praktyki_yosi_api.Exceptions;
 using wms_praktyki_yosi_api.Models;
 using wms_praktyki_yosi_api.Models.DocumentModels;
+using wms_praktyki_yosi_api.Services.Static;
 
 namespace wms_praktyki_yosi_api.Services
 {
@@ -29,21 +30,8 @@ namespace wms_praktyki_yosi_api.Services
         private readonly MagazinesDbContext _context;
         private readonly IMapper _mapper;
 
-        private readonly Dictionary<string, Expression<Func<DocumentDto, object>>> _orderByColumnDocumentSelector = new()
-        {
-            {nameof(DocumentDto.Date).ToLower(), p =>  p.Date},
-            {nameof(DocumentDto.Client).ToLower(), p => p.Client },
-            {nameof(DocumentDto.TotalQuantity).ToLower(), p => p.TotalQuantity},
-            {nameof(DocumentDto.QuantityDone).ToLower(), p => p.QuantityDone},
-        };
-        private readonly Dictionary<string, Expression<Func<DocumentItemDto, object>>> _orderByColumnItemSelector = new()
-        {
-            {nameof(DocumentItemDto.ProductName).ToLower(), p =>  p.ProductName},
-            {nameof(DocumentItemDto.Position).ToLower(), p => p.Position[0] - 'A' + p.Position[1] - '0' },
-            {nameof(DocumentItemDto.QuantityPlaned).ToLower(), p => p.QuantityPlaned},
-            {nameof(DocumentItemDto.QuantityDone).ToLower(), p => p.QuantityDone},
-            {nameof(DocumentItemDto.Tag).ToLower(), p => p.Tag},
-        };
+      
+        
 
         public DocumentService(MagazinesDbContext context, IMapper mapper)
         {
@@ -65,7 +53,7 @@ namespace wms_praktyki_yosi_api.Services
 
             if (query.OrderBy != null)
             {
-                var selectedColumn = _orderByColumnDocumentSelector[query.OrderBy.ToLower()];
+                var selectedColumn = OrderByColumnSelectors.Documents[query.OrderBy.ToLower()];
                 documentDtos = (query.Descending)
                     ? documentDtos.OrderByDescending(selectedColumn)
                     : documentDtos.OrderBy(selectedColumn);
@@ -130,7 +118,7 @@ namespace wms_praktyki_yosi_api.Services
 
             if (query.OrderBy != null)
             {
-                var selectedColumn = _orderByColumnItemSelector[query.OrderBy.ToLower()];
+                var selectedColumn = OrderByColumnSelectors.Items[query.OrderBy.ToLower()];
                 items = (query.Descending)
                     ? items.OrderByDescending(selectedColumn)
                     : items.OrderBy(selectedColumn);
