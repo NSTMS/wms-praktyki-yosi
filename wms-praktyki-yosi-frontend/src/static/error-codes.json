@@ -30,7 +30,8 @@
 
     "180": "Półka pełna",
     "181": "Nie ma wystarczajacej ilości jednego z produktów w magazynie",
-    "182": "Za mało miejsca w Magzynie"
+    "182": "Za mało miejsca w Magzynie",
+    "183": "Za mało produktu w danej lokalizacji"
   },
   "en": {
     "1": "id not found",

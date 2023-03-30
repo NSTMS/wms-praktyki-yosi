@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using System.Linq;
+using System.Linq.Expressions;
 using wms_praktyki_yosi_api.Enitities;
 using wms_praktyki_yosi_api.Exceptions;
+using wms_praktyki_yosi_api.Models;
 using wms_praktyki_yosi_api.Models.DocumentModels;
 
 namespace wms_praktyki_yosi_api.Services
 {
     public interface IDocumentService
     {
-        List<DocumentDto> GetAllDocuments();
+        List<DocumentDto> GetAllDocuments(GetRequestQuery query);
         string AddDocument(AddDocumentDto dto);
         void AddItemToDocument(string id, AddDocumentItemDto item);
         void DeleteDocument(string id);
@@ -19,6 +21,7 @@ namespace wms_praktyki_yosi_api.Services
         void UpdateItemInDocument(string documentId, int productId, EditDocumentItemDto item);
         void VisitLocation(string documentId, DocumentVisitLocationDto location);
         DetailedDocumentDto GetDocumentDetails(string id);
+        IEnumerable<DocumentItemDto> GetDocumentItems(string id, GetRequestQuery query);
     }
 
     public class DocumentService : IDocumentService
@@ -26,21 +29,49 @@ namespace wms_praktyki_yosi_api.Services
         private readonly MagazinesDbContext _context;
         private readonly IMapper _mapper;
 
+        private readonly Dictionary<string, Expression<Func<DocumentDto, object>>> _orderByColumnDocumentSelector = new()
+        {
+            {nameof(DocumentDto.Date).ToLower(), p =>  p.Date},
+            {nameof(DocumentDto.Client).ToLower(), p => p.Client },
+            {nameof(DocumentDto.TotalQuantity).ToLower(), p => p.TotalQuantity},
+            {nameof(DocumentDto.QuantityDone).ToLower(), p => p.QuantityDone},
+        };
+        private readonly Dictionary<string, Expression<Func<DocumentItemDto, object>>> _orderByColumnItemSelector = new()
+        {
+            {nameof(DocumentItemDto.ProductName).ToLower(), p =>  p.ProductName},
+            {nameof(DocumentItemDto.Position).ToLower(), p => p.Position[0] - 'A' + p.Position[1] - '0' },
+            {nameof(DocumentItemDto.QuantityPlaned).ToLower(), p => p.QuantityPlaned},
+            {nameof(DocumentItemDto.QuantityDone).ToLower(), p => p.QuantityDone},
+            {nameof(DocumentItemDto.Tag).ToLower(), p => p.Tag},
+        };
+
         public DocumentService(MagazinesDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
         }
-        public List<DocumentDto> GetAllDocuments()
+        public List<DocumentDto> GetAllDocuments(GetRequestQuery query)
         {
             var documents = _context
                 .Documents
                 .Include(d => d.Items)
                 .Where(d => !d.Deleted)
+                .Where(d => (query.SearchTerm == null) || d.Client.ToLower().Contains(query.SearchTerm.ToLower())
+                                                       || d.Date.ToString().ToLower().Contains(query.SearchTerm.ToLower())
+                                                       || d.Id.ToString().ToLower().Contains(query.SearchTerm.ToLower()))
                 .ToList();
+                
+            var documentDtos = _mapper.Map<List<DocumentDto>>(documents).AsQueryable();
 
-            var documentDtos = _mapper.Map<List<DocumentDto>>(documents);
-            return documentDtos;
+            if (query.OrderBy != null)
+            {
+                var selectedColumn = _orderByColumnDocumentSelector[query.OrderBy.ToLower()];
+                documentDtos = (query.Descending)
+                    ? documentDtos.OrderByDescending(selectedColumn)
+                    : documentDtos.OrderBy(selectedColumn);
+            }
+
+            return documentDtos.ToList();
         }
         public DetailedDocumentDto GetDocumentDetails(string id)
         {
@@ -88,9 +119,29 @@ namespace wms_praktyki_yosi_api.Services
             document.Finished = finished;
             _context.SaveChanges();
         }
+        public IEnumerable<DocumentItemDto> GetDocumentItems(string id, GetRequestQuery query)
+        {
+            var document = GetDocumentWithItemsByGuid(id);
+            var items = _mapper.Map<List<DocumentItemDto>>(document.Items).AsQueryable();
+
+            items = items.Where(i => (query.SearchTerm == null) || i.Tag.ToLower().Contains(query.SearchTerm.ToLower())
+                                                                    || i.Status.ToLower().Contains(query.SearchTerm.ToLower())
+                                                                    || i.Position.ToLower().Contains(query.SearchTerm.ToLower()));
+
+            if (query.OrderBy != null)
+            {
+                var selectedColumn = _orderByColumnItemSelector[query.OrderBy.ToLower()];
+                items = (query.Descending)
+                    ? items.OrderByDescending(selectedColumn)
+                    : items.OrderBy(selectedColumn);
+            }
+
+            return items;
+        }
         public void AddItemToDocument (string id, AddDocumentItemDto item)
         {
             var document = GetDocumentWithItemsByGuid(id);
+            CheckIfFinished(document);
 
             var productId = GetProductId(item.ProductName);
 
@@ -140,6 +191,7 @@ namespace wms_praktyki_yosi_api.Services
         public void DeleteDocumentItem(string documentId, int productId)
         {
             var document = GetDocumentWithItemsByGuid(documentId);
+            CheckIfFinished(document);
 
             var itemsToDelete = document
                 .Items
@@ -151,34 +203,20 @@ namespace wms_praktyki_yosi_api.Services
         public void UpdateItemInDocument(string documentId, int productId, EditDocumentItemDto item)
         {
             var document = GetDocumentWithItemsByGuid(documentId);
+            CheckIfFinished(document);
 
             var product = _context
                 .Products
                 .FirstOrDefault(p => p.Id == productId)
                 ?? throw new NotFoundException("151");
 
-            var newItem = new AddDocumentItemDto()
-            {
-                ProductName = product.ProductName,
-                Arriving = item.Arriving,
-                Quantity = item.Quantity,
-                Tag = item.Tag
-            };
-            var itemsToDelete = document
-                .Items
-                .Where(i => i.ProductId == productId);
-
-            _context.RemoveRange(itemsToDelete);
-            _context.SaveChanges();
-
-            var itemList = ConvertDocumentItemDtoToItemList(document.Id, document.MagazineId, newItem);
-
-            _context.AddRange(itemList);
-            _context.SaveChanges();
+            HandleEditSameArriving(item, document, product);
         }
+
         public void VisitLocation(string documentId, DocumentVisitLocationDto location)
         {
             var document = GetDocumentByGuid(documentId);
+            CheckIfFinished(document);
 
             var documentItem = _context
                 .DocumentItems
@@ -200,11 +238,15 @@ namespace wms_praktyki_yosi_api.Services
         }
         
         // ------- Private Functions --------
+        private void CheckIfFinished(Document document)
+        {
+            if (document.Finished) throw new BadRequestException("190");
+        }
         private Document GetDocumentByGuid(string guid)
         {
             return _context
                 .Documents
-                .FirstOrDefault(d => d.Id.ToString() == guid)
+                .FirstOrDefault(d => d.Id.ToString() == guid && !d.Deleted)
                 ?? throw new NotFoundException("155");
         }
         private Document GetDocumentWithItemsByGuid(string guid)
@@ -212,7 +254,7 @@ namespace wms_praktyki_yosi_api.Services
             return _context
                 .Documents
                 .Include(d => d.Items)
-                .FirstOrDefault(d => d.Id.ToString() == guid)
+                .FirstOrDefault(d => d.Id.ToString() == guid && !d.Deleted)
                 ?? throw new NotFoundException("155");
         }
         private int GetProductId(string productName)
@@ -224,6 +266,101 @@ namespace wms_praktyki_yosi_api.Services
                     ?? throw new NotFoundException("151")
                 ).Id;
         }
+        private void HandleEditSameArriving(EditDocumentItemDto item, Document document, Product product)
+        {
+            var docItems = document
+                            .Items
+                            .AsQueryable()
+                            .Where(i => i.ProductId == product.Id);
+
+            if (!docItems.Any())
+            {
+                throw new BadRequestException("nie ma czego edytowac"); // TODO: err
+            }
+
+            var quantityAlredyDone = docItems.Sum(i => i.QuantityDone);
+            var arriving = docItems.First().Arriving;
+            if (quantityAlredyDone == 0)
+            {
+                RegenerateDocumentItems(product.Id, item, document, product, arriving);
+                return;
+            }
+
+            if (quantityAlredyDone > item.Quantity)
+            {
+                throw new BadRequestException("To many already Done");// TODO: Err codes
+            }
+
+            var quantityPlannedBefore = docItems.Sum(i => i.Quantityplaned);
+
+            if (quantityPlannedBefore > item.Quantity)
+            {
+                docItems = docItems.OrderBy(i => i.Quantityplaned - i.QuantityDone);
+                var toDecreese = quantityPlannedBefore - item.Quantity;
+                foreach (var docItem in docItems)
+                {
+                    var notDone = docItem.Quantityplaned - docItem.QuantityDone;
+                    if (notDone <= toDecreese)
+                    {
+                        toDecreese -= notDone;
+                        docItem.Quantityplaned = docItem.QuantityDone;
+                        if(docItem.Quantityplaned == 0)
+                        {
+                            _context.DocumentItems.Remove(docItem);
+                        }
+                    }
+                    else
+                    {
+                        docItem.Quantityplaned -= toDecreese;
+                        _context.SaveChanges();
+                        return;
+                    }
+                }
+                return;
+            }
+
+
+            var itemsToDelete = document
+                .Items
+                .Where(i => i.ProductId == product.Id && i.QuantityDone == 0);
+
+            var newItem = new AddDocumentItemDto()
+            {
+                ProductName = product.ProductName,
+                Arriving = arriving,
+                Quantity = item.Quantity - quantityPlannedBefore + itemsToDelete.Sum(i => i.Quantityplaned),
+                Tag = item.Tag
+            };
+
+            _context.RemoveRange(itemsToDelete);
+
+            var itemList = ConvertDocumentItemDtoToItemList(document.Id, document.MagazineId, newItem);
+
+            _context.AddRange(itemList);
+            _context.SaveChanges();
+        }
+        private void RegenerateDocumentItems(int productId, EditDocumentItemDto item, Document document, Product product, bool arrving)
+        {
+            var newItem = new AddDocumentItemDto()
+            {
+                ProductName = product.ProductName,
+                Arriving = arrving,
+                Quantity = item.Quantity,
+                Tag = item.Tag
+            };
+            var itemsToDelete = document
+                .Items
+                .Where(i => i.ProductId == productId);
+
+            _context.RemoveRange(itemsToDelete);
+            _context.SaveChanges();
+
+            var itemList = ConvertDocumentItemDtoToItemList(document.Id, document.MagazineId, newItem);
+
+            _context.AddRange(itemList);
+            _context.SaveChanges();
+        }
+
         private List<DocumentItem> GetDocumentItems(
             Guid documentId,
             List<AddDocumentItemDto> itemList,
@@ -425,12 +562,14 @@ namespace wms_praktyki_yosi_api.Services
                 ) ?? throw new NotFoundException("152");
 
             if (itemLocation.Quantity < location.Quantity)
-                throw new BadRequestException("182");
+                throw new BadRequestException("183");
 
             if (itemLocation.Quantity != location.Quantity)
                 itemLocation.Quantity -= location.Quantity;
             else
-                _context.Remove(itemLocation);
+                _context
+                    .ProductLocations
+                    .Remove(itemLocation);
         }
 
     }

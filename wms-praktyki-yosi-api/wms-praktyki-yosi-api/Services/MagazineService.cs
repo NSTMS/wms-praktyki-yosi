@@ -17,13 +17,14 @@ namespace wms_praktyki_yosi_api.Services
 
         private readonly Dictionary<string, Expression<Func<ReturnMagazineDto, object>>> _orderByColumnSelector = new()
         {
-            {nameof(ReturnMagazineDto.Name), p =>  p.Name},
-            {nameof(ReturnMagazineDto.Dimentions), p => p.Dimentions },
-            {nameof(ReturnMagazineDto.ShelvesPerRow), p => p.ShelvesPerRow},
-            {nameof(ReturnMagazineDto.MaxShelfLoad), p => p.MaxShelfLoad},
-            {nameof(ReturnMagazineDto.ShelfNumber), p => p.ShelfNumber},
-            {nameof(ReturnMagazineDto.TotalCapacity), p => p.TotalCapacity},
-            {nameof(ReturnMagazineDto.TotalQuantity), p => p.TotalQuantity},
+            {nameof(ReturnMagazineDto.Name).ToLower(), p =>  p.Name},
+            {nameof(ReturnMagazineDto.Dimentions).ToLower(), p => p.Dimentions },
+            {nameof(ReturnMagazineDto.ShelvesPerRow).ToLower(), p => p.ShelvesPerRow},
+            {nameof(ReturnMagazineDto.MaxShelfLoad).ToLower(), p => p.MaxShelfLoad},
+            {nameof(ReturnMagazineDto.ShelfNumber).ToLower(), p => p.ShelfNumber},
+            {nameof(ReturnMagazineDto.TotalCapacity).ToLower(), p => p.TotalCapacity},
+            {nameof(ReturnMagazineDto.TotalQuantity).ToLower(), p => p.TotalQuantity},
+            {nameof(ReturnMagazineDto.FreeSpace).ToLower(), p => p.FreeSpace},
         };
 
         public MagazineService(MagazinesDbContext context, IMapper mapper)
@@ -36,14 +37,15 @@ namespace wms_praktyki_yosi_api.Services
         {
             var magzines = _context
                 .Magazines
-                .Where(m => (query.SearchTerm == null) || m.Name.ToLower().Contains(query.SearchTerm.ToLower()))
+                .Where(m => (query.SearchTerm == null) || m.Name.ToLower().Contains(query.SearchTerm.ToLower())
+                                                       || m.Address.ToLower().Contains(query.SearchTerm.ToLower()))
                 .ToList();
 
 
             var magazineDtos = new List<ReturnMagazineDto>();
             foreach(var magazine in magzines)
             {
-                var magazineDto = GetById(magazine.Id);
+                var magazineDto = ConvertMagazineToDto(magazine);
                 magazineDtos.Add(magazineDto);
             }
             var magazineDtosQuery = magazineDtos.AsQueryable();
@@ -51,7 +53,7 @@ namespace wms_praktyki_yosi_api.Services
             {
                 try
                 {
-                    var selectedColum = _orderByColumnSelector[query.OrderBy];
+                    var selectedColum = _orderByColumnSelector[query.OrderBy.ToLower()];
                     magazineDtosQuery = (query.Descending)
                     ? magazineDtosQuery.OrderByDescending(selectedColum)
                     : magazineDtosQuery.OrderBy(selectedColum);
@@ -71,9 +73,16 @@ namespace wms_praktyki_yosi_api.Services
                 .FirstOrDefault(x => x.Id == id)
                 ?? throw new NotFoundException("153");
 
+            ReturnMagazineDto magazineDto = ConvertMagazineToDto(magazine);
+
+            return magazineDto;
+        }
+
+        private ReturnMagazineDto ConvertMagazineToDto(Magazine magazine)
+        {
             var shelvesInMagzine = _context
-                    .Shelves
-                    .Where(s => s.MagazineId == magazine.Id);
+                                .Shelves
+                                .Where(s => s.MagazineId == magazine.Id);
 
             var maxShelfLoad = shelvesInMagzine.Min(s => s.MaxLoad);
             var numberOfShefls = shelvesInMagzine.Count();
@@ -87,6 +96,7 @@ namespace wms_praktyki_yosi_api.Services
 
             var magazineDto = new ReturnMagazineDto
             {
+                Id = magazine.Id,
                 Name = magazine.Name,
                 Address = magazine.Address,
                 Dimentions = magazine.Dimentions,
@@ -97,9 +107,9 @@ namespace wms_praktyki_yosi_api.Services
                 TotalQuantity = totalQuantity,
                 FreeSpace = totalCapacity - totalQuantity
             };
-
             return magazineDto;
         }
+
         public List<ProductLocationDto> GetLocationsInMagazine(int id)
         {
             var locations = _context

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using wms_praktyki_yosi_api.Models;
 using wms_praktyki_yosi_api.Models.DocumentModels;
 using wms_praktyki_yosi_api.Models.Validators;
 using wms_praktyki_yosi_api.Services;
@@ -20,9 +21,9 @@ namespace wms_praktyki_yosi_api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<DocumentDto>>> GetAllDocuments()
+        public async Task<ActionResult<List<DocumentDto>>> GetAllDocuments([FromQuery]GetRequestQuery query)
         {
-            var documents = _service.GetAllDocuments();
+            var documents = _service.GetAllDocuments(query);
             return Ok(documents);
         }
 
@@ -61,6 +62,13 @@ namespace wms_praktyki_yosi_api.Controllers
         {
             _service.VisitLocation(id, location);
             return Ok();
+        }
+
+        [HttpGet("{id}/items")]
+        public async Task<ActionResult> GetDocumentItems([FromRoute] string id, [FromQuery]GetRequestQuery query)
+        {
+            var items = _service.GetDocumentItems(id, query);
+            return Ok(items);
         }
 
         [HttpPost("{id}/items")]

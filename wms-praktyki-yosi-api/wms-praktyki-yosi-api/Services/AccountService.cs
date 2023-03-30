@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Text;
 using wms_praktyki_yosi_api.Enitities;
@@ -17,7 +19,7 @@ namespace wms_praktyki_yosi_api.Services
     public interface IAccountService
     {
         Task RegisterUser(RegisterUserDto dto);
-        Task<List<UserDto>> GetAll();
+        Task<List<UserDto>> GetAll(GetRequestQuery query);
         Task<LoginResult> GetToken(UserLoginDto dto);
         Task ModifyUserRole(string id, string newrole);
         Task<User> Get(string id);
@@ -32,6 +34,12 @@ namespace wms_praktyki_yosi_api.Services
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
+        private readonly Dictionary<string, Expression<Func<UserDto, object>>> _orderByColumnSelector = new()
+        {
+            {nameof(UserDto.Email).ToLower(), p =>  p.Email},
+            {nameof(UserDto.Role).ToLower(), p => p.Role},
+        };
+
         public AccountService(
             UserManager<User> userManager,
             RoleManager<IdentityRole> roleManager,
@@ -44,20 +52,40 @@ namespace wms_praktyki_yosi_api.Services
             _context = context;
         }
         
-        public async Task<List<UserDto>> GetAll()
+        public async Task<List<UserDto>> GetAll(GetRequestQuery query)
         {
-            var users = _userManager.Users.ToList();
+            var users = _userManager
+                .Users
+                .Where(u => (query.SearchTerm == null) || u.Email.ToLower().Contains(query.SearchTerm.ToLower()))
+                .ToList();
 
             var userDtos = new List<UserDto>();
             foreach (var user in users)
             {
                 userDtos.Add(new UserDto()
-                    {
-                        Id = user.Id,
-                        Email = user.Email,
-                        PasswordHash = user.PasswordHash,
-                        Role = (await _userManager.GetRolesAsync(user))[0]
-                    });
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    PasswordHash = user.PasswordHash,
+                    Role = (await _userManager.GetRolesAsync(user))[0]
+                });
+            }
+
+            if (query.OrderBy != null)
+            {
+                try
+                {
+                    var selectedColumn = _orderByColumnSelector[query.OrderBy.ToLower()];
+                    var userDtoQuery = userDtos.AsQueryable();
+                    userDtos = (query.Descending)
+                         ? userDtoQuery.OrderBy(selectedColumn).ToList()
+                         : userDtoQuery.OrderByDescending(selectedColumn).ToList();
+                }
+                catch (KeyNotFoundException)
+                {
+                    throw new BadRequestException("Bad column Name");
+                }
+                
             }
 
             return userDtos;

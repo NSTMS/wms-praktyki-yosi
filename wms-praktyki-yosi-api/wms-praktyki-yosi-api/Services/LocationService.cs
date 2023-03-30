@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Identity.Client;
+using System.Linq;
+using System.Linq.Expressions;
 using wms_praktyki_yosi_api.Enitities;
 using wms_praktyki_yosi_api.Exceptions;
 using wms_praktyki_yosi_api.Models;
@@ -12,6 +14,13 @@ namespace wms_praktyki_yosi_api.Services
     {
         private readonly IMapper _mapper;
         private MagazinesDbContext _context;
+
+        private readonly Dictionary<string, Expression<Func<ProductLocationDto, object>>> _orderByColumnSelector = new()
+        {
+            {nameof(ProductLocationDto.ProductId).ToLower(), p =>  p.ProductId},
+            {nameof(ProductLocationDto.Quantity).ToLower(), p => p.Quantity},
+            {nameof(ProductLocationDto.Tag).ToLower(), p => p.Tag},
+        };
 
         public LocationService(IMapper mapper, MagazinesDbContext context)
         {
@@ -46,7 +55,7 @@ namespace wms_praktyki_yosi_api.Services
             return product.Id;
         }
 
-        public IEnumerable<ProductLocationDto> GetAllLocations()
+        public IEnumerable<ProductLocationDto> GetAllLocations(GetRequestQuery query)
         {
             var dtos = _context
                 .ProductLocations
@@ -55,8 +64,29 @@ namespace wms_praktyki_yosi_api.Services
                     {
                         ProductId = p.ProductId,
                         Position = p.Shelf.Position,
-                        Quantity = p.Quantity
-                    });
+                        MagazineId = p.Shelf.MagazineId,
+                        Quantity = p.Quantity,
+                        Tag = p.Tag
+                    })
+                .Where(l => (query.SearchTerm == null) || l.Tag.ToLower().Contains(query.SearchTerm.ToLower())
+                                                       || l.Position.ToLower().Contains(query.SearchTerm.ToLower()));
+
+            if (query.OrderBy != null)
+            {
+                try
+                {
+                    var columnSelected = _orderByColumnSelector[query.OrderBy.ToLower()];
+
+                    dtos = (query.Descending)
+                        ? dtos.OrderByDescending(columnSelected)
+                        : dtos.OrderBy(columnSelected);
+                }
+                catch (KeyNotFoundException)
+                {
+                    throw new BadRequestException("Bad column");
+                }
+                   
+            }
 
             return dtos;
         }

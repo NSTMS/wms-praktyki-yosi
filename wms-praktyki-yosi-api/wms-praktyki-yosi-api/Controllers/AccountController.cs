@@ -8,6 +8,7 @@ using System.Web.Http.Results;
 using wms_praktyki_yosi_api.Enitities;
 using wms_praktyki_yosi_api.Exceptions;
 using wms_praktyki_yosi_api.Models;
+using wms_praktyki_yosi_api.Models.Validators;
 using wms_praktyki_yosi_api.Services;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -15,6 +16,7 @@ namespace wms_praktyki_yosi_api.Controllers
 {
     [Route("api/account")]
     [ApiController]
+    [ServiceFilter(typeof(ValidationFilterAttribute))]
     public class AccountController: ControllerBase
     {
         private readonly IAccountService _service;
@@ -30,12 +32,12 @@ namespace wms_praktyki_yosi_api.Controllers
 
         [HttpGet("users")]
         [Authorize(Roles = "Admin,Moderator")]
-        public async Task<ActionResult<List<UserDto>>> GetAll()
+        public async Task<ActionResult<List<UserDto>>> GetAll([FromQuery] GetRequestQuery query)
         {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Forbid();
 
-            return await _service.GetAll();
+            return await _service.GetAll(query);
         }
 
         [HttpGet("users/{id}")]
