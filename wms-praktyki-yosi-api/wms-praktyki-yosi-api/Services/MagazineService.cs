@@ -177,7 +177,7 @@ namespace wms_praktyki_yosi_api.Services
 
             
             _context.Magazines.Add(magazine);
-            _context.SaveChanges();
+            ConcurencyResolver.SafeSave(_context);
             var magazineId = magazine.Id;
             List<Shelf>? shelfList;
 
@@ -188,13 +188,13 @@ namespace wms_praktyki_yosi_api.Services
             catch
             {
                 _context.Magazines.Remove(magazine);
-                _context.SaveChanges();
+                ConcurencyResolver.SafeSave(_context);
                 throw new BadRequestException("117");
             }
 
             
             _context.Shelves.AddRange(shelfList);
-            _context.SaveChanges();
+            ConcurencyResolver.SafeSave(_context);
             return magazine.Id;
 
         }
@@ -205,14 +205,14 @@ namespace wms_praktyki_yosi_api.Services
 
             magazine.Address = dto.Address;
             magazine.Name = dto.Name;
-            _context.SaveChanges();
+            ConcurencyResolver.SafeSave(_context);
         }
         public void DeleteMagazine(int id)
         {
             var magazine = GetMagazineById(id);
 
             magazine.Deleted = true;
-            _context.SaveChanges();
+            ConcurencyResolver.SafeSave(_context);
         }
 
 

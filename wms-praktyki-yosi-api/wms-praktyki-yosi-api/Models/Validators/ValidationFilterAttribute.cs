@@ -13,6 +13,7 @@ namespace wms_praktyki_yosi_api.Models.Validators
             if (!context.ModelState.IsValid)
             {
                 context.Result = new BadRequestObjectResult(new { Errors = new List<string>() { "2" } });
+                /*context.Result = new BadRequestObjectResult(context.ModelState);*/
             }
 
 

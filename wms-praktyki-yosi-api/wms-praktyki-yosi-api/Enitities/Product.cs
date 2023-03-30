@@ -12,5 +12,7 @@ namespace wms_praktyki_yosi_api.Enitities
         public string EAN { get; set; }
         public double Price { get; set; }
         public virtual List<ProductLocations> Locations { get; set; }
+
+        public byte[] Version { get; set; }
     }
 }

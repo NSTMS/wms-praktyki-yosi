@@ -11,5 +11,7 @@ namespace wms_praktyki_yosi_api.Enitities
         public int ShelvesPerRow { get; set; }
         public bool Deleted { get; set; }
         public virtual List<Shelf> Shelves { get; set; }
+
+        public byte[] Version { get; set; }
     }
 }

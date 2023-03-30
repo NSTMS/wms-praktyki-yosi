@@ -16,10 +16,6 @@ namespace wms_praktyki_yosi_api.Services
         private readonly MagazinesDbContext _context;
         private readonly IMapper _mapper;
 
-       
-
-
-
         public ProductService(MagazinesDbContext context, IMapper mapper)
         {
             _context = context;
@@ -91,7 +87,7 @@ namespace wms_praktyki_yosi_api.Services
             var product = _mapper.Map<Product>( dto );
             _context.Products
                 .Add( product );
-            _context.SaveChanges();
+            ConcurencyResolver.SafeSave(_context);
             return product.Id;
             
         }
@@ -104,7 +100,7 @@ namespace wms_praktyki_yosi_api.Services
             prod.ProductName = dto.ProductName;
             prod.EAN = dto.EAN;
             prod.Price = dto.Price;
-            _context.SaveChanges();
+            ConcurencyResolver.SafeSave(_context);
         }
 
         public void RemoveProduct(int id)
@@ -117,7 +113,7 @@ namespace wms_praktyki_yosi_api.Services
                  .Products
                  .Remove(prod);
 
-            _context.SaveChanges();
+            ConcurencyResolver.SafeSave(_context);
         }
 
         public IEnumerable<ProductLocationDto> GetProductLocations(int id, GetRequestQuery query)

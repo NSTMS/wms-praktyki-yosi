@@ -34,9 +34,6 @@ namespace wms_praktyki_yosi_api.Enitities
                 .IsRequired()
                 .HasMaxLength(13);
 
-            /*modelBuilder.Entity<ProductLocations>()
-                .Property()*/
-
             modelBuilder.Entity<Document>()
                 .Property(d => d.Date)
                 .IsRequired();
@@ -52,6 +49,31 @@ namespace wms_praktyki_yosi_api.Enitities
             modelBuilder.Entity<DocumentItem>()
                 .Property(di => di.Quantityplaned)
                 .IsRequired();
+
+            modelBuilder.Entity<Document>()
+                .Property(x => x.Version)
+                .IsRowVersion();
+
+            modelBuilder.Entity<DocumentItem>()
+                .Property(x => x.Version)
+                .IsRowVersion();
+
+            modelBuilder.Entity<Magazine>()
+                .Property(x => x.Version)
+                .IsRowVersion();
+
+            modelBuilder.Entity<Product>()
+                .Property(x => x.Version)
+                .IsRowVersion();
+
+            modelBuilder.Entity<ProductLocations>()
+                .Property(x => x.Version)
+                .IsRowVersion();
+
+            modelBuilder.Entity<Shelf>()
+                .Property(x => x.Version)
+                .IsRowVersion();
+
 
 
             base.OnModelCreating(modelBuilder);

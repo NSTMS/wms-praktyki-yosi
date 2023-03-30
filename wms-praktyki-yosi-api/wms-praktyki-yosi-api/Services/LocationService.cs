@@ -15,7 +15,7 @@ namespace wms_praktyki_yosi_api.Services
     public class LocationService : ILocationService
     {
         private readonly IMapper _mapper;
-        private MagazinesDbContext _context;
+        private readonly MagazinesDbContext _context;
 
         public LocationService(IMapper mapper, MagazinesDbContext context)
         {
@@ -45,7 +45,7 @@ namespace wms_praktyki_yosi_api.Services
             var mappedProd = _mapper.Map<ProductLocations>(location);
             mappedProd.ShelfId = shelf.Id;
             _context.ProductLocations.Add(mappedProd);
-            _context.SaveChanges();
+            ConcurencyResolver.SafeSave(_context);
 
             return product.Id;
         }
@@ -124,7 +124,7 @@ namespace wms_praktyki_yosi_api.Services
             loc.ShelfId = shelf.Id;
             loc.Quantity = location.Quantity;
 
-            _context.SaveChanges();
+            ConcurencyResolver.SafeSave(_context);
         }
         public void DeleteLocation(int id)
         {
@@ -134,7 +134,7 @@ namespace wms_praktyki_yosi_api.Services
                 ?? throw new NotFoundException("152");
 
             _context.ProductLocations.Remove(loc);
-            _context.SaveChanges();
+            ConcurencyResolver.SafeSave(_context);
         }
     }
 }

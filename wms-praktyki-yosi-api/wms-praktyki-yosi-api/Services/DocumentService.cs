@@ -15,14 +15,14 @@ namespace wms_praktyki_yosi_api.Services
     {
         List<DocumentDto> GetAllDocuments(GetRequestQuery query);
         string AddDocument(AddDocumentDto dto);
-        void AddItemToDocument(string id, AddDocumentItemDto item);
-        void DeleteDocument(string id);
-        void DeleteDocumentItem(string documentId, int productId);
-        void MarkDocumentAsFinished(string id, bool finished);
-        void UpdateItemInDocument(string documentId, int productId, EditDocumentItemDto item);
-        void VisitLocation(string documentId, DocumentVisitLocationDto location);
         DetailedDocumentDto GetDocumentDetails(string id);
+        void DeleteDocument(string id);
         IEnumerable<DocumentItemDto> GetDocumentItems(string id, GetRequestQuery query);
+        void AddItemToDocument(string id, AddDocumentItemDto item);
+        void DeleteDocumentItem(string documentId, string productId);
+        void UpdateItemInDocument(string documentId, int productId, EditDocumentItemDto item);
+        void MarkDocumentAsFinished(string id, bool finished);
+        void VisitLocation(string documentId, DocumentVisitLocationDto location);
     }
 
     public class DocumentService : IDocumentService
@@ -75,21 +75,24 @@ namespace wms_praktyki_yosi_api.Services
         public string AddDocument(AddDocumentDto dto)
         {
             var doc = _mapper.Map<Document>(dto);
-
-            _context.Documents.Add(doc);
-            _context.SaveChanges();
-            try
+            using (var transaction = _context.Database.BeginTransaction())
             {
-                var docItems = GetDocumentItems(doc.Id, dto.ItemList, dto.MagazineId);
-                _context.DocumentItems.AddRange(docItems);
-                _context.SaveChanges();
-        }
-            catch
-            {
-                _context.Documents.Remove(doc);
-                _context.SaveChanges();
-                throw;
+                
+                try
+                {
+                    var docItems = GetDocumentItems(doc.Id, dto.ItemList, dto.MagazineId);
+                    doc.Items = docItems;
+                    _context.Documents.Add(doc);
+                    ConcurencyResolver.SafeSave(_context);
+                    transaction.Commit();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
             }
+            
 
             return doc.Id.ToString();
         }
@@ -98,14 +101,14 @@ namespace wms_praktyki_yosi_api.Services
             var document = GetDocumentByGuid(id);
 
             document.Deleted = true;
-            _context.SaveChanges();
+            ConcurencyResolver.SafeSave(_context);
         }
         public void MarkDocumentAsFinished(string id, bool finished)
         {
             var document = GetDocumentByGuid(id);
 
             document.Finished = finished;
-            _context.SaveChanges();
+            ConcurencyResolver.SafeSave(_context);
         }
         public IEnumerable<DocumentItemDto> GetDocumentItems(string id, GetRequestQuery query)
         {
@@ -134,21 +137,20 @@ namespace wms_praktyki_yosi_api.Services
             var productId = GetProductId(item.ProductName);
 
 
-            var itemsInDocument = document
+            var notStartedItems = document
                 .Items
-                .Where(i => i.ProductId == productId);
+                .Where(i => i.ProductId == productId && i.QuantityDone == 0);
 
 
-            if (itemsInDocument.Any())
+            if (notStartedItems.Any())
             {
 
                 int newQuantity = 0;
                 int itemQuantity = item.Quantity;
 
-                // Srry for this bullshiet code, i dont even balive it works
-                var oldQuantity = itemsInDocument.Sum(i => i.Quantityplaned);
+                var oldQuantity = notStartedItems.Sum(i => i.Quantityplaned);
 
-                if (itemsInDocument.First().Arriving == item.Arriving)
+                if (notStartedItems.First().Arriving == item.Arriving)
                 {
                     newQuantity = oldQuantity + itemQuantity;
                 }
@@ -163,8 +165,8 @@ namespace wms_praktyki_yosi_api.Services
                 }
                 
 
-                _context.DocumentItems.RemoveRange(itemsInDocument);
-                _context.SaveChanges();
+                _context.DocumentItems.RemoveRange(notStartedItems);
+                ConcurencyResolver.SafeSave(_context);
                 if (newQuantity == 0) return;
                 item.Quantity = newQuantity;
             }
@@ -174,19 +176,21 @@ namespace wms_praktyki_yosi_api.Services
             _context
                 .DocumentItems
                 .AddRange(itemsToAdd);
-            _context.SaveChanges();
+            ConcurencyResolver.SafeSave(_context);
         }
-        public void DeleteDocumentItem(string documentId, int productId)
+        public void DeleteDocumentItem(string documentId, string documentItemId)
         {
             var document = GetDocumentWithItemsByGuid(documentId);
             CheckIfFinished(document);
 
-            var itemsToDelete = document
+            var itemToDelete = document
                 .Items
-                .Where(i => i.ProductId == productId);
+                .FirstOrDefault(i => i.Id.ToString() == documentItemId)
+                ?? throw new NotFoundException("156");
+
             
-            _context.RemoveRange(itemsToDelete);
-            _context.SaveChanges();
+            _context.Remove(itemToDelete);
+            ConcurencyResolver.SafeSave(_context);
         }
         public void UpdateItemInDocument(string documentId, int productId, EditDocumentItemDto item)
         {
@@ -222,7 +226,7 @@ namespace wms_praktyki_yosi_api.Services
                 TakeProductFromShelf(document.MagazineId, location);
 
             documentItem.QuantityDone += location.Quantity;
-            _context.SaveChanges();
+            ConcurencyResolver.SafeSave(_context);
         }
         
         // ------- Private Functions --------
@@ -300,7 +304,7 @@ namespace wms_praktyki_yosi_api.Services
                     else
                     {
                         docItem.Quantityplaned -= toDecreese;
-                        _context.SaveChanges();
+                        ConcurencyResolver.SafeSave(_context);
                         return;
                     }
                 }
@@ -325,7 +329,7 @@ namespace wms_praktyki_yosi_api.Services
             var itemList = ConvertDocumentItemDtoToItemList(document.Id, document.MagazineId, newItem);
 
             _context.AddRange(itemList);
-            _context.SaveChanges();
+            ConcurencyResolver.SafeSave(_context);
         }
         private void RegenerateDocumentItems(int productId, EditDocumentItemDto item, Document document, Product product, bool arrving)
         {
@@ -341,12 +345,12 @@ namespace wms_praktyki_yosi_api.Services
                 .Where(i => i.ProductId == productId);
 
             _context.RemoveRange(itemsToDelete);
-            _context.SaveChanges();
+            ConcurencyResolver.SafeSave(_context);
 
             var itemList = ConvertDocumentItemDtoToItemList(document.Id, document.MagazineId, newItem);
 
             _context.AddRange(itemList);
-            _context.SaveChanges();
+            ConcurencyResolver.SafeSave(_context);
         }
 
         private List<DocumentItem> GetDocumentItems(

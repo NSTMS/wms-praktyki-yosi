@@ -92,7 +92,7 @@ namespace wms_praktyki_yosi_api.Controllers
                 return Unauthorized();
 
             var productLocations = _productService.GetProductLocations(id, query);
-            return Ok();
+            return Ok(productLocations);
         }
 
 
