@@ -3,9 +3,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { DocumentsService } from '@app/Services/fetching-services/documents.service';
-import { catchError, tap, throwError, map } from 'rxjs';
-
-import { document, documentItem } from '@static/types/documentTypes';
+import { document } from '@static/types/documentTypes';
 @Component({
   selector: 'app-documents-list',
   templateUrl: './documents-list.component.html',
@@ -20,6 +18,7 @@ export class DocumentsListComponent {
   canAddAndDel: boolean;
   constructor(private _service: DocumentsService, private router: Router) {
     if (localStorage.getItem('token') == null) this.router.navigate(['/login']);
+    if (localStorage.getItem('role') != 'Admin') this.router.navigate(['/table']);
 
     this.canAddAndDel = localStorage.getItem('role') != 'User';
 

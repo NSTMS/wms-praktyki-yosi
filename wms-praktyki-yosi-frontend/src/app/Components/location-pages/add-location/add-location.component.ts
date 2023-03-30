@@ -42,9 +42,12 @@ export class AddLocationComponent {
     private router: Router,
     private _service: LocationService,
     private _errorHandler: ErrorService
-  ) {}
+  ) {
+    if (localStorage.getItem('token') == null) this.router.navigate(['/login']);
+    if (localStorage.getItem('role') == 'User') this.router.navigate(['/table']);
+  }
 
-  handleSubmit() {
+  async handleSubmit() {
     if (
       this.position.invalid ||
       this.quantity.invalid ||
@@ -63,17 +66,7 @@ export class AddLocationComponent {
       tag: this.tag.value || '',
     };
 
-    this._service
-      .AddLocation(newLocation)
-      .pipe(
-        tap(() => {
-          const productId = this.productId.value;
-          this.router.navigate([`/info/${productId}`]);
-        }),
-        catchError((error) => {
-          return throwError(() => new Error(error));
-        })
-      )
-      .subscribe();
+    await this._service.AddLocation(newLocation)
+    this.router.navigate([`/info/${this.productId.value}`]);
   }
 }

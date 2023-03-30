@@ -30,12 +30,10 @@ export class LoginFormComponent {
     )) as Token;
 
     if (data) {
-      console.log(data.token);
-
       this.globalSrv.theRole = data.role;
       this._errorHandler.handleSuccesLoginIn();
       localStorage.setItem('token', data.token);
-      // localStorage.setItem("role",data.role)
+      localStorage.setItem('email',this.email.value as string);
       this.router.navigate(['/table']);
     }
   }

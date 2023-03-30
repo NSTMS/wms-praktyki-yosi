@@ -6,3 +6,20 @@
     <mat-label>Client</mat-label>
     <input matInput [(ngModel)]="data.client">
 </mat-form-field>
+<mat-form-field appearance="fill">
+    <mat-label>Choose a date</mat-label>
+    <input matInput [matDatepicker]="picker" [(ngModel)]="data.date">
+    <mat-hint>MM/DD/YYYY</mat-hint>
+    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+<br>
+<div *ngFor="let item of data.itemList;index as i; ">
+    <app-list-item [item]="item" [deleteFunc]="handleDeleteItem.bind(this)" [handleChange]="handleItemChange.bind(this)"></app-list-item>
+</div>
+
+<button mat-raised-button color="primary" (click)="handleAddItem()">add item</button>
+
+<button mat-raised-button color="secondary" (click)="handleSumbit()">add document</button>
+
+

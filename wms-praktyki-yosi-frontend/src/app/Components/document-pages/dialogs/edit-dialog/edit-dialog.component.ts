@@ -2,7 +2,6 @@ import { Component,Inject} from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { EditDialogData } from '@static/types/documentTypes';
 
-import { FormControl } from '@angular/forms';
 @Component({
   selector: 'app-edit-dialog',
   templateUrl: './edit-dialog.component.html',

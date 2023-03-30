@@ -1,1 +1,33 @@
 <!-- <mat-checkbox [(ngModel)]="data.arriving">Checked</mat-checkbox> -->
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>#Item </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <mat-form-field class="example-full-width" appearance="fill" >
+            <mat-label>Number</mat-label>
+            <input type="text"
+                   aria-label="Product"
+                   matInput
+                   [formControl]="autocomplete"
+                   [matAutocomplete]="auto">
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="handleSelect()" >
+              <mat-option *ngFor="let option of options" [value]="option" >
+                {{option}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        <mat-form-field appearance="fill" floatLabel="always">
+            <mat-label>Quantity planned</mat-label>
+            <input matInput type="number" placeholder="0"  min="0" [(ngModel)]="item.quantity" (change)="handleIChange()">
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Tag</mat-label>
+            <input matInput [(ngModel)]="item.tag" (change)="handleIChange()">
+        </mat-form-field>
+        <mat-checkbox [(ngModel)]="item.arriving" (change)="handleIChange()">arriving</mat-checkbox>
+    </mat-card-content>
+    <mat-card-actions>
+        <button mat-raised-button color="accent" (click)="deleteFunc(item.id)">remove</button>
+    </mat-card-actions>
+</mat-card>

@@ -2,39 +2,43 @@
   <button
     *ngIf="isLoggedIn"
     mat-icon-button
-    [matMenuTriggerFor]="menu"
+    [matMenuTriggerFor]="mainMenu"
     class="example-icon"
     aria-label="Example icon-button with menu icon"
   >
     <mat-icon>menu</mat-icon>
   </button>
-  <mat-menu #menu="matMenu">
-    <a mat-menu-item routerLink="/table">product List</a>
-    <a mat-menu-item routerLink="/magazines" *ngIf="isModeratorOrAdmin"
-      >magazine List</a
-    >
-    <a mat-menu-item routerLink="/users" *ngIf="isAdmin">users List</a>
-    <a mat-menu-item routerLink="/documents" *ngIf="isModeratorOrAdmin"
-      >document List</a
-    >
-    <a mat-menu-item routerLink="/add" *ngIf="isModeratorOrAdmin"
-      >add Product</a
-    >
-    <a mat-menu-item routerLink="/locations/add" *ngIf="isModeratorOrAdmin"
-      >add Location</a
-    >
-    <a mat-menu-item routerLink="/documents/add" *ngIf="isModeratorOrAdmin"
-      >add Document</a
-    >
-    <a mat-menu-item routerLink="/magazines/add" *ngIf="isModeratorOrAdmin"
-      >add Magazine
-    </a>
-    <a mat-menu-item routerLink="/magazines/addShelf" *ngIf="isModeratorOrAdmin"
-      >add Shelf</a
-    >
 
-    <button mat-menu-item (click)="handleLogOut()">log out</button>
+
+  
+
+  <mat-menu #mainMenu="matMenu">
+    <button mat-menu-item [matMenuTriggerFor]="productsMenu">Products</button>
+    <button mat-menu-item [matMenuTriggerFor]="magazinesMenu" *ngIf="isModeratorOrAdmin">Magazines</button>
+    <button mat-menu-item [matMenuTriggerFor]="documentsMenu" *ngIf="isModeratorOrAdmin">Documents</button>
+    <button mat-menu-item [matMenuTriggerFor]="usersMenu" *ngIf="isAdmin">Users</button>
+    <button mat-menu-item (click)="handleLogOut()">Log out</button>
   </mat-menu>
+
+  <mat-menu #productsMenu="matMenu">
+    <a mat-menu-item routerLink="/table">product List</a>
+    <a mat-menu-item routerLink="/add" *ngIf="isModeratorOrAdmin">add Product</a>
+    <a mat-menu-item routerLink="/locations/add" *ngIf="isModeratorOrAdmin">add Location</a>
+  </mat-menu>
+  <mat-menu #magazinesMenu="matMenu">
+    <a mat-menu-item routerLink="/magazines">magazine List</a>
+    <a mat-menu-item routerLink="/magazines/add">add Magazine</a>
+    <a mat-menu-item routerLink="/magazines/addShelf">add Shelf</a>
+  </mat-menu>
+  <mat-menu #usersMenu="matMenu" >
+    <a mat-menu-item routerLink="/users">users List</a>
+  </mat-menu>
+  
+  <mat-menu #documentsMenu="matMenu">
+    <a mat-menu-item routerLink="/documents">document List</a>
+    <a mat-menu-item routerLink="/documents/add">add Document</a>
+  </mat-menu>
+
   <span>WMS JJ</span>
   <span class="toolbar-spacer"></span>
   <span>

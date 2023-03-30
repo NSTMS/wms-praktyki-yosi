@@ -44,10 +44,23 @@ export type newDocument = {
   itemList : listItem[];
 }
 
-
 export type listItem = {
   productName : string;
   arriving : boolean;
+  quantity : number;
+  tag : string;
+  id: number;
+}
+export type ItemToSend ={
+  productName : string;
+  arriving : boolean;
+  quantity : number;
+  tag : string;
+}
+
+export type visitedElement = {
+  productName : string;
+  position : string;
   quantity : number;
   tag : string;
 }

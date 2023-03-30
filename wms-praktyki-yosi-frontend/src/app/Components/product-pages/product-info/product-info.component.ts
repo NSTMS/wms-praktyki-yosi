@@ -42,7 +42,7 @@ export class ProductInfoComponent {
     this.loadData();
   }
 
-  loadData() {
+  async loadData() {
     let productPromise;
     if (!this.magazineId) {
       productPromise = this._reader.GetById(this.id);
@@ -52,36 +52,15 @@ export class ProductInfoComponent {
         this.magazineId
       );
     }
-    const productObservable: Observable<product> = from(productPromise);
-    productObservable
-      .pipe(
-        map((data: product) => {
-          this.product = data;
-          this.dataSource = new MatTableDataSource<productLocation>(
-            data.locations
-          );
-        }),
-        catchError((error) => {
-          console.error(error);
-          this.router.navigate(['/table']);
-          this._errorHandler.handleErrorCode(error);
-          return [];
-        })
-      )
-      .subscribe();
+
+    const data = await productPromise as product
+    this.product = data;
+    this.dataSource = new MatTableDataSource<productLocation>(
+      data.locations
+    );
   }
 
-  handleDelete(id: number) {
-    this._locationService
-      .Delete(id)
-      .pipe(
-        tap(() => {
-          this.loadData();
-        }),
-        catchError((error) => {
-          return throwError(() => new Error(error));
-        })
-      )
-      .subscribe();
+  async handleDelete(id: number) {
+    await this._locationService.Delete(id)
   }
 }

@@ -1,9 +1,6 @@
 import { Injectable } from '@angular/core';
-import { user } from '@static/types/userTypes';
-import { Observable, map, catchError, tap, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { ErrorService } from '../error-handling/error.service';
-
+import { firstValueFrom } from 'rxjs';
 declare var require: any;
 const connection = require('static/connection.json');
 @Injectable({
@@ -13,60 +10,21 @@ export class AdminPanelService {
   link: string = `${connection.protocole}://${connection.ip}:${connection.port}/api/account`;
   columns = ['Id', 'Email', 'PasswordHash', 'Role'];
 
-  constructor(private _errorService: ErrorService, private http: HttpClient) {}
-  GetAll(): Observable<any> {
-    return this.http.get(this.link + '/users').pipe(
-      map((users) => {
-        return users;
-      }),
-      catchError((error) => {
-        this._errorService.HandleBadResponse(error);
-        throw error;
-      })
-    );
+  constructor(private http: HttpClient) {}
+ 
+  async GetAll() {
+    return await firstValueFrom(this.http.get(this.link + '/users'))
   }
-  GetInfoFromToken(): Observable<any> {
-    return this.http.get(this.link + '/info').pipe(
-      map((users) => {
-        return users;
-      }),
-      catchError((error) => {
-        this._errorService.HandleBadResponse(error);
-        throw error;
-      })
-    );
+  async GetInfoFromToken() {
+    return await firstValueFrom(this.http.get(this.link + '/info'))
   }
-  GetById(id: number): Observable<any> {
-    return this.http.get(this.link + '/users/' + id).pipe(
-      map((user) => {
-        return user;
-      }),
-      catchError((error) => {
-        this._errorService.HandleBadResponse(error);
-        throw error;
-      })
-    );
+  async GetById(id: string){
+    return await firstValueFrom(this.http.get(this.link + '/users/' + id))
   }
-
-  Put(id: number, updatedUser: user): Observable<any> {
-    return this.http
-      .put(this.link + '/users/' + id, JSON.stringify(updatedUser))
-      .pipe(
-        map((returnedUser) => {
-          return returnedUser;
-        }),
-        catchError((error) => {
-          this._errorService.HandleBadResponse(error);
-          throw error;
-        })
-      );
+  async Put(id: string, role: string){
+    return await firstValueFrom(this.http.put(this.link + '/users/' + id, role))
   }
-  Delete(id: number): Observable<any> {
-    return this.http.delete(this.link + '/users/' + id).pipe(
-      catchError((error) => {
-        this._errorService.HandleBadResponse(error);
-        throw error;
-      })
-    );
+  async Delete(id: string){
+    return await firstValueFrom(this.http.delete(this.link + '/users/' + id))
   }
 }

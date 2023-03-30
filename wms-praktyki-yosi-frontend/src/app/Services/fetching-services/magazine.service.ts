@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
-import { ErrorService } from '../error-handling/error.service';
 import { magazineToAdd, magazineToEdit } from '@static/types/magazineTypes';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map, catchError, tap, throwError } from 'rxjs';
 import { product } from '@static/types/productTypes';
-
+import { firstValueFrom } from 'rxjs';
 declare var require: any;
 const connection = require('@static/connection.json');
 
@@ -12,79 +10,41 @@ const connection = require('@static/connection.json');
   providedIn: 'root',
 })
 export class MagazineService {
-  columns = ['id', 'name', 'address'];
-
-  // headers = {
-  //   Accept: 'application/json',
-  //   'Content-Type': 'application/json',
-  //   Authorization: `Bearer ${localStorage.getItem('token')}`,
-  // };
-
+  columns = ['id', 'name', 'address']
   link = `${connection.protocole}://${connection.ip}:${connection.port}/api/magazines`;
 
-  constructor(private _errorService: ErrorService, private http: HttpClient) {}
+  constructor(private http: HttpClient) {}
 
-  GetAll(): Observable<any> {
-    return this.http.get(this.link).pipe(
-      map((magazines) => {
-        return magazines;
-      })
-    );
+  async GetAll(){
+    return await firstValueFrom(this.http.get(this.link))
   }
 
-  GetById(id: number): Observable<any> {
-    return this.http.get(this.link + '/' + id).pipe(
-      map((user) => {
-        return user;
-      })
-    );
+  async GetById(id: number) {
+    return await firstValueFrom(this.http.get(this.link + '/' + id))
   }
 
-  GetAllProducts(id: number): Observable<any> {
-    return this.http.get(`${this.link}/${id}/products`).pipe(
-      map((data) => {
-        return data as product[];
-      }),
-      catchError((error: any) => {
-        this._errorService.HandleBadResponse(error);
-        throw error;
-      })
-    );
+  async GetAllProducts(id: number) {
+    return await firstValueFrom(this.http.get(`${this.link}/${id}/products`)) as product[]
   }
 
-  GetLocations(productId: number, magazineId: number): Observable<any> {
-    return this.http
-      .get(`${this.link}/${magazineId}/products/${productId}`)
-      .pipe(
-        map((data) => {
-          return data as product[];
-        })
-      );
+  async GetLocations(productId: number, magazineId: number) {
+    return await firstValueFrom(this.http
+      .get(`${this.link}/${magazineId}/products/${productId}`)) as product[]
   }
 
-  Add(mazgaine: magazineToAdd): Observable<any> {
-    return this.http.post(this.link, JSON.stringify({ ...mazgaine })).pipe(
-      tap(() => {
-        return true;
-      })
-    );
+  async Add(magazine: magazineToAdd) {
+    await firstValueFrom(this.http.post(this.link, magazine))
+    console.log("elo",magazine)
+    return true;
   }
 
-  Edit(id: number, newMagazine: magazineToEdit): Observable<any> {
-    return this.http
-      .put(this.link + '/' + id, JSON.stringify(newMagazine))
-      .pipe(
-        tap(() => {
-          return true;
-        })
-      );
+  async Edit(id: number, newMagazine: magazineToEdit) {
+    await firstValueFrom(this.http.put(this.link + '/' + id, newMagazine))
+    return true;
   }
 
-  Delete(id: number): Observable<any> {
-    return this.http.delete(this.link + '/' + id).pipe(
-      tap(() => {
-        return true;
-      })
-    );
+  async Delete(id: number) {
+    await firstValueFrom(this.http.delete(this.link + '/' + id))
+    return true;
   }
 }

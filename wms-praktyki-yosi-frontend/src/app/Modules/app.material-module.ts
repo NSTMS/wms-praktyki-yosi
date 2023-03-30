@@ -16,7 +16,9 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from "@angular/material/form-field";
 import {MatCheckboxModule} from '@angular/material/checkbox';
-
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { MatDatepickerModule} from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 @NgModule({
   // since we're exporting these modules, add them to export
   exports: [
@@ -36,7 +38,10 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
     MatDialogModule,
     MatCardModule,
     MatFormFieldModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatAutocompleteModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
   ],
 })
 export class AppMaterialModule {}

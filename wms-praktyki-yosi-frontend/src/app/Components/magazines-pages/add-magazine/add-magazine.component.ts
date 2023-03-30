@@ -2,11 +2,8 @@ import { Component } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ErrorService } from '@app/Services/error-handling/error.service';
-import { LocationService } from '@app/Services/fetching-services/location.service';
 import { MagazineService } from '@app/Services/fetching-services/magazine.service';
-import { locationToAdd } from '@static/types/locationTypes';
 import { magazineToAdd } from '@static/types/magazineTypes';
-import { tap, catchError, throwError, map } from 'rxjs';
 
 @Component({
   selector: 'app-add-magazine',
@@ -35,9 +32,12 @@ export class AddMagazineComponent {
     private router: Router,
     private _magazineService: MagazineService,
     private _errorHandler: ErrorService
-  ) {}
+  ) {
+    if (localStorage.getItem('token') == null) this.router.navigate(['/login']);
+    if (localStorage.getItem('role') == 'User') this.router.navigate(['/table']);
+  }
 
-  handleSubmit() {
+  async handleSubmit() {
     if (this.name.invalid || this.address.invalid) {
       this._errorHandler.handleErrorCode(2);
       return;
@@ -51,17 +51,8 @@ export class AddMagazineComponent {
       maxShelfLoad: this.maxShelfLoad.value || 0,
     };
 
-    this._magazineService
-      .Add(newMagazine)
-      .pipe(
-        map((res) => {
-          if (!res) return;
-          this.router.navigate([`/magazines`]);
-        }),
-        catchError((error) => {
-          return throwError(() => new Error(error));
-        })
-      )
-      .subscribe();
+    const res = await this._magazineService.Add(newMagazine)
+    if (!res) return;
+    this.router.navigate([`/magazines`]);
   }
 }

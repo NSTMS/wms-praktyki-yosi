@@ -3,7 +3,7 @@ declare var require: any;
 const connection = require('static/connection.json');
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { EditDialogData } from '@static/types/documentTypes';
+import { EditDialogData, visitedElement } from '@static/types/documentTypes';
 @Injectable({
   providedIn: 'root',
 })
@@ -31,13 +31,17 @@ export class DocumentsService {
       this.http.post(this.link + '/' + guid + '/markasfinished', finished)
     );
   }
-  async VisitLocation(guid: string,){
-    return;
+  async VisitLocation(guid: string,data: visitedElement){
+    return await firstValueFrom(this.http.post(this.link + '/' + guid + "/visitedlocation",data));
   }
   async Delete(guid: string) {
-    return await firstValueFrom(this.http.get(this.link + '/' + guid));
+    return await firstValueFrom(this.http.delete(this.link + '/' + guid));
   }
-  UpdateItem(id: string, prodId: number, item : EditDialogData){
-    return this.http.put(this.link + '/' + id + "/" + prodId,item); 
+  async DeleteElement(id: string, prodId: string) 
+  {
+      return await firstValueFrom(this.http.delete(this.link + '/' + id + "/items/" + prodId))
+  }
+  async UpdateItem(id: string, prodId: number, item : EditDialogData){
+    return await firstValueFrom(this.http.put(this.link + '/' + id + "/items/" + prodId,item))
   }
 }

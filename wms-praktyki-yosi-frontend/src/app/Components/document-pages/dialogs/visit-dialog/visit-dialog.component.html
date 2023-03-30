@@ -1,1 +1,16 @@
-<p>visit-dialog works!</p>
+<h1 mat-dialog-title>Visit location</h1>
+<div mat-dialog-content>
+    <mat-form-field appearance="fill" floatLabel="always">
+        <mat-label>Quantity planned</mat-label>
+        <input matInput type="number" class="example-right-align" placeholder="0" [(ngModel)]="data">
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Tag</mat-label>
+        <input matInput [(ngModel)]="data.tag">
+      </mat-form-field>
+      <mat-checkbox [(ngModel)]="data.arriving">arriving</mat-checkbox>
+</div>
+<div mat-dialog-actions>
+    <button mat-button mat-raised-button (click)="onNoClick()" color="primary">close</button>
+    <button mat-button mat-raised-button [mat-dialog-close]="data" cdkFocusInitial color="accent">sumbit</button>
+</div>

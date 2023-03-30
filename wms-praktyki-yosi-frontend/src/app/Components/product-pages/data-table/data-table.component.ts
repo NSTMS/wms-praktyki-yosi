@@ -6,7 +6,6 @@ import { Router } from '@angular/router';
 import { DataReaderService } from '@services/fetching-services/data-reader.service';
 import type { product } from '@static/types/productTypes';
 import { tap, catchError, throwError } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-data-table',
@@ -37,8 +36,9 @@ export class DataTableComponent {
     else this.displayedColumns = [...this._reader.columns];
   }
 
-  loadData() {
-    return this._reader.GetAll().subscribe((data) => {
+
+  async loadData() {
+    const data = await this._reader.GetAll() as product[]
       if (data != null) this.length = data.length || 0;
       else this.length = 0;
 
@@ -46,25 +46,15 @@ export class DataTableComponent {
 
       if (this.paginator != undefined)
         this.dataSource.paginator = this.paginator;
-    });
   }
 
   ngAfterContentInit() {
     this.loadData();
   }
 
-  handleDelete(id: number) {
-    return this._reader
-      .Delete(id)
-      .pipe(
-        tap(() => {
-          window.location.reload();
-        }),
-        catchError((error) => {
-          return throwError(() => new Error(error));
-        })
-      )
-      .subscribe();
+  async handleDelete(id: number) {
+    await this._reader.Delete(id)
+    window.location.reload();
   }
   applyFilter() {
     // this.dataSource.filter = this.searchTerm.trim().toLowerCase();

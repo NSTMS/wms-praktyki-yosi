@@ -33,7 +33,12 @@
     "180": "Półka pełna",
     "181": "Nie ma wystarczającej ilości jednego z produktów w magazynie",
     "182": "W tej lokazlizacji nie ma wystarczającej ilości produktu",
-    "183": "Za mało produktu w danej lokalizacji"
+    "183": "Za mało produktu w danej lokalizacji",
+    
+
+
+    "190": "Nie możesz zmienic zakończonego zlecenia!"
+
   },
   "en": {
     "1": "id not found",

@@ -3,7 +3,6 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { user } from '@static/types/userTypes';
 import { AdminPanelService } from '@services/admin-panel/admin-panel.service';
-import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
@@ -20,27 +19,27 @@ export class UsersTableComponent {
   constructor(
     private _reader: AdminPanelService,
     private router: Router,
-    public dialog: MatDialog
   ) {
     if (localStorage.getItem('token') == null) this.router.navigate(['/login']);
-    if (localStorage.getItem('role') != 'Admin')
-      this.router.navigate(['/table']);
-    this._reader.GetAll().subscribe((data) => {
+    if (localStorage.getItem('role') != 'Admin') this.router.navigate(['/table']);
+    this.displayedColumns = [...this._reader.columns, 'edit', 'delete'];
+    this.loadData()
+  }
+  async loadData()
+  {
+    let data = await this._reader.GetAll() as user[]
       if (data != null) this.length = data.length || 0;
       else this.length = 0;
-
+      data = data.filter(u => u.email !== localStorage.getItem('email'))
       this.dataSource = new MatTableDataSource(data);
-
       if (this.paginator != undefined)
         this.dataSource.paginator = this.paginator;
-    });
-    this.displayedColumns = [...this._reader.columns, 'edit', 'delete'];
   }
-
-  handleDelete(id: number) {
-    this._reader.Delete(id);
-    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-      this.router.navigate(['/users']);
-    });
+  async handleDelete(id: string) {
+    await this._reader.Delete(id);
+    this.loadData()
+    // this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+    //   this.router.navigate(['/users']);
+    // });
   }
 }

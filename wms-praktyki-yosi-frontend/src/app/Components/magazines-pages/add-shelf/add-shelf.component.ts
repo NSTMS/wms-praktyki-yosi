@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { ErrorService } from '@services/error-handling/error.service';
-import { catchError, map, tap, throwError } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, Validators } from '@angular/forms';
 import { newShelf } from '@static/types/shelfTypes';
@@ -28,7 +27,10 @@ export class AddShelfComponent {
     private route: ActivatedRoute,
     private router: Router,
     private _errorHandler: ErrorService
-  ) {}
+  ) {
+    if (localStorage.getItem('token') == null) this.router.navigate(['/login']);
+    if (localStorage.getItem('role') == 'User') this.router.navigate(['/table']);
+  }
 
   handleSubmit() {
     if (

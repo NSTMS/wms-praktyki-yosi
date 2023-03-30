@@ -2,11 +2,8 @@ import { Component, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { DataReaderService } from '@app/Services/fetching-services/data-reader.service';
 import { MagazineService } from '@services/fetching-services/magazine.service';
 import { magazine } from '@static/types/magazineTypes';
-import { product } from '@static/types/productTypes';
-import { catchError, tap, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-magazine-list',
@@ -26,6 +23,7 @@ export class MagazineListComponent {
     private router: Router
   ) {
     if (localStorage.getItem('token') == null) this.router.navigate(['/login']);
+    if (localStorage.getItem('role') == 'User') this.router.navigate(['/table']);
 
     this.canAddAndDel = localStorage.getItem('role') != 'User';
 
@@ -39,33 +37,24 @@ export class MagazineListComponent {
     else this.displayedColumns = [...this._magazineService.columns];
   }
 
-  private loadData() {
-    return this._magazineService.GetAll().subscribe((data) => {
+  async loadData() {
+     const data = await this._magazineService.GetAll() as magazine[]
+     console.log(data);
+     
       if (data != null) this.length = data.length || 0;
       else this.length = 0;
-
       this.dataSource = new MatTableDataSource(data);
 
       if (this.paginator != undefined)
         this.dataSource.paginator = this.paginator;
-    });
   }
 
   ngAfterContentInit() {
     this.loadData();
   }
 
-  handleDelete(id: number) {
-    return this._magazineService
-      .Delete(id)
-      .pipe(
-        tap(() => {
-          setTimeout(this.loadData, 1000);
-        }),
-        catchError((error) => {
-          return throwError(() => new Error(error));
-        })
-      )
-      .subscribe();
+  async handleDelete(id: number) {
+    await this._magazineService.Delete(id)
+    this.loadData();
   }
 }

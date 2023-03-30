@@ -4,7 +4,6 @@ import type { productToAdd } from '@static/types/productTypes';
 import { FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ErrorService } from '@services/error-handling/error.service';
-import { catchError, tap, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-add-form',
@@ -33,26 +32,18 @@ export class AddFormComponent {
       this.router.navigate(['/table']);
   }
 
-  handleSubmit() {
+ async handleSubmit() {
     if (this.name.invalid || this.ean.invalid || this.price.invalid) {
       this._errorHandler.handleErrorCode(2);
     } else {
-      this._reader
+      
+     await this._reader
         .Post({
           productName: this.name.value,
           ean: this.ean.value,
           price: this.price.value,
           tag: this.tag.value,
         } as productToAdd)
-        .pipe(
-          tap(() => {
-            window.location.reload();
-          }),
-          catchError((error) => {
-            return throwError(() => new Error(error));
-          })
-        )
-        .subscribe();
 
       this.router.navigate(['/table']);
     }

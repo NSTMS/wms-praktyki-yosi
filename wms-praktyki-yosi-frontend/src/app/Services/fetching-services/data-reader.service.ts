@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import type { product, productToAdd } from '@static/types/productTypes';
-import { ErrorService } from '@services/error-handling/error.service';
+import type { productToAdd } from '@static/types/productTypes';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map, catchError, tap, throwError } from 'rxjs';
+import { Observable, map, catchError, tap, throwError, firstValueFrom } from 'rxjs';
 declare var require: any;
 const connection = require('static/connection.json');
 
@@ -13,65 +12,27 @@ export class DataReaderService {
   link: string = `${connection.protocole}://${connection.ip}:${connection.port}/api/products`;
   columns = ['id', 'productName', 'ean', 'price', 'quantity'];
 
-  constructor(private http: HttpClient, private _errorHandler: ErrorService) {}
+  constructor(private http: HttpClient) { }
 
-  GetAll(): Observable<any> {
-    return this.http.get(this.link).pipe(
-      map((data) => {
-        return data;
-      })
-    );
+  async GetAll() {
+    return await firstValueFrom(this.http.get(this.link))
   }
 
-  GetById(id: number): Observable<any> {
-    return this.http.get(this.link + '/' + id).pipe(
-      map((data) => {
-        return data;
-      }),
-      catchError((error) => {
-        console.error(error);
-        throw error[0];
-      })
-    );
+  async GetById(id: number) {
+    return await firstValueFrom(this.http.get(this.link + '/' + id))
   }
-
-  Put(id: number, newProduct: productToAdd): Observable<any> {
-    return this.http
+  async Put(id: number, newProduct: productToAdd) {
+    return await firstValueFrom(this.http
       .put(`${this.link}/${id}`, { ...newProduct, ...{ locations: [] } })
-      .pipe(
-        map((data) => {
-          return data;
-        }),
-        catchError((error: any) => {
-          this._errorHandler.errorMessageShow(error);
-          throw error;
-        })
-      );
+    )
   }
 
-  Post(newProduct: productToAdd): Observable<any> {
-    return this.http
-      .post(this.link, { ...newProduct, ...{ locations: [] } })
-      .pipe(
-        map((data) => {
-          return data;
-        }),
-        catchError((error: any) => {
-          this._errorHandler.errorMessageShow(error);
-          throw error;
-        })
-      );
+  async Post(newProduct: productToAdd) {
+    return await firstValueFrom(this.http
+      .post(this.link, { ...newProduct, ...{ locations: [] } }))
   }
 
-  Delete(id: number): Observable<any> {
-    return this.http.delete(this.link + '/' + id).pipe(
-      map((data) => {
-        return data;
-      }),
-      catchError((error) => {
-        console.error(error);
-        throw error[0];
-      })
-    );
+  async Delete(id: number) {
+    return await firstValueFrom(this.http.delete(this.link + '/' + id))
   }
 }

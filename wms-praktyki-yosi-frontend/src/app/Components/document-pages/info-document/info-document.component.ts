@@ -3,11 +3,9 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DocumentsService } from '@app/Services/fetching-services/documents.service';
-import { detailedDocument, documentItem,EditDialogData } from '@static/types/documentTypes';
+import { detailedDocument, documentItem,EditDialogData, ItemToSend, visitedElement } from '@static/types/documentTypes';
 import {
   MatDialog,
-  MAT_DIALOG_DATA,
-  MatDialogRef,
 } from '@angular/material/dialog';
 import { EditDialogComponent } from '../dialogs/edit-dialog/edit-dialog.component';
 import { VisitDialogComponent } from '../dialogs/visit-dialog/visit-dialog.component';
@@ -52,7 +50,7 @@ export class InfoDocumentComponent {
     public dialog: MatDialog
   ) {
     if (localStorage.getItem('token') == null) this.router.navigate(['/login']);
-
+    if (localStorage.getItem('role') == 'User') this.router.navigate(['/table']);
     this.canAddAndDel = localStorage.getItem('role') != 'User';
 
     if (this.canAddAndDel)
@@ -62,7 +60,7 @@ export class InfoDocumentComponent {
 
   async loadData() {
     this.id = this.route.snapshot.params['id'];
-    const data = await this._service.GetById(this.id)
+    const data = await this._service.GetById(this.id)    
     this.data = data as detailedDocument;
     this.data.id = this.id;
     this.dataSource = new MatTableDataSource(this.data.items);
@@ -74,13 +72,13 @@ export class InfoDocumentComponent {
     this.loadData();
   }
   async handleDelete(guid: string) {
-    await this._service.Delete(guid);
+    const dat = this.data.items.filter(d=> d.id == guid)[0] as documentItem    
+    await this._service.DeleteElement(this.id, dat.id);
     window.location.reload();
   }
   async handleEdit(guid: string) {
 
-    const dialogData = this.data.items.filter(d=> d.id == guid)[0] as documentItem
-
+    const dialogData = this.data.items.filter(d=> d.id == guid)[0] as documentItem    
     const dialogRef = this.dialog.open(EditDialogComponent, {
       data: {
         arriving:dialogData.arriving,
@@ -89,33 +87,32 @@ export class InfoDocumentComponent {
       }
     })
     dialogRef.afterClosed().subscribe(result=> {
-      this.data.items.map(v =>{
+      this.data.items.map(async v =>{
         console.log(v);
         
         if(v.id == guid)
         {
           const res = result as EditDialogData
-          this._service.UpdateItem(this.id, v.productId, res);
+          await this._service.UpdateItem(this.id, v.productId, res);
+          window.location.reload()
           
         }
       })
     });
   }
 
-  handleVisit(guid: string) {
+  handleVisit(guid: string)  {
+    const dialogData = this.data.items.filter(d=> d.id == guid)[0] as documentItem
     const dialogRef = this.dialog.open(VisitDialogComponent, {
-      data: {
-        arriving: true,
-        quantity: 0,
-        tag: "string"
-      }
+      data: {...dialogData}
     })
     dialogRef.afterClosed().subscribe(result=> {
-      this.data.items.map(async v =>{
+      this.data.items.map(async v =>{      
         if(v.id == guid)
         {
-          const res = result as EditDialogData
-          await this._service.UpdateItem(this.id, 1, res);
+          const res = result as visitedElement
+          await this._service.VisitLocation(this.id, res);
+          window.location.reload()
         }
       })
     });
