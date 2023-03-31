@@ -46,7 +46,7 @@ namespace wms_praktyki_yosi_api.Services.Workers
                         PdfWriter.GetInstance(
                             document,
                             new FileStream("Documents/MagazineStateOf"
-                                           + DateTime.Now.ToString("dd-mm-yyyyTHH.mm.ss")
+                                           + DateTime.Now.ToString("dd-MM-yyyyTHH.mm.ss")
                                            + ".pdf", FileMode.Create));
                         document.Open();
 
@@ -57,7 +57,7 @@ namespace wms_praktyki_yosi_api.Services.Workers
                             var productsInMagazine = magazineSevice.GetProductsInMagazine(magazineId, new Models.GetRequestQuery());
                             var detailedMagazine = magazineSevice.GetById(magazineId);
                             timeMiddle = DateTimeOffset.Now.ToUnixTimeMilliseconds() - startingTime;
-                            _logger.LogInformation("{DT}: Downloaded data to cashe\nTime elapsed: {i}ms", DateTime.Now, timeMiddle);
+                            _logger.LogInformation("{DT}: Downloaded data to cache\nTime elapsed: {i}ms", DateTime.Now, timeMiddle);
 
                             var header = AddHeader(detailedMagazine);
                             var table = CreatePdfTable(productHeaders, productsInMagazine.Cast<object>().ToList());

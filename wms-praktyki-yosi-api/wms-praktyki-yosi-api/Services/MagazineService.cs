@@ -302,7 +302,7 @@ namespace wms_praktyki_yosi_api.Services
                 {
                     MagazineId = magazineId,
                     Position = pos,
-                    MaxLoad = dto.MaxShelfQuantity
+                    MaxLoad = dto.MaxShelfLoad
                 };
                 shelvesList.Add(shelf);
             }
