@@ -1,46 +1,31 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 declare var require: any;
 const connection = require('@static/connection.json');
+import { firstValueFrom } from 'rxjs';
+import { ErrorService } from '../error-handling/error.service';
+
 @Injectable({
   providedIn: 'root',
 })
 export class AuthenticationService {
+  constructor(private _errorService: ErrorService, private http: HttpClient) {}
   link: string = `${connection.protocole}://${connection.ip}:${connection.port}/api/account`;
 
-  async logIn(email: string, password: string): Promise<any> {
-    const response = await fetch(this.link + '/login', {
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      method: 'POST',
-      body: JSON.stringify({ email: email, password: password }),
-    });
-    if (response.ok) {
-      const res = await response.json();
-      return res;
-    } else {
-      return null;
-    }
+  async logIn(email: string, password: string) {
+    return await firstValueFrom(
+      this.http.post(this.link + '/login', { email: email, password: password })
+    );
   }
 
   async registerUser(email: string, password: string, confirmPassword: string) {
-    try {
-      const response = await fetch(this.link + '/register', {
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        method: 'POST',
-        body: JSON.stringify({
-          email: email,
-          password: password,
-          confirmPassword: confirmPassword,
-        }),
-      });
-      return response;
-    } catch (ex: unknown) {
-      return null;
-    }
+    const regdata = {
+      email: email,
+      password: password,
+      confirmPassword: confirmPassword,
+    };
+    return await firstValueFrom(
+      this.http.post(this.link + '/register', regdata)
+    );
   }
 }

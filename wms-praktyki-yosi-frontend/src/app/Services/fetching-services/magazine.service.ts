@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { ErrorService } from '../error-handling/error.service';
 import { magazineToAdd, magazineToEdit } from '@static/types/magazineTypes';
-
+import { HttpClient } from '@angular/common/http';
+import { product } from '@static/types/productTypes';
+import { firstValueFrom } from 'rxjs';
 declare var require: any;
 const connection = require('@static/connection.json');
 
@@ -9,103 +10,40 @@ const connection = require('@static/connection.json');
   providedIn: 'root',
 })
 export class MagazineService {
-  columns = ['id', 'name', 'address'];
-
-  headers = {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${localStorage.getItem('token')}`,
-  };
-
+  columns = ['id', 'name', 'address']
   link = `${connection.protocole}://${connection.ip}:${connection.port}/api/magazines`;
 
-  constructor(private _errorHandler: ErrorService) {}
+  constructor(private http: HttpClient) { }
 
-  async GetAll() {
-    const response = await fetch(this.link, {
-      headers: this.headers,
-    });
-
-    if (response.ok) return await response.json();
-
-    this._errorHandler.HandleBadResponse(response);
-  }
-
-  async Add(newMagazine: magazineToAdd) {
-    const response = await fetch(this.link, {
-      method: 'POST',
-      headers: this.headers,
-      body: JSON.stringify({
-        ...newMagazine,
-      }),
-    });
-
-    if (response.ok) return true;
-
-    this._errorHandler.HandleBadResponse(response);
-
-    return false;
+  async GetAll(term: string) {
+    return await firstValueFrom(this.http.get(this.link + "?searchTerm=" + term));
   }
 
   async GetById(id: number) {
-    const response = await fetch(`${this.link}/${id}`, {
-      headers: this.headers,
-    });
-
-    if (response.ok) return await response.json();
-
-    this._errorHandler.HandleBadResponse(response);
-  }
-
-  async Edit(id: number, newMagazine: magazineToEdit) {
-    const response = await fetch(`${this.link}/${id}`, {
-      method: 'PUT',
-      headers: this.headers,
-      body: JSON.stringify({
-        ...newMagazine,
-      }),
-    });
-
-    if (response.ok) return true;
-
-    this._errorHandler.HandleBadResponse(response);
-
-    return false;
-  }
-
-  async Delete(id: number) {
-    const response = await fetch(this.link + '/' + id, {
-      headers: this.headers,
-      method: 'DELETE',
-    });
-
-    if (response.ok) return true;
-
-    this._errorHandler.HandleBadResponse(response);
-
-    return false;
+    return await firstValueFrom(this.http.get(this.link + '/' + id))
   }
 
   async GetAllProducts(id: number) {
-    const response = await fetch(`${this.link}/${id}/products`, {
-      headers: this.headers,
-    });
-
-    if (response.ok) return await response.json();
-
-    this._errorHandler.HandleBadResponse(response);
+    return await firstValueFrom(this.http.get(`${this.link}/${id}/products`)) as product[]
   }
 
   async GetLocations(productId: number, magazineId: number) {
-    const response = await fetch(
-      `${this.link}/${magazineId}/products/${productId}`,
-      {
-        headers: this.headers,
-      }
-    );
+    return await firstValueFrom(this.http
+      .get(`${this.link}/${magazineId}/products/${productId}`)) as product[]
+  }
 
-    if (response.ok) return await response.json();
+  async Add(magazine: magazineToAdd) {
+    await firstValueFrom(this.http.post(this.link, magazine))
+    return true;
+  }
 
-    this._errorHandler.HandleBadResponse(response);
+  async Edit(id: number, newMagazine: magazineToEdit) {
+    await firstValueFrom(this.http.put(this.link + '/' + id, newMagazine))
+    return true;
+  }
+
+  async Delete(id: number) {
+    await firstValueFrom(this.http.delete(this.link + '/' + id))
+    return true;
   }
 }

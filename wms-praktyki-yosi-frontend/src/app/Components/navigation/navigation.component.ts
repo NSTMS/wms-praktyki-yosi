@@ -1,10 +1,4 @@
-import {
-  AfterViewInit,
-  ChangeDetectorRef,
-  Component,
-  SimpleChanges,
-  ViewChild,
-} from '@angular/core';
+import {  Component,  ViewChild} from '@angular/core';
 import { Router } from '@angular/router';
 import { GlobalService } from '@services/global/global.service';
 
@@ -37,6 +31,7 @@ export class NavigationComponent {
   handleLogOut() {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
+    localStorage.removeItem('email');
     window.location.reload();
   }
 

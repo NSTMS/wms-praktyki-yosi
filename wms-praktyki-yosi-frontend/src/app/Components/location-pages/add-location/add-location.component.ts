@@ -8,6 +8,7 @@ import {
   locationToEdit,
   locationToAdd,
 } from '@static/types/locationTypes';
+import { catchError, tap, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-add-location',
@@ -35,11 +36,16 @@ export class AddLocationComponent {
     Validators.pattern('^[0-9]+$'),
   ]);
 
+  tag = new FormControl('');
+
   constructor(
     private router: Router,
     private _service: LocationService,
     private _errorHandler: ErrorService
-  ) {}
+  ) {
+    if (localStorage.getItem('token') == null) this.router.navigate(['/login']);
+    if (localStorage.getItem('role') == 'User') this.router.navigate(['/table']);
+  }
 
   async handleSubmit() {
     if (
@@ -57,13 +63,10 @@ export class AddLocationComponent {
       magazineId: this.magazineId.value || -1,
       quantity: this.quantity.value || 0,
       productId: this.productId.value || -1,
+      tag: this.tag.value || '',
     };
 
-    const added = await this._service.AddLocation(newLocation);
-
-    if (!added) return;
-
-    const productId = this.productId.value;
-    this.router.navigate([`/info/${productId}`]);
+    await this._service.AddLocation(newLocation)
+    this.router.navigate([`/info/${this.productId.value}`]);
   }
 }

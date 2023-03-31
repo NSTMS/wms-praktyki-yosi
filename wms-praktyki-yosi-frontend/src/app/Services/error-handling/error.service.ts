@@ -1,7 +1,8 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 declare var require: any;
-const errorCodes = require('src/static/error-codes.json');
+const errorCodes = require('static/error-codes.json');
 
 @Injectable({
   providedIn: 'root',
@@ -23,6 +24,9 @@ export class ErrorService {
   }
 
   errorMessageShow(arr: string[]) {
+    if (!arr) return;
+    console.log(arr);
+
     let text = '';
     var set = new Set(arr);
 
@@ -35,17 +39,10 @@ export class ErrorService {
     this._snackBar.open(text, 'ok');
   }
 
-  async HandleBadResponse(respone: Response) {
-    try {
-      const responseData = await respone.json();
-
-      const errors = responseData.Errors as string[];
-      this.errorMessageShow(errors);
-    } catch {
-      console.error('Status: ', respone.status, respone.statusText);
-
-      if (respone.status == 404 || respone.status >= 500)
-        this.handleErrorCode(5);
-    }
+  HandleBadResponse(response: HttpErrorResponse) {
+    if (response.status == 404 || response.status >= 500)
+      this.handleErrorCode(5);
+    const errors = response.error as string[];
+    this.errorMessageShow(errors);
   }
 }

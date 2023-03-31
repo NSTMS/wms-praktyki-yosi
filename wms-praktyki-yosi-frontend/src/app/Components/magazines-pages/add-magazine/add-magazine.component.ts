@@ -2,9 +2,7 @@ import { Component } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ErrorService } from '@app/Services/error-handling/error.service';
-import { LocationService } from '@app/Services/fetching-services/location.service';
 import { MagazineService } from '@app/Services/fetching-services/magazine.service';
-import { locationToAdd } from '@static/types/locationTypes';
 import { magazineToAdd } from '@static/types/magazineTypes';
 
 @Component({
@@ -19,18 +17,25 @@ export class AddMagazineComponent {
 
   dimentions = new FormControl('', [
     Validators.required,
-    Validators.pattern("^[0-9]{1,2}x[0-9]+$")
+    Validators.pattern('^[0-9]{1,2}x[0-9]+$'),
   ]);
 
   shelvesPerRow = new FormControl(0, [
     Validators.required,
-    Validators.pattern("^[0-9]+$")
+    Validators.pattern('^[0-9]+$'),
+  ]);
+  maxShelfLoad = new FormControl(0, [
+    Validators.required,
+    Validators.pattern('^[0-9]+$'),
   ]);
   constructor(
     private router: Router,
     private _magazineService: MagazineService,
     private _errorHandler: ErrorService
-  ) {}
+  ) {
+    if (localStorage.getItem('token') == null) this.router.navigate(['/login']);
+    if (localStorage.getItem('role') == 'User') this.router.navigate(['/table']);
+  }
 
   async handleSubmit() {
     if (this.name.invalid || this.address.invalid) {
@@ -42,13 +47,12 @@ export class AddMagazineComponent {
       name: this.name.value || '',
       address: this.address.value || '',
       shelvesPerRow: this.shelvesPerRow.value || -1,
-      dimentions: this.dimentions.value || ''
+      dimentions: this.dimentions.value || '',
+      maxShelfLoad: this.maxShelfLoad.value || 0,
     };
 
-    const added = await this._magazineService.Add(newMagazine);
-
-    if (!added) return;
-
+    const res = await this._magazineService.Add(newMagazine)
+    if (!res) return;
     this.router.navigate([`/magazines`]);
   }
 }

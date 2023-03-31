@@ -3,7 +3,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '@services/authentication/authentication.service';
 import { ErrorService } from '@services/error-handling/error.service';
-
+import { catchError, map, tap } from 'rxjs';
 type errorMessage = {
   Errors: string[];
 };
@@ -22,27 +22,19 @@ export class RegisterFormComponent {
     private _errorHandler: ErrorService,
     private router: Router,
     private _authenticationService: AuthenticationService
-  ) {}
+  ) {
+    if (localStorage.getItem('token')) this.router.navigate(['/table']);
+  }
 
   async handleButtonClick() {
-    const response = await this._authenticationService.registerUser(
+    const data = await this._authenticationService.registerUser(
       this.email.value as string,
       this.password.value as string,
       this.confirmPassword.value as string
     );
-
-    if (response == null) return;
-
-    if (response.ok) {
+    if (data) {
       this._errorHandler.handleErrorCode(8);
       this.router.navigate(['/login']);
-      return;
-    }
-
-    const res = await response.json();
-
-    if (res && res.Errors) {
-      this._errorHandler.errorMessageShow(res.Errors);
     }
   }
 }

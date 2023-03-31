@@ -1,1 +1,59 @@
+{
+  "pl": {
+    "1": "nie znaleziono id",
+    "2": "coś nie tak w formularzu",
+    "3": "niepoprawne dane logowania",
+    "4": "nazwa użytkownika zajęta",
+    "5": "serwer nie odpowiada",
+    "7": "zalogowano poprawnie!",
+    "8": "zarejestrowano pomyślnie!",
+    "9": "Nie ma użytkownika o takim emailu",
+    "13": "coś nie tak na serwerze",
 
+    "100": "Email nie może być pusty",
+    "101": "Email nie jest poprawny",
+    "110": "Hasło nie może być puste",
+    "111": "Za krótkie hasło",
+    "112": "Hasło musi posiadać litery różnej wielkości",
+    "113": "Hasło musi zawierać liczby",
+    "114": "Hasło musi zawierać znaki specjalne",
+    "115": "Twoje hasło zwiera niedozwolone znaki",
+    "116": "Hasła są różne",
+    "117": "Wymiary są nieprawidlowe",
+
+    "150": "Nie ma tekiej półki",
+    "151": "Nie ma produktu o takim id",
+    "152": "Nie ma tekiej lokalozacji",
+    "153": "Nie ma takiego magazynu",
+    "154": "Nie ma użtkownika o takim Id",
+    "155": "Nie ma takiego Dokumentu",
+
+    "180": "Półka pełna",
+    "181": "Nie ma wystarczajacej ilości jednego z produktów w magazynie",
+    "182": "Za mało miejsca w Magzynie"
+  },
+  "en": {
+    "1": "id not found",
+    "2": "something wrong in the form",
+    "3": "invalid login details",
+    "4": "username taken",
+    "5": "server is not responding",
+    "7": "Logged in successfully!",
+    "8": "registered successfully!",
+    "9": "User with this email doesn't exist",
+    "13": "something wrong on the server",
+
+    "100": "Email cannot be empty",
+    "101": "Email is not valid",
+    "110": "Password cannot be empty",
+    "111": "Password too short",
+    "112": "Password must be mixed case",
+    "113": "Password must contain numbers",
+    "114": "Password must contain special characters",
+    "115": "Your password contains illegal characters",
+    "116": "The passwords are different",
+
+    "150": "There is no shelf of that position",
+    "151": "Product of this id don't exist"
+  }
+}

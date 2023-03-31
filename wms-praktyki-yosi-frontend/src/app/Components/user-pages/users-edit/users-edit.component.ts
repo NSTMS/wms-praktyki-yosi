@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AdminPanelService } from '@services/admin-panel/admin-panel.service';
-import { Form, FormControl, Validators } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { user } from '@static/types/userTypes';
+import { ErrorService } from '@app/Services/error-handling/error.service';
 
 @Component({
   selector: 'app-users-edit',
@@ -11,34 +12,39 @@ import { user } from '@static/types/userTypes';
 })
 export class UsersEditComponent implements OnInit {
   selected: string = 'User';
-  data: any;
+  id: string;
   Id: FormControl;
   Email: FormControl;
   role: FormControl;
   constructor(
     private _reader: AdminPanelService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private _errorHandler: ErrorService,
+    private router : Router
   ) {
-    const temp = this.data;
-
-    this.selected = this.data?.id;
-    this.Id = new FormControl(
-      { value: this.route.snapshot.paramMap.get('id'), disabled: true },
-      Validators.required
-    );
-    this.Email = new FormControl(this.data?.email, Validators.required);
+    if (localStorage.getItem('token') == null) this.router.navigate(['/login']);
+    if (localStorage.getItem('role') != 'Admin') this.router.navigate(['/table']);
+    
+    this.id = this.route.snapshot.params['id'];
+    this.Id = new FormControl({ value: '', disabled: true }, Validators.required);
+    this.Email = new FormControl({ value: '', disabled: true }, Validators.required);
     this.role = new FormControl('', Validators.required);
   }
   async ngOnInit() {
-    this.data = await this._reader.GetInfoFromToken();
-    // console.log(this.data);
+
+    const data = await this._reader.GetById(this.id) as user
+    this.Id.setValue(data.id);
+    this.Email.setValue(data.email);    
   }
 
-  handleSubmit() {
-    // let tempUser = this._reader.GetById()
-    // this._reader.Put()
-  }
-  handleSelectChange() {
-    console.log(this.selected);
+  ngAfterContentInit() {}
+
+  async handleSubmit() {    
+    if (this.Id.invalid || this.Email.invalid) {
+      this._errorHandler.handleErrorCode(2);
+      return;
+    }
+    await this._reader.Put(this.Id.value, JSON.stringify(this.selected));
+    this.router.navigate(['/users'])
   }
 }

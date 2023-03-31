@@ -7,7 +7,7 @@ import { ErrorService } from '@services/error-handling/error.service';
 import { product } from '@static/types/productTypes';
 import { productLocation } from '@static/types/locationTypes';
 import { MagazineService } from '@app/Services/fetching-services/magazine.service';
-
+import { catchError, from, map, Observable, tap, throwError } from 'rxjs';
 @Component({
   selector: 'app-product-info',
   templateUrl: './product-info.component.html',
@@ -42,39 +42,25 @@ export class ProductInfoComponent {
     this.loadData();
   }
 
-  loadData() {
+  async loadData() {
     let productPromise;
-    if (!this.magazineId) productPromise = this._reader.GetById(this.id);
-    else
+    if (!this.magazineId) {
+      productPromise = this._reader.GetById(this.id);
+    } else {
       productPromise = this._magazineService.GetLocations(
         this.id,
         this.magazineId
       );
+    }
 
-    productPromise
-      .then((prod: product) => {
-        if (typeof prod === 'number') {
-          this.router.navigate(['/table']);
-          this._errorHandler.handleErrorCode(prod);
-        }
-        this.product = prod;
-        this.dataSource = new MatTableDataSource<productLocation>(
-          prod.locations
-        );
-      })
-      .catch((ex) => {
-        console.log('err');
-        this.router.navigate(['/table']);
-      });
-    return;
+    const data = await productPromise as product
+    this.product = data;
+    this.dataSource = new MatTableDataSource<productLocation>(
+      data.locations
+    );
   }
 
   async handleDelete(id: number) {
-    const deleted = await this._locationService.Delete(id);
-    if (!deleted) return;
-
-    this.loadData();
-
-    this._errorHandler.errorMessageShow(['Pomyślnie usunieto', 'ok']);
+    await this._locationService.Delete(id)
   }
 }

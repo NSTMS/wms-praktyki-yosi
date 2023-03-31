@@ -1,12 +1,8 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
-import {
-  MatTableDataSource,
-  MatTable,
-  MatTableModule,
-} from '@angular/material/table';
+import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-
 import { DataReaderService } from '@services/fetching-services/data-reader.service';
 import type { product } from '@static/types/productTypes';
 
@@ -22,7 +18,8 @@ export class DataTableComponent {
   displayedColumns: string[];
   length: number = 0;
   canAddAndDel: boolean;
-
+  options : string[]
+  formGroup : FormGroup;
   constructor(private _reader: DataReaderService, private router: Router) {
     if (localStorage.getItem('token') == null) this.router.navigate(['/login']);
 
@@ -36,28 +33,38 @@ export class DataTableComponent {
         'delete',
       ];
     else this.displayedColumns = [...this._reader.columns];
+
+    this.formGroup = new FormGroup({
+      'search' : new FormControl(''),
+      'column' : new FormControl(''),
+      'descending' : new FormControl(false)
+    })
+    this.options = ["", ...this._reader.columns.map(o => o.trim().toLowerCase())]  
+    this.options  = this.options.filter(o => o != "id")
+    
   }
 
-  loadData() {
-    this._reader.GetAll().then((res) => {
-      if (res) this.length = res.length || 0;
+
+  async loadData() {
+    const searchTerm = `${this.formGroup.value.search}&orderBy=${this.formGroup.value.column}&descending=${this.formGroup.value.descending}` 
+    const data = await this._reader.GetAll(searchTerm) as product[]
+      if (data != null) this.length = data.length || 0;
       else this.length = 0;
 
-      this.dataSource = new MatTableDataSource(res);
+      this.dataSource = new MatTableDataSource(data);
 
       if (this.paginator != undefined)
         this.dataSource.paginator = this.paginator;
-    });
   }
 
   ngAfterContentInit() {
     this.loadData();
   }
 
-  handleDelete(id: number) {
-    this._reader.Delete(id);
-    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-      this.router.navigate(['/table']);
-    });
+  async handleDelete(id: number) {
+    await this._reader.Delete(id)
+    window.location.reload();
   }
+
+
 }

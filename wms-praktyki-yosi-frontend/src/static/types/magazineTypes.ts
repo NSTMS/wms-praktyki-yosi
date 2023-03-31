@@ -12,13 +12,25 @@ export type magazineToAdd = {
   address: string;
   dimentions: string;
   shelvesPerRow: number;
+  maxShelfLoad: number;
+};
+
+export type shelf = {
+  position: string;
+};
+
+export type magazineDto = {
+  name: string;
+  address: string;
+  dimentions: string;
+  shelvesPerRow: number;
+  maxShelfCapacity: number;
+  shelfNumber: number;
+  totalCapacity: number;
+  totalQuantity: number;
 };
 
 export type magazineToEdit = {
   name: string;
   address: string;
 };
-
-export type shelf = {
-  position: string;
-}

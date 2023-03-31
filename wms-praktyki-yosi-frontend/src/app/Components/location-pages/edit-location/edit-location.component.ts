@@ -3,11 +3,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { ErrorService } from '@services/error-handling/error.service';
 import { LocationService } from '@services/fetching-services/location.service';
-import {
-  locationToAdd,
-  locationToEdit,
-  productLocation,
-} from '@static/types/locationTypes';
+import {locationToEdit,productLocation,} from '@static/types/locationTypes';
 
 @Component({
   selector: 'app-edit-location',
@@ -37,21 +33,20 @@ export class EditLocationComponent {
     private _service: LocationService,
     private _errorHandler: ErrorService
   ) {
+    if (localStorage.getItem('token') == null) this.router.navigate(['/login']);
+    if (localStorage.getItem('role') == 'User') this.router.navigate(['/table']);
     this.id = this.route.snapshot.params['id'];
-    _service
-      .GetById(this.id)
-      .then((location: productLocation | undefined) => {
-        if (location == undefined) {
-          this.router.navigate(['/table']);
-          return;
-        }
-        this.position.setValue(location.position);
-        this.quantity.setValue(location.quantity);
-      })
-      .catch((ex) => {
-        console.error(`edit location ex`, ex);
-        this.router.navigate(['/table']);
-      });
+    this.loadData()
+  }
+  async loadData(){
+    const location = await this._service.GetById(this.id) as productLocation || undefined
+    if (location == undefined) {
+      this.router.navigate(['/table']);
+      return;
+    }
+    this.position.setValue(location.position);
+    this.quantity.setValue(location.quantity);
+    this.magazineId.setValue(location.magazineId);
   }
 
   async handleSubmit() {
@@ -70,8 +65,7 @@ export class EditLocationComponent {
       magazineId: this.magazineId.value || -1,
     };
 
-    const edited = await this._service.EditLocation(this.id, newLocation);
-
-    if (edited) this.router.navigate(['/table']);
+    await this._service.EditLocation(this.id, newLocation)
+    this.router.navigate(['/table'])
   }
 }

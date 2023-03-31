@@ -1,0 +1,23 @@
+<mat-grid-list cols="1" rowHeight="75px" (keyup.enter)="handleSubmit()">
+  <mat-grid-tile>
+    <mat-form-field appearance="fill">
+      <mat-label>Magazine Id</mat-label>
+      <input matInput [formControl]="magazineId" />
+    </mat-form-field>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-form-field appearance="fill">
+      <mat-label>Position</mat-label>
+      <input matInput [formControl]="position" />
+    </mat-form-field>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-form-field appearance="fill">
+      <mat-label>Maximum capacity</mat-label>
+      <input matInput [formControl]="maxload" />
+    </mat-form-field>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <button mat-raised-button (click)="handleSubmit()">Submit</button>
+  </mat-grid-tile>
+</mat-grid-list>

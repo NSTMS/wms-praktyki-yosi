@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { locationToEdit, locationToAdd } from '@static/types/locationTypes';
 import { ErrorService } from '@services/error-handling/error.service';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 
 declare var require: any;
 const connection = require('@static/connection.json');
@@ -11,81 +13,21 @@ const connection = require('@static/connection.json');
 export class LocationService {
   columns = ['id', 'magazineId', 'position', 'quantity'];
 
-  headers = {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${localStorage.getItem('token')}`,
-  };
-
   link = `${connection.protocole}://${connection.ip}:${connection.port}/api/locations`;
-  constructor(private _errorHandler: ErrorService) {}
+  constructor(private _errorHandler: ErrorService, private http: HttpClient) {}
 
   async EditLocation(id: number, newLocation: locationToEdit) {
-    const response = await fetch(`${this.link}/${id}`, {
-      method: 'PUT',
-      headers: this.headers,
-      body: JSON.stringify({
-        ...newLocation,
-      }),
-    });
-
-    if (response.ok) return true;
-
-    const json = await response.json();
-
-    json?.Errors.forEach((errCode: number) => {
-      this._errorHandler.handleErrorCode(errCode);
-    });
-    return false;
+    return await firstValueFrom(this.http.put(`${this.link}/${id}`, newLocation))
   }
 
   async AddLocation(newLocation: locationToAdd) {
-    const response = await fetch(this.link, {
-      method: 'POST',
-      headers: this.headers,
-      body: JSON.stringify({
-        ...newLocation,
-      }),
-    });
-
-    if (response.ok) return true;
-
-    const json = await response.json();
-
-    json?.Errors.forEach((errCode: number) => {
-      this._errorHandler.handleErrorCode(errCode);
-    });
-
-    return false;
+    return await firstValueFrom(this.http.post(this.link, {...newLocation,}))
   }
 
   async GetById(id: number) {
-    const response = await fetch(this.link + '/' + id, {
-      headers: this.headers,
-    });
-
-    if (response.ok) return await response.json();
-
-    const json = await response.json();
-
-    json.Errors.forEach((errCode: number) => {
-      this._errorHandler.handleErrorCode(errCode);
-    });
+    return await firstValueFrom(this.http.get(this.link + '/' + id))
   }
-
-  async Delete(id: number) {
-    const response = await fetch(this.link + '/' + id, {
-      headers: this.headers,
-      method: 'DELETE',
-    });
-
-    if (response.ok) return true;
-
-    const json = await response.json();
-
-    json.Errors.forEach((errCode: number) => {
-      this._errorHandler.handleErrorCode(errCode);
-    });
-    return false;
+  async Delete(id: number){
+    return await firstValueFrom(this.http.delete(this.link + '/' + id))
   }
 }
