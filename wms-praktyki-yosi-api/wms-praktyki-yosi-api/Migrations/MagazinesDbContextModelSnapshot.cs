@@ -155,6 +155,88 @@ namespace wms_praktyki_yosi_api.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("wms_praktyki_yosi_api.Enitities.Document", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Client")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Finished")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MagazineId")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("Version")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MagazineId");
+
+                    b.ToTable("Documents");
+                });
+
+            modelBuilder.Entity("wms_praktyki_yosi_api.Enitities.DocumentItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Arriving")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("DocumentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("MagzineId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Position")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuantityDone")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantityplaned")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Tag")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("Version")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DocumentId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("DocumentItems");
+                });
+
             modelBuilder.Entity("wms_praktyki_yosi_api.Enitities.Magazine", b =>
                 {
                     b.Property<int>("Id")
@@ -167,6 +249,9 @@ namespace wms_praktyki_yosi_api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Dimentions")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -174,6 +259,15 @@ namespace wms_praktyki_yosi_api.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ShelvesPerRow")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("Version")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.HasKey("Id");
 
@@ -200,6 +294,12 @@ namespace wms_praktyki_yosi_api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<byte[]>("Version")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.HasKey("Id");
 
                     b.ToTable("Products");
@@ -222,6 +322,16 @@ namespace wms_praktyki_yosi_api.Migrations
                     b.Property<int>("ShelfId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Tag")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("Version")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
@@ -242,9 +352,18 @@ namespace wms_praktyki_yosi_api.Migrations
                     b.Property<int>("MagazineId")
                         .HasColumnType("int");
 
+                    b.Property<int>("MaxLoad")
+                        .HasColumnType("int");
+
                     b.Property<string>("Position")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("Version")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.HasKey("Id");
 
@@ -373,6 +492,36 @@ namespace wms_praktyki_yosi_api.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("wms_praktyki_yosi_api.Enitities.Document", b =>
+                {
+                    b.HasOne("wms_praktyki_yosi_api.Enitities.Magazine", "Magazine")
+                        .WithMany()
+                        .HasForeignKey("MagazineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Magazine");
+                });
+
+            modelBuilder.Entity("wms_praktyki_yosi_api.Enitities.DocumentItem", b =>
+                {
+                    b.HasOne("wms_praktyki_yosi_api.Enitities.Document", "Document")
+                        .WithMany("Items")
+                        .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("wms_praktyki_yosi_api.Enitities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Document");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("wms_praktyki_yosi_api.Enitities.ProductLocations", b =>
                 {
                     b.HasOne("wms_praktyki_yosi_api.Enitities.Product", "Product")
@@ -399,6 +548,11 @@ namespace wms_praktyki_yosi_api.Migrations
                         .HasForeignKey("MagazineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("wms_praktyki_yosi_api.Enitities.Document", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("wms_praktyki_yosi_api.Enitities.Magazine", b =>

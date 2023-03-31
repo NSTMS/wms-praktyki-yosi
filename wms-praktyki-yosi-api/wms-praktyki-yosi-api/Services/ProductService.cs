@@ -2,9 +2,13 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Cryptography;
 using wms_praktyki_yosi_api.Enitities;
+using wms_praktyki_yosi_api.Exceptions;
 using wms_praktyki_yosi_api.Models;
+using wms_praktyki_yosi_api.Services.Static;
+
 namespace wms_praktyki_yosi_api.Services
 {
     public class ProductService : IProductService
@@ -18,75 +22,54 @@ namespace wms_praktyki_yosi_api.Services
             _mapper = mapper;
         }
 
-        public int AddNewProduct(ProductDto dto) {
-            var product = _mapper.Map<Product>( dto );
-            _context.Products
-                .Add( product );
-            _context.SaveChanges();
-            return product.Id;
-            
-        }
-        public bool RemoveProduct(int id) {
-            var prod =_context
-                .Products.
-                FirstOrDefault(r => r.Id == id);
-            if (prod == null)
-            {
-                return false;
-            }
-
-            _context
-                 .Products
-                 .Remove(prod);
-
-            _context.SaveChanges();
-            return true;
-        }
-        public bool UpdateProduct(int id, ProductDto dto) {
-            var prod = _context.Products.FirstOrDefault(r => r.Id == id);
-    
-            if(prod == null) {
-                return false;
-            }
-
-            prod.ProductName = dto.ProductName;
-            prod.EAN = dto.EAN;
-            prod.Price = dto.Price;
-            _context.SaveChanges();
-
-            return true;
-        }
-        public IEnumerable<ProductDto> GetAll()
+        public IEnumerable<ProductDto> GetAll(GetRequestQuery query)
         {
             var seeder = new MagazinesSeeder(_context);
             seeder.Seed();
-            var products = _context.Products.Include(p => p.Locations).ToList();
-            var dtos = products.Select(p => new ProductDto
+
+            var productDtos = _context.Products
+                .Include(p => p.Locations)
+                .Where(p => (query.SearchTerm == null) || p.ProductName.ToLower().Contains(query.SearchTerm.ToLower())
+                                                       || p.EAN.ToLower().Contains(query.SearchTerm.ToLower()))
+                .Select(p => new ProductDto
+                 {
+                     Id = p.Id,
+                     ProductName = p.ProductName,
+                     EAN = p.EAN,
+                     Price = p.Price,
+                     Quantity = p.Locations.Sum(l => l.Quantity)
+                 });
+            if (query.OrderBy != null)
             {
-                Id = p.Id,
-                ProductName = p.ProductName,
-                EAN = p.EAN,
-                Price = p.Price,
-                Quantity = p.Locations.Sum(l => l.Quantity)
-            });
-            return dtos;
+                try
+                {
+                    var selectedColum = OrderByColumnSelectors.Products[query.OrderBy.ToLower()];
+                    productDtos = (query.Descending)
+                    ? productDtos.OrderByDescending(selectedColum)
+                    : productDtos.OrderBy(selectedColum);
+                }
+                catch (KeyNotFoundException)
+                {
+                    throw new BadRequestException("U bad");
+                }
+
+                
+            }
+
+            return productDtos;
         }
 
         public ProductDto GetById(int id)
         {
             var product = _context.Products
-                .Include(p => p.Locations)
-                .FirstOrDefault(r => r.Id == id);
-
-            if (product == null)
-                return null;
+                .FirstOrDefault(r => r.Id == id)
+                ?? throw new NotFoundException("151");
 
             var loc = _context
                 .ProductLocations
                 .Include(s => s.Shelf)
-                .Where(s => s.ProductId == id).ToList();
-
-
+                .Where(s => s.ProductId == id)
+                .ToList();
 
             var res = new ProductDto()
             {
@@ -98,7 +81,75 @@ namespace wms_praktyki_yosi_api.Services
             };
 
             return res;
+        }
 
+        public int AddNewProduct(ProductDto dto) {
+            var product = _mapper.Map<Product>( dto );
+            _context.Products
+                .Add( product );
+            ConcurencyResolver.SafeSave(_context);
+            return product.Id;
+            
+        }
+        
+        public void UpdateProduct(int id, ProductDto dto) {
+            var prod = _context.Products
+                .FirstOrDefault(r => r.Id == id)
+                ?? throw new NotFoundException("151");
+
+            prod.ProductName = dto.ProductName;
+            prod.EAN = dto.EAN;
+            prod.Price = dto.Price;
+            ConcurencyResolver.SafeSave(_context);
+        }
+
+        public void RemoveProduct(int id)
+        {
+            var prod = _context.Products
+                .FirstOrDefault(r => r.Id == id)
+                ?? throw new NotFoundException("151");
+
+            _context
+                 .Products
+                 .Remove(prod);
+
+            ConcurencyResolver.SafeSave(_context);
+        }
+
+        public IEnumerable<ProductLocationDto> GetProductLocations(int id, GetRequestQuery query)
+        {
+            var locations = _context.ProductLocations
+                .Where(l => l.ProductId == id);
+
+            var locationDtos = locations
+                .Select(p => new ProductLocationDto()
+                    {
+                        ProductId = p.ProductId,
+                        Position = p.Shelf.Position,
+                        MagazineId = p.Shelf.MagazineId,
+                        Quantity = p.Quantity,
+                        Tag = p.Tag
+                    })
+                .Where(l => (query.SearchTerm == null) || l.Tag.ToLower().Contains(query.SearchTerm.ToLower())
+                                                       || l.Position.ToLower().Contains(query.SearchTerm.ToLower()));
+
+            if (query.OrderBy != null)
+            {
+                try
+                {
+                    var columnSelected = OrderByColumnSelectors.Locations[query.OrderBy.ToLower()];
+
+                    locationDtos = (query.Descending)
+                        ? locationDtos.OrderByDescending(columnSelected)
+                        : locationDtos.OrderBy(columnSelected);
+                }
+                catch (KeyNotFoundException)
+                {
+                    throw new BadRequestException("Bad column");
+                }
+            }
+
+                return locationDtos;
 
         }
     }

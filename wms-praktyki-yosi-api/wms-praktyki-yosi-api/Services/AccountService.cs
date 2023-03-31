@@ -5,19 +5,22 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Text;
 using wms_praktyki_yosi_api.Enitities;
 using wms_praktyki_yosi_api.Exceptions;
 using wms_praktyki_yosi_api.Models;
 using wms_praktyki_yosi_api.Results;
+using wms_praktyki_yosi_api.Services.Static;
 
 namespace wms_praktyki_yosi_api.Services
 {
     public interface IAccountService
     {
-        Task<bool> RegisterUser(RegisterUserDto dto);
-        Task<List<UserDto>> GetAll();
+        Task RegisterUser(RegisterUserDto dto);
+        Task<List<UserDto>> GetAll(GetRequestQuery query);
         Task<LoginResult> GetToken(UserLoginDto dto);
         Task ModifyUserRole(string id, string newrole);
         Task<User> Get(string id);
@@ -32,6 +35,8 @@ namespace wms_praktyki_yosi_api.Services
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
+        
+
         public AccountService(
             UserManager<User> userManager,
             RoleManager<IdentityRole> roleManager,
@@ -44,20 +49,40 @@ namespace wms_praktyki_yosi_api.Services
             _context = context;
         }
         
-        public async Task<List<UserDto>> GetAll()
+        public async Task<List<UserDto>> GetAll(GetRequestQuery query)
         {
-            var users = _userManager.Users.ToList();
+            var users = _userManager
+                .Users
+                .Where(u => (query.SearchTerm == null) || u.Email.ToLower().Contains(query.SearchTerm.ToLower()))
+                .ToList();
 
             var userDtos = new List<UserDto>();
             foreach (var user in users)
             {
                 userDtos.Add(new UserDto()
-                    {
-                        Id = user.Id,
-                        Email = user.Email,
-                        PasswordHash = user.PasswordHash,
-                        Role = (await _userManager.GetRolesAsync(user))[0]
-                    });
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    PasswordHash = user.PasswordHash,
+                    Role = (await _userManager.GetRolesAsync(user))[0]
+                });
+            }
+
+            if (query.OrderBy != null)
+            {
+                try
+                {
+                    var selectedColumn = OrderByColumnSelectors.Users[query.OrderBy.ToLower()];
+                    var userDtoQuery = userDtos.AsQueryable();
+                    userDtos = (query.Descending)
+                         ? userDtoQuery.OrderBy(selectedColumn).ToList()
+                         : userDtoQuery.OrderByDescending(selectedColumn).ToList();
+                }
+                catch (KeyNotFoundException)
+                {
+                    throw new BadRequestException("Bad column Name");
+                }
+                
             }
 
             return userDtos;
@@ -66,11 +91,10 @@ namespace wms_praktyki_yosi_api.Services
         public async Task<User> Get(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-
-            return user == null ? throw new BadRequestException("1") : user;
+            return user ?? throw new NotFoundException("154");
         }
 
-        public async Task<bool> RegisterUser(RegisterUserDto dto)
+        public async Task RegisterUser(RegisterUserDto dto)
         {
              var seeder = new MagazinesSeeder(_context, _roleManager);
              await seeder.SeedRoles();
@@ -95,8 +119,6 @@ namespace wms_praktyki_yosi_api.Services
 
             if (!result.Succeeded)
                 throw new Exception();
-
-            return true;
         }
 
         public async Task<LoginResult> GetToken(UserLoginDto dto)
@@ -141,11 +163,9 @@ namespace wms_praktyki_yosi_api.Services
         public async Task ModifyUserRole(string id, string newrole)
         {
 
-            var user = await _userManager.FindByIdAsync(id);
-            if (user is null)
-            {
-                throw new BadRequestException("1");
-            }
+            var user = await _userManager
+                .FindByIdAsync(id)
+                ?? throw new BadRequestException("154");
 
             var oldRole = (await _userManager.GetRolesAsync(user))[0];
             var result = await _userManager.RemoveFromRoleAsync(user, oldRole);
@@ -166,9 +186,9 @@ namespace wms_praktyki_yosi_api.Services
 
         public async Task DeleteUser(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user is null)
-                throw new BadRequestException("1");
+            var user = await _userManager
+                .FindByIdAsync(id)
+                ?? throw new BadRequestException("154");
             var result = await _userManager.DeleteAsync(user);
 
             if (!result.Succeeded)

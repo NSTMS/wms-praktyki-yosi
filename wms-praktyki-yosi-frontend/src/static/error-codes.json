@@ -19,9 +19,20 @@
     "114": "Hasło musi zawierać znaki specjalne",
     "115": "Twoje hasło zwiera niedozwolone znaki",
     "116": "Hasła są różne",
+    "117": "Wymiary są nieprawidlowe",
 
     "150": "Nie ma tekiej półki",
-    "151": "Nie ma produktu o takim id"
+    "151": "Nie ma produktu o takim id",
+    "152": "Nie ma tekiej lokalozacji",
+    "153": "Nie ma takiego magazynu",
+    "154": "Nie ma użtkownika o takim Id",
+    "155": "Nie ma takiego Dokumentu",
+    "156": "nie ma takiego produktu na liście",
+
+    "180": "Półka pełna",
+    "181": "Nie ma wystarczajacej ilości jednego z produktów w magazynie",
+    "182": "Za mało miejsca w Magzynie",
+    "183": "Za mało produktu w danej lokalizacji"
   },
   "en": {
     "1": "id not found",

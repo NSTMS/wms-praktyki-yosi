@@ -6,13 +6,13 @@ namespace wms_praktyki_yosi_api.Services
     public interface IMagazineService
     {
         int AddMagzine(MagazineDto dto);
-        bool DeleteMagazine(int id);
-        List<Magazine> GetAll();
-        MagazineDto GetById(int id);
+        void DeleteMagazine(int id);
+        IEnumerable<ReturnMagazineDto> GetAll(GetRequestQuery query);
+        ReturnMagazineDto GetById(int id);
         List<ProductLocationDto> GetLocationsInMagazine(int id);
         public ProductDto GetProductInMagazine(int id, int productId);
-        List<ProductDto> GetProductsInMagazine(int id);
-        bool UpdateMagazine(int id, MagazineDto dto);
+        List<ProductDto> GetProductsInMagazine(int id, GetRequestQuery query);
+        void UpdateMagazine(int id, EditMagazineDto dto);
         public List<ReturnProductLocationDto> GetLocationsOfProduct(int id, int productId);
     }
 }

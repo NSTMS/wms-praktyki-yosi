@@ -5,5 +5,7 @@
         public string Name { get; set; }
         public string Address { get; set; }
         public string Dimentions { get; set; }
+        public int ShelvesPerRow { get; set; }
+        public int MaxShelfLoad { get; set; } = 100;
     }
 }
