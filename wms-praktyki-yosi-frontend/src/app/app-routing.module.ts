@@ -19,7 +19,6 @@ import { EditDocumentComponent } from './Components/document-pages/edit-document
 import { AddDocumentComponent } from './Components/document-pages/add-document/add-document.component';
 import { InfoDocumentComponent } from './Components/document-pages/info-document/info-document.component';
 import { DocumentsListComponent } from './Components/document-pages/documents-list/documents-list.component';
-import { DocumentsInMagazineComponent } from './Components/document-pages/documents-in-magazine/documents-in-magazine.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/table', pathMatch: 'full' },
@@ -44,10 +43,6 @@ const routes: Routes = [
   { path: 'users/edit/:id', component: UsersEditComponent },
   { path: 'documents', component: DocumentsListComponent },
   { path: 'documents/add', component: AddDocumentComponent },
-  {
-    path: 'magazines/:magazineId/documents',
-    component: DocumentsInMagazineComponent,
-  },
   {
     path: 'documents/info/:id',
     pathMatch: 'full',
