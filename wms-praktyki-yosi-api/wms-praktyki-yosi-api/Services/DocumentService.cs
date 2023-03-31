@@ -19,6 +19,7 @@ namespace wms_praktyki_yosi_api.Services
         void DeleteDocument(string id);
         IEnumerable<DocumentItemDto> GetDocumentItems(string id, GetRequestQuery query);
         void AddItemToDocument(string id, AddDocumentItemDto item);
+        DocumentItemDto GetDocumentItem(string id, string itemId);
         void DeleteDocumentItem(string documentId, string productId);
         void UpdateItemInDocument(string documentId, int productId, EditDocumentItemDto item);
         void MarkDocumentAsFinished(string id, bool finished);
@@ -30,8 +31,7 @@ namespace wms_praktyki_yosi_api.Services
         private readonly MagazinesDbContext _context;
         private readonly IMapper _mapper;
 
-      
-        
+
 
         public DocumentService(MagazinesDbContext context, IMapper mapper)
         {
@@ -58,7 +58,6 @@ namespace wms_praktyki_yosi_api.Services
                     ? documentDtos.OrderByDescending(selectedColumn)
                     : documentDtos.OrderBy(selectedColumn);
             }
-
             return documentDtos.ToList();
         }
         public DetailedDocumentDto GetDocumentDetails(string id)
@@ -128,6 +127,14 @@ namespace wms_praktyki_yosi_api.Services
             }
 
             return items;
+        }
+        public DocumentItemDto GetDocumentItem(string id, string itemId)
+        {
+            var item = _context.DocumentItems
+                .FirstOrDefault(i => i.Id.ToString() == itemId)
+                ?? throw new NotFoundException("156");
+            var itemDto = _mapper.Map<DocumentItemDto>(item);
+            return itemDto;
         }
         public void AddItemToDocument (string id, AddDocumentItemDto item)
         {
@@ -204,7 +211,6 @@ namespace wms_praktyki_yosi_api.Services
 
             HandleEditSameArriving(item, document, product);
         }
-
         public void VisitLocation(string documentId, DocumentVisitLocationDto location)
         {
             var document = GetDocumentByGuid(documentId);
@@ -564,6 +570,7 @@ namespace wms_praktyki_yosi_api.Services
                     .Remove(itemLocation);
         }
 
+        
     }
 
 }

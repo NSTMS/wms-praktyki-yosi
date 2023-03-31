@@ -43,7 +43,7 @@ namespace wms_praktyki_yosi_api.Services
             {
                 try
                 {
-                    var selectedColum = OrderByColumnSelectors.Products[query.OrderBy];
+                    var selectedColum = OrderByColumnSelectors.Products[query.OrderBy.ToLower()];
                     productDtos = (query.Descending)
                     ? productDtos.OrderByDescending(selectedColum)
                     : productDtos.OrderBy(selectedColum);

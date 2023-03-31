@@ -5,8 +5,8 @@ namespace wms_praktyki_yosi_api.Services.Static
 {
     public static class ConcurencyResolver
     {
-        public static readonly int MAX_TRIES = 50;
-        public static readonly int MAX_TIME_SECONDS = 10;
+        public static readonly int MAX_TRIES = 10;
+        public static readonly int MAX_TIME_SECONDS = 1;
 
         public static void ResolveConcurency(MagazinesDbContext context)
         {

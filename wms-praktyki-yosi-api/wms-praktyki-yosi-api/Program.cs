@@ -25,8 +25,11 @@ using wms_praktyki_yosi_api.Models;
 using wms_praktyki_yosi_api.Models.Validators;
 using Microsoft.EntityFrameworkCore;
 using wms_praktyki_yosi_api.Middleweare;
+using wms_praktyki_yosi_api.Services.Workers;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
 builder.Services.AddControllers();
 builder.Services.AddMvc();
 
@@ -39,6 +42,9 @@ builder.Services.AddSingleton(connectionString);
 
 builder.Services.AddDbContext<MagazinesDbContext>(options =>
     options.UseSqlServer(connectionString.database));
+
+builder.Services.AddHostedService<MagzineStateWorker>();
+
 
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<MagazinesDbContext>()

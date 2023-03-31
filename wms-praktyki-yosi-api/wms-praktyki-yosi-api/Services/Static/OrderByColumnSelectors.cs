@@ -43,10 +43,10 @@ namespace wms_praktyki_yosi_api.Services.Static
 
         public static readonly Dictionary<string, Expression<Func<ProductDto, object>>> Products = new()
         {
-            {nameof(ProductDto.ProductName), p =>  p.ProductName},
-            {nameof(ProductDto.EAN), p => p.EAN },
-            {nameof(ProductDto.Price), p => p.Price},
-            {nameof(ProductDto.Quantity), p => p.Quantity},
+            {nameof(ProductDto.ProductName).ToLower(), p =>  p.ProductName},
+            {nameof(ProductDto.EAN).ToLower(), p => p.EAN },
+            {nameof(ProductDto.Price).ToLower(), p => p.Price},
+            {nameof(ProductDto.Quantity).ToLower(), p => p.Quantity},
         };
 
         public static readonly Dictionary<string, Expression<Func<ProductLocationDto, object>>> Locations = new()

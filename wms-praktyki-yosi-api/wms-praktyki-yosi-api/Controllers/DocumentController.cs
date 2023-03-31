@@ -107,6 +107,16 @@ namespace wms_praktyki_yosi_api.Controllers
             return Ok();
         }
 
+        [HttpGet("{id}/items/{itemId}")]
+        public async Task<ActionResult<DocumentItemDto>> GetDocumentItem([FromRoute] string id, [FromRoute] string itemId)
+        {
+            if (!await _authorizationService.UserIsAuthorized(User))
+                return Unauthorized();
+
+            var item = _service.GetDocumentItem(id, itemId);
+            return Ok(item);
+        }
+
         [HttpDelete("{id}/items/{itemId}")]
         [Authorize(Roles = "Admin,Moderator")]
         public async Task<ActionResult> DeleteItemFromDocument([FromRoute] string id, [FromRoute] string itemId)
