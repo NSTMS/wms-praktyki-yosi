@@ -10,6 +10,7 @@ namespace wms_praktyki_yosi_api.Models.DocumentModels
         [Required]
         public string Position { get; set; }
         [Required]
+        [Range(0, int.MaxValue)]
         public int Quantity { get; set; }
         public string? Tag { get; set; }
     }

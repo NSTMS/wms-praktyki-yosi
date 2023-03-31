@@ -3,6 +3,7 @@
     public class DocumentItemDto
     {
         public string Id { get; set; }
+        public int ProductId { get; set; }
         public string ProductName { get; set; }
         public string Position { get; set; }
         public bool Arriving { get; set; }

@@ -11,6 +11,9 @@ namespace wms_praktyki_yosi_api.Enitities
         public string Tag { get; set; }
         public virtual Product Product { get; set; }
         public virtual Shelf Shelf { get; set; }
+
+        public byte[] Version { get; set; }
+
     }
 }
  

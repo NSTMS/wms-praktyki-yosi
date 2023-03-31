@@ -41,6 +41,16 @@ namespace wms_praktyki_yosi_api.Controllers
             var productList = _productService.GetAll(query);
             return Ok(productList);
         }
+        [HttpPost]
+        [Authorize(Roles = "Admin,Moderator")]
+        public async Task<ActionResult> AddProductAsync([FromBody] ProductDto dto)
+        {
+            if (!await _authorizationService.UserIsAuthorized(User))
+                return Unauthorized();
+
+            var productId = _productService.AddNewProduct(dto);
+            return Created("/api/products/" + productId, null);
+        }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetAsync([FromRoute] int id)
@@ -74,16 +84,17 @@ namespace wms_praktyki_yosi_api.Controllers
             _productService.RemoveProduct(id);
             return Ok();
         }
-        [HttpPost]
-        [Authorize(Roles = "Admin,Moderator")]
-        public async Task<ActionResult> AddProductAsync([FromBody] ProductDto dto)
+
+        [HttpGet("{id}/locations")]
+        public async Task<ActionResult<List<ProductLocationDto>>> GetLocationsOfProduct([FromRoute]int id, [FromQuery]GetRequestQuery query)
         {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
 
-            var productId = _productService.AddNewProduct(dto);
-            return Created("/api/products/" + productId, null);
+            var productLocations = _productService.GetProductLocations(id, query);
+            return Ok(productLocations);
         }
+
 
 
     }

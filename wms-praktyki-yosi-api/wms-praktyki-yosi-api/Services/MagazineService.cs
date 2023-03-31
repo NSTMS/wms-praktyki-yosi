@@ -6,6 +6,7 @@ using System.Reflection.Metadata.Ecma335;
 using wms_praktyki_yosi_api.Enitities;
 using wms_praktyki_yosi_api.Exceptions;
 using wms_praktyki_yosi_api.Models;
+using wms_praktyki_yosi_api.Services.Static;
 
 namespace wms_praktyki_yosi_api.Services
 {
@@ -13,18 +14,6 @@ namespace wms_praktyki_yosi_api.Services
     {
         private readonly MagazinesDbContext _context;
         private readonly IMapper _mapper;
-
-
-        private readonly Dictionary<string, Expression<Func<ReturnMagazineDto, object>>> _orderByColumnSelector = new()
-        {
-            {nameof(ReturnMagazineDto.Name), p =>  p.Name},
-            {nameof(ReturnMagazineDto.Dimentions), p => p.Dimentions },
-            {nameof(ReturnMagazineDto.ShelvesPerRow), p => p.ShelvesPerRow},
-            {nameof(ReturnMagazineDto.MaxShelfLoad), p => p.MaxShelfLoad},
-            {nameof(ReturnMagazineDto.ShelfNumber), p => p.ShelfNumber},
-            {nameof(ReturnMagazineDto.TotalCapacity), p => p.TotalCapacity},
-            {nameof(ReturnMagazineDto.TotalQuantity), p => p.TotalQuantity},
-        };
 
         public MagazineService(MagazinesDbContext context, IMapper mapper)
         {
@@ -36,14 +25,15 @@ namespace wms_praktyki_yosi_api.Services
         {
             var magzines = _context
                 .Magazines
-                .Where(m => (query.SearchTerm == null) || m.Name.ToLower().Contains(query.SearchTerm.ToLower()))
+                .Where(m => (query.SearchTerm == null) || m.Name.ToLower().Contains(query.SearchTerm.ToLower())
+                                                       || m.Address.ToLower().Contains(query.SearchTerm.ToLower()))
                 .ToList();
 
 
             var magazineDtos = new List<ReturnMagazineDto>();
             foreach(var magazine in magzines)
             {
-                var magazineDto = GetById(magazine.Id);
+                var magazineDto = ConvertMagazineToDto(magazine);
                 magazineDtos.Add(magazineDto);
             }
             var magazineDtosQuery = magazineDtos.AsQueryable();
@@ -51,7 +41,7 @@ namespace wms_praktyki_yosi_api.Services
             {
                 try
                 {
-                    var selectedColum = _orderByColumnSelector[query.OrderBy];
+                    var selectedColum = OrderByColumnSelectors.Magazines[query.OrderBy.ToLower()];
                     magazineDtosQuery = (query.Descending)
                     ? magazineDtosQuery.OrderByDescending(selectedColum)
                     : magazineDtosQuery.OrderBy(selectedColum);
@@ -66,37 +56,9 @@ namespace wms_praktyki_yosi_api.Services
         }
         public ReturnMagazineDto GetById(int id)
         {
-            var magazine = _context
-                .Magazines
-                .FirstOrDefault(x => x.Id == id)
-                ?? throw new NotFoundException("153");
+            var magazine = GetMagazineById(id);
 
-            var shelvesInMagzine = _context
-                    .Shelves
-                    .Where(s => s.MagazineId == magazine.Id);
-
-            var maxShelfLoad = shelvesInMagzine.Min(s => s.MaxLoad);
-            var numberOfShefls = shelvesInMagzine.Count();
-            var totalCapacity = shelvesInMagzine.Sum(s => s.MaxLoad);
-            shelvesInMagzine = null;
-            var totalQuantity = _context
-                .ProductLocations
-                .Include(l => l.Shelf)
-                .Where(l => l.Shelf.MagazineId == magazine.Id)
-                .Sum(l => l.Quantity);
-
-            var magazineDto = new ReturnMagazineDto
-            {
-                Name = magazine.Name,
-                Address = magazine.Address,
-                Dimentions = magazine.Dimentions,
-                ShelvesPerRow = magazine.ShelvesPerRow,
-                MaxShelfLoad = maxShelfLoad,
-                ShelfNumber = numberOfShefls,
-                TotalCapacity = totalCapacity,
-                TotalQuantity = totalQuantity,
-                FreeSpace = totalCapacity - totalQuantity
-            };
+            ReturnMagazineDto magazineDto = ConvertMagazineToDto(magazine);
 
             return magazineDto;
         }
@@ -112,11 +74,7 @@ namespace wms_praktyki_yosi_api.Services
         }
         public ProductDto GetProductInMagazine(int id, int productId)
         {
-            var magazine = _context
-                .Magazines
-                .Include(s => s.Shelves)
-                .FirstOrDefault(x => x.Id == id)
-                ?? throw new NotFoundException("153");
+            var magazine = GetMagazineWithShelvesById(id);
 
             var locations = _context
               .ProductLocations
@@ -144,9 +102,7 @@ namespace wms_praktyki_yosi_api.Services
             };
             return res;
         }
-
-
-        public List<ProductDto> GetProductsInMagazine(int id)
+        public List<ProductDto> GetProductsInMagazine(int id, GetRequestQuery query)
         {
             var prodIds = _context
                 .ProductLocations
@@ -159,31 +115,56 @@ namespace wms_praktyki_yosi_api.Services
             var products = _context
                 .Products
                 .Include(r => r.Locations)
-                .Where(p => prodIds.Contains(p.Id));
+                .Where(p => prodIds.Contains(p.Id)
+                    && ((query.SearchTerm == null) || p.ProductName.ToLower().Contains(query.SearchTerm.ToLower())
+                                                   || p.EAN.ToLower().Contains(query.SearchTerm.ToLower())));
+ 
 
-            var dtos = products.Select(p => new ProductDto
+            var dtos = products
+                .Select(p => new ProductDto
+                {
+                    Id = p.Id,
+                    ProductName = p.ProductName,
+                    EAN = p.EAN,
+                    Price = p.Price,
+                    Quantity = p.Locations.Sum(l => l.Quantity)
+                });
+
+            if (query.OrderBy != null)
             {
-                Id = p.Id,
-                ProductName = p.ProductName,
-                EAN = p.EAN,
-                Price = p.Price,
-                Quantity = p.Locations.Sum(l => l.Quantity)
-            }).ToList();
-            return dtos;
+                try
+                {
+                    var selectedColum = OrderByColumnSelectors.Products[query.OrderBy.ToLower()];
+                    dtos = (query.Descending)
+                    ? dtos.OrderByDescending(selectedColum)
+                    : dtos.OrderBy(selectedColum);
+                }
+                catch (KeyNotFoundException)
+                {
+                    throw new BadRequestException("No column of that name");
+                }
+            }
+
+            return dtos.ToList();
         }
         public List<ReturnProductLocationDto> GetLocationsOfProduct(int id, int productId)
         {
-            var magzaine = _context
+            var LocationsInMagzaine = _context
                 .ProductLocations
                 .Include(s => s.Shelf)
                 .Where(p => p.Shelf.MagazineId == id);
-            if (magzaine == null)
-                throw new NotFoundException("153");
 
-            var locations = magzaine
-                .Where(p => p.ProductId == productId).ToList();
-            if (locations == null)
+            if (!LocationsInMagzaine.Any())
+            {
+                throw new NotFoundException("153");
+            }
+
+            var locations = LocationsInMagzaine
+                .Where(p => p.ProductId == productId)
+                .ToList();
+            if (!locations.Any())
                 throw new NotFoundException("152");
+
             var res = _mapper.Map<List<ReturnProductLocationDto>>(locations);
             return res;
         }
@@ -196,7 +177,7 @@ namespace wms_praktyki_yosi_api.Services
 
             
             _context.Magazines.Add(magazine);
-            _context.SaveChanges();
+            ConcurencyResolver.SafeSave(_context);
             var magazineId = magazine.Id;
             List<Shelf>? shelfList;
 
@@ -207,66 +188,35 @@ namespace wms_praktyki_yosi_api.Services
             catch
             {
                 _context.Magazines.Remove(magazine);
-                _context.SaveChanges();
+                ConcurencyResolver.SafeSave(_context);
                 throw new BadRequestException("117");
             }
 
             
             _context.Shelves.AddRange(shelfList);
-            _context.SaveChanges();
+            ConcurencyResolver.SafeSave(_context);
             return magazine.Id;
 
         }
-
-        private List<Shelf> GetShelvesList(MagazineDto dto, int magazineId)
-        {
-            var shelvesList = new List<Shelf>();
-
-            var dimentions = dto.Dimentions.Split("x");
-            var shelvesPR = dto.ShelvesPerRow;
-
-            var positions = GetAllPositions(
-                    Convert.ToInt32(dimentions[0]),
-                    Convert.ToInt32(dimentions[1]),
-                    Convert.ToInt32(shelvesPR)
-                );
-
-            foreach (var pos in positions)
-            {
-                Shelf shelf = new()
-                {
-                    MagazineId = magazineId,
-                    Position = pos,
-                    MaxLoad = dto.MaxShelfQuantity
-                };
-                shelvesList.Add(shelf);
-            }
-            return shelvesList; 
-        }
-
         public void UpdateMagazine(int id, EditMagazineDto dto)
         {
-            var magazine = _context.Magazines
-                .FirstOrDefault(m => m.Id == id)
-                ?? throw new NotFoundException("153");
+            var magazine = GetMagazineById(id);
 
 
             magazine.Address = dto.Address;
             magazine.Name = dto.Name;
-            _context.SaveChanges();
+            ConcurencyResolver.SafeSave(_context);
         }
-
         public void DeleteMagazine(int id)
         {
-            var magazine = _context.Magazines
-                .FirstOrDefault(m => m.Id == id)
-                ?? throw new NotFoundException("153");
+            var magazine = GetMagazineById(id);
 
-            _context.Magazines.Remove(magazine);
-            _context.SaveChanges();
+            magazine.Deleted = true;
+            ConcurencyResolver.SafeSave(_context);
         }
 
-        public List<string> GetRegalNames(int count)
+
+        private List<string> GetRegalNames(int count)
         {
             var num = Convert.ToInt32(count);
             var NUM = num;
@@ -319,6 +269,75 @@ namespace wms_praktyki_yosi_api.Services
                 }
             }
             return positions;
+        }
+        private Magazine GetMagazineById(int id)
+        {
+            return _context.Magazines
+                .FirstOrDefault(m => m.Id == id && !m.Deleted)
+                ?? throw new NotFoundException("153");
+        }
+        private Magazine GetMagazineWithShelvesById(int id)
+        {
+            return _context.Magazines
+                .Include(m => m.Shelves)
+                .FirstOrDefault(m => m.Id == id && !m.Deleted)
+                ?? throw new NotFoundException("153");
+        }
+        private List<Shelf> GetShelvesList(MagazineDto dto, int magazineId)
+        {
+            var shelvesList = new List<Shelf>();
+
+            var dimentions = dto.Dimentions.Split("x");
+            var shelvesPR = dto.ShelvesPerRow;
+
+            var positions = GetAllPositions(
+                    Convert.ToInt32(dimentions[0]),
+                    Convert.ToInt32(dimentions[1]),
+                    Convert.ToInt32(shelvesPR)
+                );
+
+            foreach (var pos in positions)
+            {
+                Shelf shelf = new()
+                {
+                    MagazineId = magazineId,
+                    Position = pos,
+                    MaxLoad = dto.MaxShelfLoad
+                };
+                shelvesList.Add(shelf);
+            }
+            return shelvesList;
+        }
+        private ReturnMagazineDto ConvertMagazineToDto(Magazine magazine)
+        {
+            var shelvesInMagzine = _context
+                                .Shelves
+                                .Where(s => s.MagazineId == magazine.Id);
+
+            var maxShelfLoad = shelvesInMagzine.Min(s => s.MaxLoad);
+            var numberOfShefls = shelvesInMagzine.Count();
+            var totalCapacity = shelvesInMagzine.Sum(s => s.MaxLoad);
+            shelvesInMagzine = null;
+            var totalQuantity = _context
+                .ProductLocations
+                .Include(l => l.Shelf)
+                .Where(l => l.Shelf.MagazineId == magazine.Id)
+                .Sum(l => l.Quantity);
+
+            var magazineDto = new ReturnMagazineDto
+            {
+                Id = magazine.Id,
+                Name = magazine.Name,
+                Address = magazine.Address,
+                Dimentions = magazine.Dimentions,
+                ShelvesPerRow = magazine.ShelvesPerRow,
+                MaxShelfLoad = maxShelfLoad,
+                ShelfNumber = numberOfShefls,
+                TotalCapacity = totalCapacity,
+                TotalQuantity = totalQuantity,
+                FreeSpace = totalCapacity - totalQuantity
+            };
+            return magazineDto;
         }
 
     }

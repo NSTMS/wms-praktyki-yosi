@@ -25,11 +25,11 @@ namespace wms_praktyki_yosi_api.Controllers
             _authorizationService = authorizationService;
         }
 
-        [HttpGet] public async Task<ActionResult> GetAll() {
+        [HttpGet] public async Task<ActionResult> GetAll([FromQuery]GetRequestQuery query) {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
 
-            var result = _locationService.GetAllLocations();
+            var result = _locationService.GetAllLocations(query);
             return Ok(result);
         }
         [HttpPost]

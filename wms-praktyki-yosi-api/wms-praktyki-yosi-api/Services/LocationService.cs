@@ -2,16 +2,20 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Identity.Client;
+using System.Linq;
+using System.Linq.Expressions;
 using wms_praktyki_yosi_api.Enitities;
 using wms_praktyki_yosi_api.Exceptions;
 using wms_praktyki_yosi_api.Models;
+using wms_praktyki_yosi_api.Services.Static;
+
 namespace wms_praktyki_yosi_api.Services
 {
 
     public class LocationService : ILocationService
     {
         private readonly IMapper _mapper;
-        private MagazinesDbContext _context;
+        private readonly MagazinesDbContext _context;
 
         public LocationService(IMapper mapper, MagazinesDbContext context)
         {
@@ -41,12 +45,12 @@ namespace wms_praktyki_yosi_api.Services
             var mappedProd = _mapper.Map<ProductLocations>(location);
             mappedProd.ShelfId = shelf.Id;
             _context.ProductLocations.Add(mappedProd);
-            _context.SaveChanges();
+            ConcurencyResolver.SafeSave(_context);
 
             return product.Id;
         }
 
-        public IEnumerable<ProductLocationDto> GetAllLocations()
+        public IEnumerable<ProductLocationDto> GetAllLocations(GetRequestQuery query)
         {
             var dtos = _context
                 .ProductLocations
@@ -55,8 +59,29 @@ namespace wms_praktyki_yosi_api.Services
                     {
                         ProductId = p.ProductId,
                         Position = p.Shelf.Position,
-                        Quantity = p.Quantity
-                    });
+                        MagazineId = p.Shelf.MagazineId,
+                        Quantity = p.Quantity,
+                        Tag = p.Tag
+                    })
+                .Where(l => (query.SearchTerm == null) || l.Tag.ToLower().Contains(query.SearchTerm.ToLower())
+                                                       || l.Position.ToLower().Contains(query.SearchTerm.ToLower()));
+
+            if (query.OrderBy != null)
+            {
+                try
+                {
+                    var columnSelected = OrderByColumnSelectors.Locations[query.OrderBy.ToLower()];
+
+                    dtos = (query.Descending)
+                        ? dtos.OrderByDescending(columnSelected)
+                        : dtos.OrderBy(columnSelected);
+                }
+                catch (KeyNotFoundException)
+                {
+                    throw new BadRequestException("Bad column");
+                }
+                   
+            }
 
             return dtos;
         }
@@ -99,7 +124,7 @@ namespace wms_praktyki_yosi_api.Services
             loc.ShelfId = shelf.Id;
             loc.Quantity = location.Quantity;
 
-            _context.SaveChanges();
+            ConcurencyResolver.SafeSave(_context);
         }
         public void DeleteLocation(int id)
         {
@@ -109,7 +134,7 @@ namespace wms_praktyki_yosi_api.Services
                 ?? throw new NotFoundException("152");
 
             _context.ProductLocations.Remove(loc);
-            _context.SaveChanges();
+            ConcurencyResolver.SafeSave(_context);
         }
     }
 }

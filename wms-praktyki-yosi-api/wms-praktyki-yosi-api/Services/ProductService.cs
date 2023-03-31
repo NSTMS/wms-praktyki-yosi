@@ -7,22 +7,14 @@ using System.Security.Cryptography;
 using wms_praktyki_yosi_api.Enitities;
 using wms_praktyki_yosi_api.Exceptions;
 using wms_praktyki_yosi_api.Models;
+using wms_praktyki_yosi_api.Services.Static;
+
 namespace wms_praktyki_yosi_api.Services
 {
     public class ProductService : IProductService
     {
         private readonly MagazinesDbContext _context;
         private readonly IMapper _mapper;
-
-        private readonly Dictionary<string, Expression<Func<ProductDto, object>>> _orderByColumnSelector = new()
-        {
-            {nameof(ProductDto.ProductName), p =>  p.ProductName},
-            {nameof(ProductDto.EAN), p => p.EAN },
-            {nameof(ProductDto.Price), p => p.Price},
-            {nameof(ProductDto.Quantity), p => p.Quantity},
-        };
-
-
 
         public ProductService(MagazinesDbContext context, IMapper mapper)
         {
@@ -51,7 +43,7 @@ namespace wms_praktyki_yosi_api.Services
             {
                 try
                 {
-                    var selectedColum = _orderByColumnSelector[query.OrderBy];
+                    var selectedColum = OrderByColumnSelectors.Products[query.OrderBy.ToLower()];
                     productDtos = (query.Descending)
                     ? productDtos.OrderByDescending(selectedColum)
                     : productDtos.OrderBy(selectedColum);
@@ -70,21 +62,21 @@ namespace wms_praktyki_yosi_api.Services
         public ProductDto GetById(int id)
         {
             var product = _context.Products
-                .Include(p => p.Locations)
                 .FirstOrDefault(r => r.Id == id)
                 ?? throw new NotFoundException("151");
 
             var loc = _context
                 .ProductLocations
                 .Include(s => s.Shelf)
-                .Where(s => s.ProductId == id);
+                .Where(s => s.ProductId == id)
+                .ToList();
 
             var res = new ProductDto()
             {
                 ProductName = product.ProductName,
                 EAN = product.EAN,
                 Price = product.Price,
-                Locations = _mapper.Map<List<ReturnProductLocationDto>>(loc.ToList()),
+                Locations = _mapper.Map<List<ReturnProductLocationDto>>(loc),
                 Quantity = loc.Sum(l => l.Quantity)
             };
 
@@ -95,7 +87,7 @@ namespace wms_praktyki_yosi_api.Services
             var product = _mapper.Map<Product>( dto );
             _context.Products
                 .Add( product );
-            _context.SaveChanges();
+            ConcurencyResolver.SafeSave(_context);
             return product.Id;
             
         }
@@ -108,7 +100,7 @@ namespace wms_praktyki_yosi_api.Services
             prod.ProductName = dto.ProductName;
             prod.EAN = dto.EAN;
             prod.Price = dto.Price;
-            _context.SaveChanges();
+            ConcurencyResolver.SafeSave(_context);
         }
 
         public void RemoveProduct(int id)
@@ -121,9 +113,44 @@ namespace wms_praktyki_yosi_api.Services
                  .Products
                  .Remove(prod);
 
-            _context.SaveChanges();
+            ConcurencyResolver.SafeSave(_context);
         }
 
+        public IEnumerable<ProductLocationDto> GetProductLocations(int id, GetRequestQuery query)
+        {
+            var locations = _context.ProductLocations
+                .Where(l => l.ProductId == id);
 
+            var locationDtos = locations
+                .Select(p => new ProductLocationDto()
+                    {
+                        ProductId = p.ProductId,
+                        Position = p.Shelf.Position,
+                        MagazineId = p.Shelf.MagazineId,
+                        Quantity = p.Quantity,
+                        Tag = p.Tag
+                    })
+                .Where(l => (query.SearchTerm == null) || l.Tag.ToLower().Contains(query.SearchTerm.ToLower())
+                                                       || l.Position.ToLower().Contains(query.SearchTerm.ToLower()));
+
+            if (query.OrderBy != null)
+            {
+                try
+                {
+                    var columnSelected = OrderByColumnSelectors.Locations[query.OrderBy.ToLower()];
+
+                    locationDtos = (query.Descending)
+                        ? locationDtos.OrderByDescending(columnSelected)
+                        : locationDtos.OrderBy(columnSelected);
+                }
+                catch (KeyNotFoundException)
+                {
+                    throw new BadRequestException("Bad column");
+                }
+            }
+
+                return locationDtos;
+
+        }
     }
 }

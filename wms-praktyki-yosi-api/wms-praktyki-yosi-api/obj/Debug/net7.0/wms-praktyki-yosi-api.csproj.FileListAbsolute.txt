@@ -171,3 +171,8 @@ C:\Users\jan\Desktop\wms-praktyki-yosi\wms-praktyki-yosi-api\wms-praktyki-yosi-a
 C:\Users\jan\Desktop\wms-praktyki-yosi\wms-praktyki-yosi-api\wms-praktyki-yosi-api\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\jan\Desktop\wms-praktyki-yosi\wms-praktyki-yosi-api\wms-praktyki-yosi-api\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerUI.dll
 C:\Users\jan\Desktop\wms-praktyki-yosi\wms-praktyki-yosi-api\wms-praktyki-yosi-api\obj\Debug\net7.0\wms-praktyki-yosi-api.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\jan\Desktop\wms-praktyki-yosi\wms-praktyki-yosi-api\wms-praktyki-yosi-api\bin\Debug\net7.0\NLog.dll
+C:\Users\jan\Desktop\wms-praktyki-yosi\wms-praktyki-yosi-api\wms-praktyki-yosi-api\bin\Debug\net7.0\NLog.Extensions.Logging.dll
+C:\Users\jan\Desktop\wms-praktyki-yosi\wms-praktyki-yosi-api\wms-praktyki-yosi-api\bin\Debug\net7.0\NLog.Web.AspNetCore.dll
+C:\Users\jan\Desktop\wms-praktyki-yosi\wms-praktyki-yosi-api\wms-praktyki-yosi-api\bin\Debug\net7.0\BouncyCastle.Crypto.dll
+C:\Users\jan\Desktop\wms-praktyki-yosi\wms-praktyki-yosi-api\wms-praktyki-yosi-api\bin\Debug\net7.0\itextsharp.dll
