@@ -17,8 +17,3 @@ export class EditDialogComponent {
     this.dialogRef.close();
   }
 }
-
-
-//tag 
-// quantity planned
-// arriving 

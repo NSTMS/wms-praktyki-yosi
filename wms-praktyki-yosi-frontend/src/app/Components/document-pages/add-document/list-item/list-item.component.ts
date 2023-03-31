@@ -1,4 +1,4 @@
-import { Component,ElementRef,Input, ViewChild } from '@angular/core';
+import { Component,Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { DataReaderService } from '@app/Services/fetching-services/data-reader.service';
 import { listItem } from '@static/types/documentTypes';
@@ -17,19 +17,18 @@ export class ListItemComponent {
   @Input() deleteFunc = (id : number) =>{} 
   
   @Input() handleChange = (id : number, data: listItem) =>{}
-  math : number = Math.random()
 
   constructor(private _service : DataReaderService){
     this.loadData()
   }
   async loadData(){
     this.options = []
-    const data = await this._service.GetAll() as product[]
+    const data = await this._service.GetAll("") as product[]
     this.options = data.map(p => p.productName)
   }
-handleSelect(){
-  this.item.productName = this.autocomplete.value || "";
-}
+  handleSelect(){
+    this.item.productName = this.autocomplete.value || "";
+  }
   
   handleIChange(){
     this.handleChange(this.item.id, this.item)

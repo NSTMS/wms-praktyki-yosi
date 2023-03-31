@@ -3,7 +3,7 @@ declare var require: any;
 const connection = require('static/connection.json');
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { EditDialogData, visitedElement } from '@static/types/documentTypes';
+import { EditDialogData, ItemToSend,visitedElement } from '@static/types/documentTypes';
 @Injectable({
   providedIn: 'root',
 })
@@ -18,30 +18,30 @@ export class DocumentsService {
     'realizeQuantity',
     'finished',
   ];
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  async GetAll() {
-    return await firstValueFrom(this.http.get(this.link));
+  async GetAll(term : string) {
+      return await firstValueFrom(this.http.get(this.link +  "?searchTerm=" + term));
   }
   async GetById(id: string) {
     return await firstValueFrom(this.http.get(this.link + '/' + id));
   }
   async MarkAsFinished(guid: string, finished: boolean) {
-    return await firstValueFrom(
-      this.http.post(this.link + '/' + guid + '/markasfinished', finished)
-    );
+    return await firstValueFrom(this.http.post(this.link + '/' + guid + '/markasfinished', finished));
   }
-  async VisitLocation(guid: string,data: visitedElement){
-    return await firstValueFrom(this.http.post(this.link + '/' + guid + "/visitedlocation",data));
+  async VisitLocation(guid: string, data: visitedElement) {
+    return await firstValueFrom(this.http.post(this.link + '/' + guid + "/visitedlocation", data));
   }
   async Delete(guid: string) {
     return await firstValueFrom(this.http.delete(this.link + '/' + guid));
   }
-  async DeleteElement(id: string, prodId: string) 
-  {
-      return await firstValueFrom(this.http.delete(this.link + '/' + id + "/items/" + prodId))
+  async DeleteElement(id: string, prodId: string) {
+    return await firstValueFrom(this.http.delete(this.link + '/' + id + "/items/" + prodId))
   }
-  async UpdateItem(id: string, prodId: number, item : EditDialogData){
-    return await firstValueFrom(this.http.put(this.link + '/' + id + "/items/" + prodId,item))
+  async AddItem(guid: string, item:ItemToSend) {
+    return await firstValueFrom(this.http.post(this.link + '/' + guid + "/items", item));
+  }
+  async UpdateItem(id: string, prodId: number, item: EditDialogData) {
+    return await firstValueFrom(this.http.put(this.link + '/' + id + "/items/" + prodId, item))
   }
 }

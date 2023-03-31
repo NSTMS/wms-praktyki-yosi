@@ -1,3 +1,4 @@
+
 <mat-grid-list cols="5" rowHeight="75px" gutterSize="20px">
   <mat-grid-tile>
     <mat-card>
@@ -50,7 +51,11 @@
     </mat-card>
   </mat-grid-tile>
 </mat-grid-list>
-
+<br>
+<button mat-button mat-raised-button (click)="addNewItemToDoc()"
+ color="primary" style=" width:100%;display:flex;justify-content: center;">add item</button>
+<br>
+<br>
 <mat-table class="mat-table" #table [dataSource]="dataSource">
   <ng-container matColumnDef="id">
     <mat-header-cell *matHeaderCellDef>Guid</mat-header-cell>

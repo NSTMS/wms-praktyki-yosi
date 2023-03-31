@@ -1,4 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
@@ -11,7 +12,8 @@ import { document } from '@static/types/documentTypes';
 })
 export class DocumentsListComponent {
   @ViewChild('paginator') paginator: MatPaginator | undefined;
-
+  options : string[]
+  formGroup : FormGroup;
   dataSource: MatTableDataSource<document> = new MatTableDataSource();
   displayedColumns: string[];
   length: number = 0;
@@ -30,11 +32,19 @@ export class DocumentsListComponent {
         'delete',
       ];
     else this.displayedColumns = [...this._service.columns];
+        
+    this.formGroup = new FormGroup({
+      'search' : new FormControl(''),
+      'column' : new FormControl(''),
+      'descending' : new FormControl(false)
+    })
+    this.options = ["","magazineId","client","date","totalQuantity","quantityDone","fisnished"]  
+    this.options  = this.options.filter(o => o != "guid")
   }
 
   async loadData() {
-    const data = await this._service.GetAll();
-    console.log(data);
+    const searchTerm = `${this.formGroup.value.search}&orderBy=${this.formGroup.value.column}&descending=${this.formGroup.value.descending}` 
+    const data = await this._service.GetAll(searchTerm);
     if (data != null) this.length = (data as document[]).length || 0;
     else this.length = 0;
 

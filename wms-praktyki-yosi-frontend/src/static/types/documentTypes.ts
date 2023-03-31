@@ -22,7 +22,7 @@ export type documentItem = {
   id: string;
   productName: string;
   productId : number;
-  postion: string;
+  position: string;
   arriving: boolean;
   quantityPlaned: number;
   quantityDone: number;
@@ -31,11 +31,6 @@ export type documentItem = {
 };
 
 
-export type EditDialogData = {
-  arriving : boolean;
-  tag : string;
-  quantity : number;
-}
 
 export type newDocument = {
   date  : string;
@@ -64,3 +59,8 @@ export type visitedElement = {
   quantity : number;
   tag : string;
 }
+export type EditDialogData = {
+  tag : string;
+  quantity : number;
+}
+

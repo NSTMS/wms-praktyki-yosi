@@ -14,8 +14,9 @@ export class DataReaderService {
 
   constructor(private http: HttpClient) { }
 
-  async GetAll() {
-    return await firstValueFrom(this.http.get(this.link))
+
+  async GetAll(term : string) {
+    return await firstValueFrom(this.http.get(this.link +  "?searchTerm=" + term));
   }
 
   async GetById(id: number) {

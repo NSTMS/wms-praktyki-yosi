@@ -1,4 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
@@ -17,6 +18,8 @@ export class MagazineListComponent {
   displayedColumns: string[];
   length: number = 0;
   canAddAndDel: boolean;
+  options : string[]
+  formGroup : FormGroup;
 
   constructor(
     private _magazineService: MagazineService,
@@ -35,10 +38,19 @@ export class MagazineListComponent {
         'delete',
       ];
     else this.displayedColumns = [...this._magazineService.columns];
+    this.formGroup = new FormGroup({
+      'search' : new FormControl(''),
+      'column' : new FormControl(''),
+      'descending' : new FormControl(false)
+    })
+    
+    this.options = ["","name"]  
+    this.options  = this.options.filter(o => o != "guid")
   }
 
   async loadData() {
-     const data = await this._magazineService.GetAll() as magazine[]
+    const searchTerm = `${this.formGroup.value.search}&orderBy=${this.formGroup.value.column}&descending=${this.formGroup.value.descending}` 
+    const data = await this._magazineService.GetAll(searchTerm) as magazine[]
      console.log(data);
      
       if (data != null) this.length = data.length || 0;

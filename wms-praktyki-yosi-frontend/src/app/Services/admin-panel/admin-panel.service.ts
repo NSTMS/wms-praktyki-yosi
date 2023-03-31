@@ -11,10 +11,10 @@ export class AdminPanelService {
   columns = ['Id', 'Email', 'PasswordHash', 'Role'];
 
   constructor(private http: HttpClient) {}
- 
-  async GetAll() {
-    return await firstValueFrom(this.http.get(this.link + '/users'))
-  }
+
+  async GetAll(term : string) {
+    return await firstValueFrom(this.http.get(this.link +  "/users?searchTerm=" + term));
+}
   async GetInfoFromToken() {
     return await firstValueFrom(this.http.get(this.link + '/info'))
   }

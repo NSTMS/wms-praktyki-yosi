@@ -13,10 +13,10 @@ export class MagazineService {
   columns = ['id', 'name', 'address']
   link = `${connection.protocole}://${connection.ip}:${connection.port}/api/magazines`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  async GetAll(){
-    return await firstValueFrom(this.http.get(this.link))
+  async GetAll(term: string) {
+    return await firstValueFrom(this.http.get(this.link + "?searchTerm=" + term));
   }
 
   async GetById(id: number) {
@@ -34,7 +34,6 @@ export class MagazineService {
 
   async Add(magazine: magazineToAdd) {
     await firstValueFrom(this.http.post(this.link, magazine))
-    console.log("elo",magazine)
     return true;
   }
 

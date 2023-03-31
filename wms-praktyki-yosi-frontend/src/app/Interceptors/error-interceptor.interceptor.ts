@@ -6,7 +6,7 @@ import {
   HttpInterceptor,
   HttpErrorResponse,
 } from '@angular/common/http';
-import { catchError, Observable, throwError } from 'rxjs';
+import { catchError, Observable, throwError, timeInterval } from 'rxjs';
 import { ErrorService } from '@app/Services/error-handling/error.service';
 
 @Injectable()
@@ -31,9 +31,14 @@ export class ErrorInterceptor implements HttpInterceptor {
 
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
-        console.error(error);
+        // console.error(error);
+        if(error.status == 0){
+          this._errorHandler.errorMessageShow(['13'])
+        }
+        else{
+          this._errorHandler.errorMessageShow(error.error.errors);
+        } 
 
-        this._errorHandler.errorMessageShow(error.error.errors);
         return throwError(() => new Error(error.error.errors));
       })
     );

@@ -2,13 +2,16 @@
 <div mat-dialog-content>
     <mat-form-field appearance="fill" floatLabel="always">
         <mat-label>Quantity planned</mat-label>
-        <input matInput type="number" class="example-right-align" placeholder="0" [(ngModel)]="data">
+        <input matInput type="number" class="example-right-align" min="0" placeholder=data.quantityPlaned [(ngModel)]="data.quantityDone">
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Position</mat-label>
+        <input matInput class="example-right-align" placeholder="A1/B" [(ngModel)]="data.position">
     </mat-form-field>
     <mat-form-field appearance="fill">
         <mat-label>Tag</mat-label>
         <input matInput [(ngModel)]="data.tag">
       </mat-form-field>
-      <mat-checkbox [(ngModel)]="data.arriving">arriving</mat-checkbox>
 </div>
 <div mat-dialog-actions>
     <button mat-button mat-raised-button (click)="onNoClick()" color="primary">close</button>

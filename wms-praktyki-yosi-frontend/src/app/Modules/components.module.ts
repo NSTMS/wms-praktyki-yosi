@@ -27,6 +27,7 @@ import { DocumentsInMagazineComponent } from '@app/Components/document-pages/doc
 import { EditDialogComponent } from '@app/Components/document-pages/dialogs/edit-dialog/edit-dialog.component';
 import { VisitDialogComponent } from '@app/Components/document-pages/dialogs/visit-dialog/visit-dialog.component';
 import { ListItemComponent } from '@app/Components/document-pages/add-document/list-item/list-item.component';
+import { AddDialogComponent } from '@app/Components/document-pages/dialogs/add-dialog/add-dialog.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import { ListItemComponent } from '@app/Components/document-pages/add-document/l
     DocumentsInMagazineComponent,
     EditDialogComponent,
     VisitDialogComponent,
-    ListItemComponent
+    ListItemComponent,
+    AddDialogComponent
   ],
   imports: [
     CommonModule,

@@ -9,7 +9,7 @@ import {
 } from '@angular/material/dialog';
 import { EditDialogComponent } from '../dialogs/edit-dialog/edit-dialog.component';
 import { VisitDialogComponent } from '../dialogs/visit-dialog/visit-dialog.component';
-import { __awaiter } from 'tslib';
+import { AddDialogComponent } from '../dialogs/add-dialog/add-dialog.component';
 
 @Component({
   selector: 'app-info-document',
@@ -86,6 +86,10 @@ export class InfoDocumentComponent {
         tag: dialogData.tag
       }
     })
+    dialogRef.backdropClick().subscribe(()  =>{
+      window.location.reload()
+    })
+
     dialogRef.afterClosed().subscribe(result=> {
       this.data.items.map(async v =>{
         console.log(v);
@@ -100,17 +104,42 @@ export class InfoDocumentComponent {
       })
     });
   }
+  async addNewItemToDoc()
+  {
+    const dialogRef = this.dialog.open(AddDialogComponent, {
+      data: {
+        guid: this.id,
+        item: {
+          productName : "",
+          arriving : false,
+          quantity : 0,
+          tag : ""
+        }
+      }
+    })
+  }
 
   handleVisit(guid: string)  {
     const dialogData = this.data.items.filter(d=> d.id == guid)[0] as documentItem
     const dialogRef = this.dialog.open(VisitDialogComponent, {
       data: {...dialogData}
     })
+    dialogRef.backdropClick().subscribe(()  =>{
+      window.location.reload()
+    })
     dialogRef.afterClosed().subscribe(result=> {
       this.data.items.map(async v =>{      
         if(v.id == guid)
         {
-          const res = result as visitedElement
+          const res = 
+          {
+            productName : result.productName,
+            position : result.position,
+            quantity : result.quantityDone,
+            tag : result.tag
+          }
+          console.log(result);
+          
           await this._service.VisitLocation(this.id, res);
           window.location.reload()
         }
