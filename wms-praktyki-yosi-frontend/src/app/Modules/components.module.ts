@@ -23,7 +23,6 @@ import { InfoMagazineComponent } from '@app/Components/magazines-pages/info-maga
 import { EditDocumentComponent } from '@app/Components/document-pages/edit-document/edit-document.component';
 import { InfoDocumentComponent } from '@app/Components/document-pages/info-document/info-document.component';
 import { DocumentsListComponent } from '@app/Components/document-pages/documents-list/documents-list.component';
-import { DocumentsInMagazineComponent } from '@app/Components/document-pages/documents-in-magazine/documents-in-magazine.component';
 import { EditDialogComponent } from '@app/Components/document-pages/dialogs/edit-dialog/edit-dialog.component';
 import { VisitDialogComponent } from '@app/Components/document-pages/dialogs/visit-dialog/visit-dialog.component';
 import { ListItemComponent } from '@app/Components/document-pages/add-document/list-item/list-item.component';
@@ -50,7 +49,6 @@ import { AddDialogComponent } from '@app/Components/document-pages/dialogs/add-d
     EditDocumentComponent,
     InfoDocumentComponent,
     DocumentsListComponent,
-    DocumentsInMagazineComponent,
     EditDialogComponent,
     VisitDialogComponent,
     ListItemComponent,
