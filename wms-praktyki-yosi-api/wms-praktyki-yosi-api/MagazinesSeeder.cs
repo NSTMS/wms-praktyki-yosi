@@ -77,7 +77,7 @@ namespace wms_praktyki_yosi_api
                     _dbContext.ProductLocations.AddRange(productLocationsList);
                     _dbContext.SaveChanges();
                 }
-         
+
 
             }
 

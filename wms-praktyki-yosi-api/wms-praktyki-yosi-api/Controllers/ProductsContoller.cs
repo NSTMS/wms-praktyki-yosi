@@ -5,6 +5,7 @@ using System.Net;
 using System.Security.Claims;
 using wms_praktyki_yosi_api.Enitities;
 using wms_praktyki_yosi_api.Models;
+using wms_praktyki_yosi_api.Models.ProductModels;
 using wms_praktyki_yosi_api.Models.Validators;
 using wms_praktyki_yosi_api.Services;
 
@@ -33,7 +34,7 @@ namespace wms_praktyki_yosi_api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetAll([FromQuery]GetRequestQuery query)
+        public async Task<ActionResult<IEnumerable<Product>>> GetAll([FromQuery] GetRequestQuery query)
         {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
@@ -86,7 +87,7 @@ namespace wms_praktyki_yosi_api.Controllers
         }
 
         [HttpGet("{id}/locations")]
-        public async Task<ActionResult<List<ProductLocationDto>>> GetLocationsOfProduct([FromRoute]int id, [FromQuery]GetRequestQuery query)
+        public async Task<ActionResult<List<ProductLocationDto>>> GetLocationsOfProduct([FromRoute] int id, [FromQuery] GetRequestQuery query)
         {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();

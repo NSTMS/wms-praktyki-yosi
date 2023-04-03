@@ -41,7 +41,7 @@ namespace wms_praktyki_yosi_api.Enitities
             modelBuilder.Entity<Document>()
                 .Property(d => d.Client)
                 .IsRequired();
-            
+
             modelBuilder.Entity<DocumentItem>()
                 .Property(di => di.DocumentId)
                 .IsRequired();

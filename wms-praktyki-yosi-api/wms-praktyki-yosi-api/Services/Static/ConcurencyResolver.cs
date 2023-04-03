@@ -10,20 +10,20 @@ namespace wms_praktyki_yosi_api.Services.Static
 
         public static void ResolveConcurency(MagazinesDbContext context)
         {
-                int tries = 0;
-                while (tries < MAX_TRIES)
+            int tries = 0;
+            while (tries < MAX_TRIES)
+            {
+                try
                 {
-                    try
-                    {
-                        context.SaveChanges();
-                        return;
-                    }
-                    catch (DbUpdateConcurrencyException)
-                    {
-                        tries++;
-                        Thread.Sleep(MAX_TIME_SECONDS / MAX_TRIES * 1000);
-                    }
+                    context.SaveChanges();
+                    return;
                 }
+                catch (DbUpdateConcurrencyException)
+                {
+                    tries++;
+                    Thread.Sleep(MAX_TIME_SECONDS / MAX_TRIES * 1000);
+                }
+            }
         }
         public static void SafeSave(MagazinesDbContext context)
         {

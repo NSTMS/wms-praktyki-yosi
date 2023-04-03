@@ -1,6 +1,6 @@
-﻿namespace wms_praktyki_yosi_api.Models
+﻿namespace wms_praktyki_yosi_api.Models.ProductModels
 {
-    public class EditProductLocationDto 
+    public class EditProductLocationDto
     {
         public int MagazineId { get; set; }
         public string Position { get; set; }

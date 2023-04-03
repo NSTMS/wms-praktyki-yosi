@@ -2,7 +2,7 @@
 using System.Reflection.Metadata.Ecma335;
 using wms_praktyki_yosi_api.Enitities;
 
-namespace wms_praktyki_yosi_api.Models
+namespace wms_praktyki_yosi_api.Models.ProductModels
 {
     public class ProductLocationDto
     {

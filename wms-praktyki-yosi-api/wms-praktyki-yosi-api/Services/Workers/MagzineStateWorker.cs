@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 using wms_praktyki_yosi_api.Enitities;
 using System.Reflection.Metadata;
-using wms_praktyki_yosi_api.Models;
+using wms_praktyki_yosi_api.Models.MagazineModels;
 
 namespace wms_praktyki_yosi_api.Services.Workers
 {
@@ -16,7 +16,7 @@ namespace wms_praktyki_yosi_api.Services.Workers
         private readonly int FIVE_MINUTES = 5 * 60 * 1000;
         private readonly ILogger _logger;
         private readonly IServiceProvider _provider;
-        private readonly string[] productHeaders = {"Id", "ProductName", "EAN", "Price", "Quantity" };
+        private readonly string[] productHeaders = { "Id", "ProductName", "EAN", "Price", "Quantity" };
 
         public MagzineStateWorker(ILogger<MagzineStateWorker> logger, IServiceProvider serviceProvider)
         {
@@ -34,6 +34,7 @@ namespace wms_praktyki_yosi_api.Services.Workers
                     var magazineSevice = scope.ServiceProvider.GetRequiredService<IMagazineService>();
 
                     var magazineIds = context.Magazines
+                        .Where(m => !m.Deleted)
                         .Select(m => m.Id)
                         .ToList();
 
@@ -69,7 +70,7 @@ namespace wms_praktyki_yosi_api.Services.Workers
 
                     var timeElapsed = DateTimeOffset.Now.ToUnixTimeMilliseconds() - startingTime;
                     _logger.LogInformation("{DT}: Finished report on magazines state\nTime elapsed: {i}ms", DateTime.Now, timeElapsed);
-                    
+
 
                 }
                 await Task.Delay(FIVE_MINUTES, stoppingToken);
@@ -100,7 +101,7 @@ namespace wms_praktyki_yosi_api.Services.Workers
                 }
             }
 
-           return table;
+            return table;
         }
         private static Paragraph AddHeader(ReturnMagazineDto data)
         {

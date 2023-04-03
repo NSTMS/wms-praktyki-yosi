@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using wms_praktyki_yosi_api.Enitities;
 using AutoMapper.Configuration.Conventions;
 using wms_praktyki_yosi_api.Models.Validators;
+using wms_praktyki_yosi_api.Models.MagazineModels;
+using System.Web;
 
 namespace wms_praktyki_yosi_api.Controllers
 {
@@ -25,7 +27,7 @@ namespace wms_praktyki_yosi_api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetAllMagazines([FromQuery]GetRequestQuery query)
+        public async Task<ActionResult> GetAllMagazines([FromQuery] GetRequestQuery query)
         {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
@@ -39,7 +41,7 @@ namespace wms_praktyki_yosi_api.Controllers
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
 
-            var res =  _magazineService.GetById(id);
+            var res = _magazineService.GetById(id);
             // name address list of locations 
             return Ok(res);
         }
@@ -53,8 +55,8 @@ namespace wms_praktyki_yosi_api.Controllers
             return Ok(res);
         }
         [HttpGet("{id}/locations/{prodId}")]
-        public async Task<ActionResult> GetLocationsOfProductInMagazineGotFromId([FromRoute]int id, [FromRoute]int prodId)
-        { 
+        public async Task<ActionResult> GetLocationsOfProductInMagazineGotFromId([FromRoute] int id, [FromRoute] int prodId)
+        {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
 
@@ -95,7 +97,7 @@ namespace wms_praktyki_yosi_api.Controllers
         {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
- 
+
             _magazineService.UpdateMagazine(id, dto);
             return Ok();
         }
@@ -110,5 +112,41 @@ namespace wms_praktyki_yosi_api.Controllers
             return Ok();
         }
 
+        [HttpGet("{id}/shelves")]
+        public async Task<ActionResult<IEnumerable<ShelfDto>>> GetSelvesInMagazine([FromRoute] int id, [FromQuery] GetRequestQuery query)
+        {
+            if (!await _authorizationService.UserIsAuthorized(User))
+                return Unauthorized();
+
+            var shelves = _magazineService.GetShelvesInMagazine(id, query);
+            return Ok(shelves);
+        }
+
+        [HttpGet("{id}/shelves/{position}")]
+        public async Task<ActionResult<DetailedShelfDto>> GetSelfInMagazine([FromRoute] int id, [FromRoute] string position)
+        {
+            if (!await _authorizationService.UserIsAuthorized(User))
+                return Unauthorized();
+
+            position = HttpUtility.UrlDecode(position);
+
+            var shelf = _magazineService.GetShelfInMagazine(id, position);
+            return Ok(shelf);
+        }
+
+
+
+        [HttpPost("{id}/shelves/{position}/move")]
+        public async Task<ActionResult<DetailedShelfDto>> MoveShelfTo([FromRoute] int id, [FromRoute] string position, [FromBody] string newPosition)
+        {
+            if (!await _authorizationService.UserIsAuthorized(User))
+                return Unauthorized();
+
+            position = HttpUtility.UrlDecode(position);
+            position = HttpUtility.UrlDecode(position);
+
+            _magazineService.MoveShelfTo(id, position, newPosition);
+            return Ok();
+        }
     }
 }

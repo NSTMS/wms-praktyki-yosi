@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 using wms_praktyki_yosi_api.Enitities;
 using wms_praktyki_yosi_api.Exceptions;
 using wms_praktyki_yosi_api.Models;
+using wms_praktyki_yosi_api.Models.ProductModels;
 using wms_praktyki_yosi_api.Services.Static;
 
 namespace wms_praktyki_yosi_api.Services
@@ -26,7 +27,7 @@ namespace wms_praktyki_yosi_api.Services
         {
             var product = _context
                 .Products
-                .FirstOrDefault(p => p.Id == location.ProductId) 
+                .FirstOrDefault(p => p.Id == location.ProductId)
                 ?? throw new NotFoundException("151");
 
             var shelf = _context
@@ -56,13 +57,13 @@ namespace wms_praktyki_yosi_api.Services
                 .ProductLocations
                 .Include(r => r.Shelf)
                 .Select(p => new ProductLocationDto()
-                    {
-                        ProductId = p.ProductId,
-                        Position = p.Shelf.Position,
-                        MagazineId = p.Shelf.MagazineId,
-                        Quantity = p.Quantity,
-                        Tag = p.Tag
-                    })
+                {
+                    ProductId = p.ProductId,
+                    Position = p.Shelf.Position,
+                    MagazineId = p.Shelf.MagazineId,
+                    Quantity = p.Quantity,
+                    Tag = p.Tag
+                })
                 .Where(l => (query.SearchTerm == null) || l.Tag.ToLower().Contains(query.SearchTerm.ToLower())
                                                        || l.Position.ToLower().Contains(query.SearchTerm.ToLower()));
 
@@ -80,7 +81,7 @@ namespace wms_praktyki_yosi_api.Services
                 {
                     throw new BadRequestException("Bad column");
                 }
-                   
+
             }
 
             return dtos;
@@ -106,13 +107,13 @@ namespace wms_praktyki_yosi_api.Services
                 .FirstOrDefault(r => r.Id == id)
                 ?? throw new NotFoundException("152");
 
-            
+
             var shelf = _context
                 .Shelves
                 .Include(s => s.Locations)
                 .FirstOrDefault(s => s.Position == location.Position && s.MagazineId == location.MagazineId)
                 ?? throw new NotFoundException("150");
-            
+
             var quantityOnShelf = shelf
                 .Locations
                 .Where(r => r.Id != id)
@@ -130,7 +131,7 @@ namespace wms_praktyki_yosi_api.Services
         {
             var loc = _context
                 .ProductLocations
-                .FirstOrDefault(r => r.Id == id) 
+                .FirstOrDefault(r => r.Id == id)
                 ?? throw new NotFoundException("152");
 
             _context.ProductLocations.Remove(loc);

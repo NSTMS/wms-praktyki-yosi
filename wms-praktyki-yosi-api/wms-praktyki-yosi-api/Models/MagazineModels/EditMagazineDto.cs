@@ -1,4 +1,4 @@
-﻿namespace wms_praktyki_yosi_api.Models
+﻿namespace wms_praktyki_yosi_api.Models.MagazineModels
 {
     public class EditMagazineDto
     {

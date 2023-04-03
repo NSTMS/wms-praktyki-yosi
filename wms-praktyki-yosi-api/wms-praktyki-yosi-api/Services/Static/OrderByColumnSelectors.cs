@@ -1,6 +1,8 @@
 ﻿using System.Linq.Expressions;
-using wms_praktyki_yosi_api.Models;
+using wms_praktyki_yosi_api.Models.AccountModels;
 using wms_praktyki_yosi_api.Models.DocumentModels;
+using wms_praktyki_yosi_api.Models.MagazineModels;
+using wms_praktyki_yosi_api.Models.ProductModels;
 
 namespace wms_praktyki_yosi_api.Services.Static
 {
@@ -54,6 +56,14 @@ namespace wms_praktyki_yosi_api.Services.Static
             {nameof(ProductLocationDto.ProductId).ToLower(), p =>  p.ProductId},
             {nameof(ProductLocationDto.Quantity).ToLower(), p => p.Quantity},
             {nameof(ProductLocationDto.Tag).ToLower(), p => p.Tag},
+        };
+
+        public static readonly Dictionary<string, Expression<Func<ShelfDto, object>>> Shelves = new()
+        {
+            {nameof(ShelfDto.Position).ToLower(), p =>  p.Position},
+            {nameof(ShelfDto.TotalQuantity).ToLower(), p => p.TotalQuantity},
+            {nameof(ShelfDto.FreeSpace).ToLower(), p => p.FreeSpace},
+            {nameof(ShelfDto.MaxQuantity).ToLower(), p => p.MaxQuantity},
         };
 
     }

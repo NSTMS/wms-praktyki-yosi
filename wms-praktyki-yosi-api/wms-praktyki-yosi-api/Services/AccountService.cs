@@ -12,6 +12,7 @@ using System.Text;
 using wms_praktyki_yosi_api.Enitities;
 using wms_praktyki_yosi_api.Exceptions;
 using wms_praktyki_yosi_api.Models;
+using wms_praktyki_yosi_api.Models.AccountModels;
 using wms_praktyki_yosi_api.Results;
 using wms_praktyki_yosi_api.Services.Static;
 
@@ -35,7 +36,7 @@ namespace wms_praktyki_yosi_api.Services
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        
+
 
         public AccountService(
             UserManager<User> userManager,
@@ -48,7 +49,7 @@ namespace wms_praktyki_yosi_api.Services
             _authenticationSettings = authenticationSetings;
             _context = context;
         }
-        
+
         public async Task<List<UserDto>> GetAll(GetRequestQuery query)
         {
             var users = _userManager
@@ -82,7 +83,7 @@ namespace wms_praktyki_yosi_api.Services
                 {
                     throw new BadRequestException("Bad column Name");
                 }
-                
+
             }
 
             return userDtos;
@@ -96,8 +97,8 @@ namespace wms_praktyki_yosi_api.Services
 
         public async Task RegisterUser(RegisterUserDto dto)
         {
-             var seeder = new MagazinesSeeder(_context, _roleManager);
-             await seeder.SeedRoles();
+            var seeder = new MagazinesSeeder(_context, _roleManager);
+            await seeder.SeedRoles();
 
             var userExists = await _userManager.FindByNameAsync(dto.Email);
             if (userExists != null)
@@ -157,7 +158,7 @@ namespace wms_praktyki_yosi_api.Services
             };
 
             return res;
-            
+
         }
 
         public async Task ModifyUserRole(string id, string newrole)
@@ -176,7 +177,7 @@ namespace wms_praktyki_yosi_api.Services
             }
 
             result = await _userManager.AddToRoleAsync(user, newrole);
-             
+
             if (!result.Succeeded)
             {
                 throw new Exception();

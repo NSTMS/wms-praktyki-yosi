@@ -21,11 +21,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentValidation;
-using wms_praktyki_yosi_api.Models;
 using wms_praktyki_yosi_api.Models.Validators;
 using Microsoft.EntityFrameworkCore;
 using wms_praktyki_yosi_api.Middleweare;
 using wms_praktyki_yosi_api.Services.Workers;
+using wms_praktyki_yosi_api.Models.AccountModels;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -8,6 +8,7 @@ using System.Web.Http.Results;
 using wms_praktyki_yosi_api.Enitities;
 using wms_praktyki_yosi_api.Exceptions;
 using wms_praktyki_yosi_api.Models;
+using wms_praktyki_yosi_api.Models.AccountModels;
 using wms_praktyki_yosi_api.Models.Validators;
 using wms_praktyki_yosi_api.Services;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -17,7 +18,7 @@ namespace wms_praktyki_yosi_api.Controllers
     [Route("api/account")]
     [ApiController]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
-    public class AccountController: ControllerBase
+    public class AccountController : ControllerBase
     {
         private readonly IAccountService _service;
         private readonly IValidator<RegisterUserDto> _validator;
@@ -55,7 +56,7 @@ namespace wms_praktyki_yosi_api.Controllers
         [HttpPost("register")]
         [AllowAnonymous]
 
-        public async Task<ActionResult> RegisterUser([FromBody]RegisterUserDto user)
+        public async Task<ActionResult> RegisterUser([FromBody] RegisterUserDto user)
         {
             var result = await _validator.ValidateAsync(user);
 
@@ -79,28 +80,28 @@ namespace wms_praktyki_yosi_api.Controllers
 
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<ActionResult> Login([FromBody]UserLoginDto dto)
+        public async Task<ActionResult> Login([FromBody] UserLoginDto dto)
         {
             var result = await _service.GetToken(dto);
             return Ok(result);
-            
+
         }
-        
+
         [HttpPut("users/{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult> UpdateUserRole([FromRoute]string id, [FromBody] string newRole)
+        public async Task<ActionResult> UpdateUserRole([FromRoute] string id, [FromBody] string newRole)
         {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
 
-            
-                await _service.ModifyUserRole(id, newRole);
-                return Ok();
+
+            await _service.ModifyUserRole(id, newRole);
+            return Ok();
         }
 
         [HttpDelete("users/{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult> DeleteUser([FromRoute]string id)
+        public async Task<ActionResult> DeleteUser([FromRoute] string id)
         {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
@@ -119,7 +120,7 @@ namespace wms_praktyki_yosi_api.Controllers
             var userEmail = User.FindFirst(ClaimTypes.Name);
             if (userEmail is null)
                 return Unauthorized();
-            
+
 
             var userInfo = await _service.GetUserInfo(userEmail.Value);
             return Ok(userInfo);
