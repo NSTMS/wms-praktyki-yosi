@@ -7,6 +7,7 @@ namespace wms_praktyki_yosi_api.Models
         public string? SearchTerm { get; set; }
         public string? OrderBy { get; set; }
         public bool Descending { get; set; } = false;
-
+        public int PageNumber { get; set; }
+        public int RecordsPerPage { get; set; } 
     }
 }

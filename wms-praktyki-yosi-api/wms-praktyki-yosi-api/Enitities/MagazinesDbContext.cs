@@ -15,6 +15,8 @@ namespace wms_praktyki_yosi_api.Enitities
         public DbSet<Magazine> Magazines { get; set; }
         public DbSet<Document> Documents { get; set; }
         public DbSet<DocumentItem> DocumentItems { get; set; }
+        public DbSet<StandingOrder> StandingOrders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
 
         private readonly ConnectionsStrings _connectionStrings;
         public MagazinesDbContext(DbContextOptions<MagazinesDbContext> options, ConnectionsStrings connectionStrings) : base(options)
@@ -50,6 +52,11 @@ namespace wms_praktyki_yosi_api.Enitities
                 .Property(di => di.Quantityplaned)
                 .IsRequired();
 
+            modelBuilder.Entity<StandingOrder>()
+                .Property(x => x.Interval)
+                .IsRequired();
+
+            // ---- version setup ----
             modelBuilder.Entity<Document>()
                 .Property(x => x.Version)
                 .IsRowVersion();
@@ -71,6 +78,14 @@ namespace wms_praktyki_yosi_api.Enitities
                 .IsRowVersion();
 
             modelBuilder.Entity<Shelf>()
+                .Property(x => x.Version)
+                .IsRowVersion();
+
+            modelBuilder.Entity<StandingOrder>()
+                .Property(x => x.Version)
+                .IsRowVersion();
+
+            modelBuilder.Entity<OrderItem>()
                 .Property(x => x.Version)
                 .IsRowVersion();
 

@@ -3,6 +3,7 @@ using wms_praktyki_yosi_api.Models.AccountModels;
 using wms_praktyki_yosi_api.Models.DocumentModels;
 using wms_praktyki_yosi_api.Models.MagazineModels;
 using wms_praktyki_yosi_api.Models.ProductModels;
+using wms_praktyki_yosi_api.Models.StandingOrderModels;
 
 namespace wms_praktyki_yosi_api.Services.Static
 {
@@ -22,7 +23,7 @@ namespace wms_praktyki_yosi_api.Services.Static
             {nameof(DocumentDto.QuantityDone).ToLower(), p => p.QuantityDone},
         };
 
-        public static readonly Dictionary<string, Expression<Func<DocumentItemDto, object>>> Items = new()
+        public static readonly Dictionary<string, Expression<Func<DocumentItemDto, object>>> DocumentItems = new()
         {
             {nameof(DocumentItemDto.ProductName).ToLower(), p =>  p.ProductName},
             {nameof(DocumentItemDto.Position).ToLower(), p => p.Position[0] - 'A' + p.Position[1] - '0' },
@@ -51,11 +52,11 @@ namespace wms_praktyki_yosi_api.Services.Static
             {nameof(ProductDto.Quantity).ToLower(), p => p.Quantity},
         };
 
-        public static readonly Dictionary<string, Expression<Func<ProductLocationDto, object>>> Locations = new()
+        public static readonly Dictionary<string, Expression<Func<ReturnProductLocationDto, object>>> Locations = new()
         {
-            {nameof(ProductLocationDto.ProductId).ToLower(), p =>  p.ProductId},
-            {nameof(ProductLocationDto.Quantity).ToLower(), p => p.Quantity},
-            {nameof(ProductLocationDto.Tag).ToLower(), p => p.Tag},
+            {nameof(ReturnProductLocationDto.ProductId).ToLower(), p =>  p.ProductId},
+            {nameof(ReturnProductLocationDto.Quantity).ToLower(), p => p.Quantity},
+            {nameof(ReturnProductLocationDto.Tag).ToLower(), p => p.Tag},
         };
 
         public static readonly Dictionary<string, Expression<Func<ShelfDto, object>>> Shelves = new()
@@ -64,6 +65,22 @@ namespace wms_praktyki_yosi_api.Services.Static
             {nameof(ShelfDto.TotalQuantity).ToLower(), p => p.TotalQuantity},
             {nameof(ShelfDto.FreeSpace).ToLower(), p => p.FreeSpace},
             {nameof(ShelfDto.MaxQuantity).ToLower(), p => p.MaxQuantity},
+        };
+
+        public static readonly Dictionary<string, Expression<Func<StandingOrderDto, object>>> Orders = new()
+        {
+            {nameof(StandingOrderDto.Interval).ToLower(), p =>  p.Interval},
+            {nameof(StandingOrderDto.NextOrder).ToLower(), p => p.NextOrder},
+            {nameof(StandingOrderDto.Client).ToLower(), p => p.Client},
+            {nameof(StandingOrderDto.MagazineId).ToLower(), p => p.MagazineId},
+            {nameof(StandingOrderDto.TotalQuantity).ToLower(), p => p.TotalQuantity},
+        };
+
+        public static readonly Dictionary<string, Expression<Func<OrderItemDto, object>>> OrderItems = new()
+        {
+            {nameof(OrderItemDto.ProductName).ToLower(), p =>  p.ProductName },
+            {nameof(OrderItemDto.Quantity).ToLower(), p => p.Quantity },
+            {nameof(OrderItemDto.Tag).ToLower(), p => p.Tag ?? "" },
         };
 
     }

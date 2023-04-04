@@ -134,8 +134,6 @@ namespace wms_praktyki_yosi_api.Controllers
             return Ok(shelf);
         }
 
-
-
         [HttpPost("{id}/shelves/{position}/move")]
         public async Task<ActionResult<DetailedShelfDto>> MoveShelfTo([FromRoute] int id, [FromRoute] string position, [FromBody] string newPosition)
         {

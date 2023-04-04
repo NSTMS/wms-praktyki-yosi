@@ -121,7 +121,7 @@ namespace wms_praktyki_yosi_api.Services
 
             if (query.OrderBy != null)
             {
-                var selectedColumn = OrderByColumnSelectors.Items[query.OrderBy.ToLower()];
+                var selectedColumn = OrderByColumnSelectors.DocumentItems[query.OrderBy.ToLower()];
                 items = (query.Descending)
                     ? items.OrderByDescending(selectedColumn)
                     : items.OrderBy(selectedColumn);

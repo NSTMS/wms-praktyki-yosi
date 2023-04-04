@@ -51,13 +51,14 @@ namespace wms_praktyki_yosi_api.Services
             return product.Id;
         }
 
-        public IEnumerable<ProductLocationDto> GetAllLocations(GetRequestQuery query)
+        public IEnumerable<ReturnProductLocationDto> GetAllLocations(GetRequestQuery query)
         {
             var dtos = _context
                 .ProductLocations
                 .Include(r => r.Shelf)
-                .Select(p => new ProductLocationDto()
+                .Select(p => new ReturnProductLocationDto()
                 {
+                    Id = p.Id,
                     ProductId = p.ProductId,
                     Position = p.Shelf.Position,
                     MagazineId = p.Shelf.MagazineId,
@@ -124,6 +125,7 @@ namespace wms_praktyki_yosi_api.Services
 
             loc.ShelfId = shelf.Id;
             loc.Quantity = location.Quantity;
+            loc.Tag = location.Tag;
 
             ConcurencyResolver.SafeSave(_context);
         }

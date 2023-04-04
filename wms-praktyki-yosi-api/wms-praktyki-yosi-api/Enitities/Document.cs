@@ -10,7 +10,6 @@
         public int MagazineId { get; set; }
         public virtual Magazine Magazine { get; set; }
         public virtual List<DocumentItem> Items { get; set; }
-
         public byte[] Version { get; set; }
     }
 }

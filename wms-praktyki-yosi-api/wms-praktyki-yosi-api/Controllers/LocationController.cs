@@ -27,7 +27,7 @@ namespace wms_praktyki_yosi_api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetAll([FromQuery] GetRequestQuery query)
+        public async Task<ActionResult<IEnumerable<ReturnProductLocationDto>>> GetAll([FromQuery] GetRequestQuery query)
         {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
@@ -49,7 +49,7 @@ namespace wms_praktyki_yosi_api.Controllers
         }
         [HttpGet("{id}")]
         [Authorize(Roles = "Admin,Moderator")]
-        public async Task<ActionResult> GetById([FromRoute] int id)
+        public async Task<ActionResult<ReturnProductLocationDto>> GetById([FromRoute] int id)
         {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
