@@ -16,4 +16,3 @@ namespace wms_praktyki_yosi_api.Enitities
 
     }
 }
- 

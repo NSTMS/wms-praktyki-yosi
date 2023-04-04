@@ -23,7 +23,7 @@ namespace wms_praktyki_yosi_api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<DocumentDto>>> GetAllDocuments([FromQuery]GetRequestQuery query)
+        public async Task<ActionResult<List<DocumentDto>>> GetAllDocuments([FromQuery] GetRequestQuery query)
         {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
@@ -43,7 +43,7 @@ namespace wms_praktyki_yosi_api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<DetailedDocumentDto>> GetDocumentDetails([FromRoute]string id)
+        public async Task<ActionResult<DetailedDocumentDto>> GetDocumentDetails([FromRoute] string id)
         {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
@@ -74,7 +74,7 @@ namespace wms_praktyki_yosi_api.Controllers
             return Ok();
         }
 
-        [HttpPost("{id}/visitedlocation")]
+        [HttpPost("{id}/visitlocation")]
         public async Task<ActionResult> VisitLocation(
             [FromRoute] string id,
             [FromBody] DocumentVisitLocationDto location)
@@ -86,8 +86,20 @@ namespace wms_praktyki_yosi_api.Controllers
             return Ok();
         }
 
+        [HttpPost("{id}/revertvisit")]
+        public async Task<ActionResult> RevertVisit(
+            [FromRoute] string id,
+            [FromBody] DocumentVisitLocationDto location)
+        {
+            if (!await _authorizationService.UserIsAuthorized(User))
+                return Unauthorized();
+
+            _service.RevertVisit(id, location);
+            return Ok();
+        }
+
         [HttpGet("{id}/items")]
-        public async Task<ActionResult> GetDocumentItems([FromRoute] string id, [FromQuery]GetRequestQuery query)
+        public async Task<ActionResult> GetDocumentItems([FromRoute] string id, [FromQuery] GetRequestQuery query)
         {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();

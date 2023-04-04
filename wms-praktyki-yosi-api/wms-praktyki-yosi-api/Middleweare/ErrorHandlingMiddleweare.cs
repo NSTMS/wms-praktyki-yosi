@@ -37,10 +37,10 @@ namespace wms_praktyki_yosi_api.Middleweare
                 await context.Response.WriteAsJsonAsync(new
                 {
                     Errors = new List<string> { ex.Message }
-                }); 
+                });
             }
 
-            catch (UnauthorizedUserException ex) 
+            catch (UnauthorizedUserException ex)
             {
                 context.Response.StatusCode = 401;
                 await context.Response.WriteAsJsonAsync(new

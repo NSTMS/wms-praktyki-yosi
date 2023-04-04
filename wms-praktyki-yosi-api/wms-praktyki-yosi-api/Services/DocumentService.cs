@@ -24,6 +24,7 @@ namespace wms_praktyki_yosi_api.Services
         void UpdateItemInDocument(string documentId, int productId, EditDocumentItemDto item);
         void MarkDocumentAsFinished(string id, bool finished);
         void VisitLocation(string documentId, DocumentVisitLocationDto location);
+        void RevertVisit(string documentId, DocumentVisitLocationDto location);
     }
 
     public class DocumentService : IDocumentService
@@ -48,7 +49,7 @@ namespace wms_praktyki_yosi_api.Services
                                                        || d.Date.ToString().ToLower().Contains(query.SearchTerm.ToLower())
                                                        || d.Id.ToString().ToLower().Contains(query.SearchTerm.ToLower()))
                 .ToList();
-                
+
             var documentDtos = _mapper.Map<List<DocumentDto>>(documents).AsQueryable();
 
             if (query.OrderBy != null)
@@ -76,7 +77,7 @@ namespace wms_praktyki_yosi_api.Services
             var doc = _mapper.Map<Document>(dto);
             using (var transaction = _context.Database.BeginTransaction())
             {
-                
+
                 try
                 {
                     var docItems = GetDocumentItems(doc.Id, dto.ItemList, dto.MagazineId);
@@ -91,7 +92,7 @@ namespace wms_praktyki_yosi_api.Services
                     throw;
                 }
             }
-            
+
 
             return doc.Id.ToString();
         }
@@ -136,7 +137,7 @@ namespace wms_praktyki_yosi_api.Services
             var itemDto = _mapper.Map<DocumentItemDto>(item);
             return itemDto;
         }
-        public void AddItemToDocument (string id, AddDocumentItemDto item)
+        public void AddItemToDocument(string id, AddDocumentItemDto item)
         {
             var document = GetDocumentWithItemsByGuid(id);
             CheckIfFinished(document);
@@ -170,7 +171,7 @@ namespace wms_praktyki_yosi_api.Services
                     newQuantity = oldQuantity - itemQuantity;
                     item.Arriving = !item.Arriving;
                 }
-                
+
 
                 _context.DocumentItems.RemoveRange(notStartedItems);
                 ConcurencyResolver.SafeSave(_context);
@@ -195,7 +196,7 @@ namespace wms_praktyki_yosi_api.Services
                 .FirstOrDefault(i => i.Id.ToString() == documentItemId)
                 ?? throw new NotFoundException("156");
 
-            
+
             _context.Remove(itemToDelete);
             ConcurencyResolver.SafeSave(_context);
         }
@@ -234,7 +235,37 @@ namespace wms_praktyki_yosi_api.Services
             documentItem.QuantityDone += location.Quantity;
             ConcurencyResolver.SafeSave(_context);
         }
-        
+
+        public void RevertVisit(string documentId, DocumentVisitLocationDto location)
+        {
+            var document = GetDocumentByGuid(documentId);
+            CheckIfFinished(document);
+
+            var documentItem = _context
+                .DocumentItems
+                .Include(di => di.Product)
+                .FirstOrDefault(di =>
+                    di.DocumentId == document.Id &&
+                    di.Product.ProductName == location.ProductName &&
+                    di.Position == location.Position &&
+                    (location.Tag == null || location.Tag == di.Tag)
+                ) ?? throw new NotFoundException("156");
+
+            if (location.Quantity > documentItem.QuantityDone)
+            {
+                throw new BadRequestException("184");
+            }
+
+
+            if (!documentItem.Arriving)
+                PutProductOnShelf(document.MagazineId, location);
+            else
+                TakeProductFromShelf(document.MagazineId, location);
+
+            documentItem.QuantityDone -= location.Quantity;
+            ConcurencyResolver.SafeSave(_context);
+        }
+
         // ------- Private Functions --------
         private void CheckIfFinished(Document document)
         {
@@ -302,7 +333,7 @@ namespace wms_praktyki_yosi_api.Services
                     {
                         toDecreese -= notDone;
                         docItem.Quantityplaned = docItem.QuantityDone;
-                        if(docItem.Quantityplaned == 0)
+                        if (docItem.Quantityplaned == 0)
                         {
                             _context.DocumentItems.Remove(docItem);
                         }
@@ -402,7 +433,7 @@ namespace wms_praktyki_yosi_api.Services
         {
             var items = new List<DocumentItem>();
 
-            
+
 
             var productLocations = _context
                 .ProductLocations
@@ -496,7 +527,7 @@ namespace wms_praktyki_yosi_api.Services
                          Position = shelf.Position
                      }
                     );
-               if (quatityToAllocate <= 0)
+                if (quatityToAllocate <= 0)
                 {
                     break;
                 }
@@ -543,7 +574,7 @@ namespace wms_praktyki_yosi_api.Services
                 return;
             }
 
-            itemLocation.Quantity += location.Quantity;  
+            itemLocation.Quantity += location.Quantity;
         }
 
         private void TakeProductFromShelf(int magazineId, DocumentVisitLocationDto location)
@@ -570,7 +601,7 @@ namespace wms_praktyki_yosi_api.Services
                     .Remove(itemLocation);
         }
 
-        
+
     }
 
 }

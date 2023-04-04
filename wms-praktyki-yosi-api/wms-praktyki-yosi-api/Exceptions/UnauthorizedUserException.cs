@@ -4,7 +4,7 @@
     {
         public UnauthorizedUserException(string message) : base(message)
         {
-            
+
         }
     }
 }

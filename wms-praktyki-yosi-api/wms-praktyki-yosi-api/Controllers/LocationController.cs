@@ -5,6 +5,7 @@ using System.Security.Claims;
 using wms_praktyki_yosi_api.Enitities;
 using wms_praktyki_yosi_api.Exceptions;
 using wms_praktyki_yosi_api.Models;
+using wms_praktyki_yosi_api.Models.ProductModels;
 using wms_praktyki_yosi_api.Models.Validators;
 using wms_praktyki_yosi_api.Services;
 namespace wms_praktyki_yosi_api.Controllers
@@ -25,7 +26,9 @@ namespace wms_praktyki_yosi_api.Controllers
             _authorizationService = authorizationService;
         }
 
-        [HttpGet] public async Task<ActionResult> GetAll([FromQuery]GetRequestQuery query) {
+        [HttpGet]
+        public async Task<ActionResult> GetAll([FromQuery] GetRequestQuery query)
+        {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
 
@@ -42,10 +45,11 @@ namespace wms_praktyki_yosi_api.Controllers
             var result = _locationService.AddProductToLocation(dto);
             return Ok(result);
 
-          
+
         }
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin,Moderator")] public async Task<ActionResult> GetById([FromRoute] int id)
+        [Authorize(Roles = "Admin,Moderator")]
+        public async Task<ActionResult> GetById([FromRoute] int id)
         {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
@@ -55,7 +59,8 @@ namespace wms_praktyki_yosi_api.Controllers
         }
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin,Moderator")]
-        public async Task<ActionResult> Edit([FromRoute] int id, [FromBody] EditProductLocationDto dto) {
+        public async Task<ActionResult> Edit([FromRoute] int id, [FromBody] EditProductLocationDto dto)
+        {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
 
@@ -64,7 +69,8 @@ namespace wms_praktyki_yosi_api.Controllers
         }
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin,Moderator")]
-        public async Task<ActionResult> Delete([FromRoute] int id) {
+        public async Task<ActionResult> Delete([FromRoute] int id)
+        {
             if (!await _authorizationService.UserIsAuthorized(User))
                 return Unauthorized();
 

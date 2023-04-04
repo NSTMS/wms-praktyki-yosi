@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using wms_praktyki_yosi_api.Enitities;
+using wms_praktyki_yosi_api.Models.AccountModels;
 
 namespace wms_praktyki_yosi_api.Models.Validators
 {

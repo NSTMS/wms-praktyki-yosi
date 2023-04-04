@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using wms_praktyki_yosi_api.Enitities;
 using wms_praktyki_yosi_api.Exceptions;
 using wms_praktyki_yosi_api.Models;
+using wms_praktyki_yosi_api.Models.ProductModels;
 using wms_praktyki_yosi_api.Services.Static;
 
 namespace wms_praktyki_yosi_api.Services
@@ -32,13 +33,13 @@ namespace wms_praktyki_yosi_api.Services
                 .Where(p => (query.SearchTerm == null) || p.ProductName.ToLower().Contains(query.SearchTerm.ToLower())
                                                        || p.EAN.ToLower().Contains(query.SearchTerm.ToLower()))
                 .Select(p => new ProductDto
-                 {
-                     Id = p.Id,
-                     ProductName = p.ProductName,
-                     EAN = p.EAN,
-                     Price = p.Price,
-                     Quantity = p.Locations.Sum(l => l.Quantity)
-                 });
+                {
+                    Id = p.Id,
+                    ProductName = p.ProductName,
+                    EAN = p.EAN,
+                    Price = p.Price,
+                    Quantity = p.Locations.Sum(l => l.Quantity)
+                });
             if (query.OrderBy != null)
             {
                 try
@@ -53,7 +54,7 @@ namespace wms_praktyki_yosi_api.Services
                     throw new BadRequestException("U bad");
                 }
 
-                
+
             }
 
             return productDtos;
@@ -83,16 +84,18 @@ namespace wms_praktyki_yosi_api.Services
             return res;
         }
 
-        public int AddNewProduct(ProductDto dto) {
-            var product = _mapper.Map<Product>( dto );
+        public int AddNewProduct(ProductDto dto)
+        {
+            var product = _mapper.Map<Product>(dto);
             _context.Products
-                .Add( product );
+                .Add(product);
             ConcurencyResolver.SafeSave(_context);
             return product.Id;
-            
+
         }
-        
-        public void UpdateProduct(int id, ProductDto dto) {
+
+        public void UpdateProduct(int id, ProductDto dto)
+        {
             var prod = _context.Products
                 .FirstOrDefault(r => r.Id == id)
                 ?? throw new NotFoundException("151");
@@ -123,13 +126,13 @@ namespace wms_praktyki_yosi_api.Services
 
             var locationDtos = locations
                 .Select(p => new ProductLocationDto()
-                    {
-                        ProductId = p.ProductId,
-                        Position = p.Shelf.Position,
-                        MagazineId = p.Shelf.MagazineId,
-                        Quantity = p.Quantity,
-                        Tag = p.Tag
-                    })
+                {
+                    ProductId = p.ProductId,
+                    Position = p.Shelf.Position,
+                    MagazineId = p.Shelf.MagazineId,
+                    Quantity = p.Quantity,
+                    Tag = p.Tag
+                })
                 .Where(l => (query.SearchTerm == null) || l.Tag.ToLower().Contains(query.SearchTerm.ToLower())
                                                        || l.Position.ToLower().Contains(query.SearchTerm.ToLower()));
 
@@ -149,7 +152,7 @@ namespace wms_praktyki_yosi_api.Services
                 }
             }
 
-                return locationDtos;
+            return locationDtos;
 
         }
     }

@@ -5,7 +5,7 @@ namespace wms_praktyki_yosi_api.Enitities
 {
     public class User : IdentityUser
     {
-         public string CustomName { get; set; }
+        public string CustomName { get; set; }
         //[Required]
         //public string Email { get; set; }
         //[Required]
