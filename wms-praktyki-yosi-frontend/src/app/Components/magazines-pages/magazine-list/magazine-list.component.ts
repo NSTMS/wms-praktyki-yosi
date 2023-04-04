@@ -51,7 +51,6 @@ export class MagazineListComponent {
   async loadData() {
     const searchTerm = `${this.formGroup.value.search}&orderBy=${this.formGroup.value.column}&descending=${this.formGroup.value.descending}` 
     const data = await this._magazineService.GetAll(searchTerm) as magazine[]
-     console.log(data);
      
       if (data != null) this.length = data.length || 0;
       else this.length = 0;

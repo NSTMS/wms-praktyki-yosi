@@ -58,6 +58,7 @@ export class ProductInfoComponent {
     this.dataSource = new MatTableDataSource<productLocation>(
       data.locations
     );
+    
   }
 
   async handleDelete(id: number) {

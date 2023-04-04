@@ -11,12 +11,14 @@ const connection = require('@static/connection.json');
   providedIn: 'root',
 })
 export class LocationService {
-  columns = ['id', 'magazineId', 'position', 'quantity'];
+  columns = ['id', 'magazineId', 'position', 'quantity','tag'];
 
   link = `${connection.protocole}://${connection.ip}:${connection.port}/api/locations`;
   constructor(private _errorHandler: ErrorService, private http: HttpClient) {}
 
   async EditLocation(id: number, newLocation: locationToEdit) {
+    console.log(newLocation);
+    
     return await firstValueFrom(this.http.put(`${this.link}/${id}`, newLocation))
   }
 

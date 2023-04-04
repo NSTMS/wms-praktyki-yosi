@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { magazineToAdd, magazineToEdit } from '@static/types/magazineTypes';
 import { HttpClient } from '@angular/common/http';
 import { product } from '@static/types/productTypes';
-import { firstValueFrom } from 'rxjs';
+import { first, firstValueFrom } from 'rxjs';
 declare var require: any;
 const connection = require('@static/connection.json');
 
@@ -45,5 +45,17 @@ export class MagazineService {
   async Delete(id: number) {
     await firstValueFrom(this.http.delete(this.link + '/' + id))
     return true;
+  }
+  async showShelves(id : number)
+  {
+    return await firstValueFrom(this.http.get(this.link + "/" + id +"/shelves"))
+  }
+  async GetShelfDetails(id : number, position : string)
+  {
+    return await firstValueFrom(this.http.get(this.link + "/" + id +"/shelves/" + position))
+  }
+  async ChnageShelfProductLocation(id : number, position : string,destination : string)
+  {
+    return await firstValueFrom(this.http.post(this.link + "/" + id +"/shelves/" + position + '/move', JSON.stringify( destination)))
   }
 }
