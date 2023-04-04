@@ -119,14 +119,15 @@ namespace wms_praktyki_yosi_api.Services
             ConcurencyResolver.SafeSave(_context);
         }
 
-        public IEnumerable<ProductLocationDto> GetProductLocations(int id, GetRequestQuery query)
+        public IEnumerable<ReturnProductLocationDto> GetProductLocations(int id, GetRequestQuery query)
         {
             var locations = _context.ProductLocations
                 .Where(l => l.ProductId == id);
 
             var locationDtos = locations
-                .Select(p => new ProductLocationDto()
+                .Select(p => new ReturnProductLocationDto()
                 {
+                    Id = p.Id,
                     ProductId = p.ProductId,
                     Position = p.Shelf.Position,
                     MagazineId = p.Shelf.MagazineId,

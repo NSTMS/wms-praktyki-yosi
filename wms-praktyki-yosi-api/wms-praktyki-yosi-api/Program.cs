@@ -43,19 +43,19 @@ builder.Services.AddSingleton(connectionString);
 builder.Services.AddDbContext<MagazinesDbContext>(options =>
     options.UseSqlServer(connectionString.database));
 
+
+//                    Host Services
 builder.Services.AddHostedService<MagzineStateWorker>();
+builder.Services.AddHostedService<StandingOrdersWorker>();
 
 
-builder.Services.AddIdentity<User, IdentityRole>()
-    .AddEntityFrameworkStores<MagazinesDbContext>()
-    .AddDefaultTokenProviders();
 //                Scope services
-
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IMagazineService, MagazineService>();
 builder.Services.AddScoped<IDocumentService, DocumentService>();
+builder.Services.AddScoped<IStandingOrdersService, StandingOrdersService>();
 
 builder.Services.AddScoped<ICustomAuthorizationService, CustomAuthorizationService>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
@@ -64,12 +64,18 @@ builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator
 builder.Services.AddScoped<ValidationFilterAttribute>();
 builder.Services.AddScoped<ErrorHandlingMiddleweare>();
 
-
+//                weird things 
 builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddSwaggerGen();
+
 builder.Services.Configure<ApiBehaviorOptions>(options
     => options.SuppressModelStateInvalidFilter = true);
+
+builder.Services.AddIdentity<User, IdentityRole>()
+    .AddEntityFrameworkStores<MagazinesDbContext>()
+    .AddDefaultTokenProviders();
+
 
 //            Authentication loading
 var authenticationSettings = new AuthenticationSettings();
