@@ -30,6 +30,13 @@ import { ShevlesListComponent } from '@app/Components/magazines-pages/shevles-li
 import { ShelfDetailComponent } from '@app/Components/magazines-pages/shelf-detail/shelf-detail.component';
 import { PutbackDialogComponent } from '@app/Components/document-pages/dialogs/putback-dialog/putback-dialog.component';
 import { MoveDialogComponent } from '@app/Components/magazines-pages/shevles-list/move-dialog/move-dialog.component';
+import { OrdersListComponent } from '@app/Components/standing-orders/orders-list/orders-list.component';
+import { AddOrderComponent } from '@app/Components/standing-orders/add-order/add-order.component';
+import { OrderInfoComponent } from '@app/Components/standing-orders/order-info/order-info.component';
+import { OrderItemComponent } from '@app/Components/standing-orders/add-order/order-item/order-item.component';
+import { EditOrderDialogComponent } from '@app/Components/standing-orders/orders-list/edit-order-dialog/edit-order-dialog.component';
+import { AddProductToOrderDialogComponent } from '@app/Components/standing-orders/order-info/add-product-to-order-dialog/add-product-to-order-dialog.component';
+import { EditProductInOrderDialogComponent } from '@app/Components/standing-orders/order-info/edit-product-in-order-dialog/edit-product-in-order-dialog.component';
 
 @NgModule({
   declarations: [
@@ -58,7 +65,14 @@ import { MoveDialogComponent } from '@app/Components/magazines-pages/shevles-lis
     ShevlesListComponent,
     ShelfDetailComponent,
     PutbackDialogComponent,
-    MoveDialogComponent
+    MoveDialogComponent,
+    OrdersListComponent,
+    AddOrderComponent,
+    OrderInfoComponent,
+    OrderItemComponent,
+    EditOrderDialogComponent,
+    EditProductInOrderDialogComponent,
+    AddProductToOrderDialogComponent
   ],
   imports: [
     CommonModule,

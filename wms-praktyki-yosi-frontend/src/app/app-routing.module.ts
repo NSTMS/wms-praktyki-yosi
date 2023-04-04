@@ -20,6 +20,9 @@ import { InfoDocumentComponent } from './Components/document-pages/info-document
 import { DocumentsListComponent } from './Components/document-pages/documents-list/documents-list.component';
 import { ShevlesListComponent } from './Components/magazines-pages/shevles-list/shevles-list.component';
 import { ShelfDetailComponent } from './Components/magazines-pages/shelf-detail/shelf-detail.component';
+import { OrdersListComponent } from '@app/Components/standing-orders/orders-list/orders-list.component';
+import { AddOrderComponent } from '@app/Components/standing-orders/add-order/add-order.component';
+import { OrderInfoComponent } from './Components/standing-orders/order-info/order-info.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/table', pathMatch: 'full' },
@@ -51,7 +54,10 @@ const routes: Routes = [
     pathMatch: 'full',
     component: InfoDocumentComponent,
   },
-
+  { path: 'orders', component: OrdersListComponent },
+  { path: 'orders/add', component: AddOrderComponent },
+  { path: 'orders/:id', component: OrderInfoComponent },
+  
   { path: '**', redirectTo: '/table' },
 ];
 

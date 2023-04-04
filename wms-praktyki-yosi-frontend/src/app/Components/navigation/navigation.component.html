@@ -16,17 +16,18 @@
     <button mat-menu-item [matMenuTriggerFor]="productsMenu">Products</button>
     <button mat-menu-item [matMenuTriggerFor]="magazinesMenu" *ngIf="isModeratorOrAdmin">Magazines</button>
     <button mat-menu-item [matMenuTriggerFor]="documentsMenu" *ngIf="isModeratorOrAdmin">Documents</button>
+    <button mat-menu-item [matMenuTriggerFor]="ordersMenu" *ngIf="isAdmin">Orders</button>
     <button mat-menu-item [matMenuTriggerFor]="usersMenu" *ngIf="isAdmin">Users</button>
     <button mat-menu-item (click)="handleLogOut()">Log out</button>
   </mat-menu>
 
   <mat-menu #productsMenu="matMenu">
-    <a mat-menu-item routerLink="/table">product List</a>
+    <a mat-menu-item routerLink="/table">products List</a>
     <a mat-menu-item routerLink="/add" *ngIf="isModeratorOrAdmin">add Product</a>
     <a mat-menu-item routerLink="/locations/add" *ngIf="isModeratorOrAdmin">add Location</a>
   </mat-menu>
   <mat-menu #magazinesMenu="matMenu">
-    <a mat-menu-item routerLink="/magazines">magazine List</a>
+    <a mat-menu-item routerLink="/magazines">magazines List</a>
     <a mat-menu-item routerLink="/magazines/add">add Magazine</a>
     <a mat-menu-item routerLink="/magazines/addShelf">add Shelf</a>
   </mat-menu>
@@ -35,10 +36,13 @@
   </mat-menu>
   
   <mat-menu #documentsMenu="matMenu">
-    <a mat-menu-item routerLink="/documents">document List</a>
+    <a mat-menu-item routerLink="/documents">documents List</a>
     <a mat-menu-item routerLink="/documents/add">add Document</a>
   </mat-menu>
-
+  <mat-menu #ordersMenu="matMenu">
+    <a mat-menu-item routerLink="/orders">orders List</a>
+    <a mat-menu-item routerLink="/orders/add">add Order</a>
+  </mat-menu>
   <span>WMS JJ</span>
   <span class="toolbar-spacer"></span>
   <span>

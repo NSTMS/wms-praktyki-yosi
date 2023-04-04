@@ -1,0 +1,123 @@
+<mat-grid-list cols="5" rowHeight="75px" gutterSize="20px">
+    <mat-grid-tile>
+        <mat-card>
+            <mat-card-header>
+                <mat-card-subtitle>Id</mat-card-subtitle>
+                <mat-card-title>
+                    {{ data.id }}
+                </mat-card-title>
+            </mat-card-header>
+        </mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile>
+        <mat-card>
+            <mat-card-header>
+                <mat-card-subtitle>magazineId</mat-card-subtitle>
+                <mat-card-title>
+                    {{ data.magazineId }}
+                </mat-card-title>
+            </mat-card-header>
+        </mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile>
+        <mat-card>
+            <mat-card-header>
+                <mat-card-subtitle>client</mat-card-subtitle>
+                <mat-card-title>
+                    {{ data.client }}
+                </mat-card-title>
+            </mat-card-header>
+        </mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile>
+        <mat-card>
+            <mat-card-header>
+                <mat-card-subtitle>interval</mat-card-subtitle>
+                <mat-card-title>
+                    {{ data.interval }}
+                </mat-card-title>
+            </mat-card-header>
+        </mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile>
+        <mat-card>
+            <mat-card-header>
+                <mat-card-subtitle>nextDate</mat-card-subtitle>
+                <mat-card-title>
+                    {{ data.nextOrder | date}}
+                </mat-card-title>
+            </mat-card-header>
+        </mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile>
+        <mat-card>
+            <mat-card-header>
+                <mat-card-subtitle>status</mat-card-subtitle>
+                <mat-card-title>
+                    {{ data.status }}
+                </mat-card-title>
+            </mat-card-header>
+        </mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile>
+        <mat-card>
+            <mat-card-header>
+                <mat-card-subtitle>message</mat-card-subtitle>
+                <mat-card-title>
+                    {{ data.message }}
+                </mat-card-title>
+            </mat-card-header>
+        </mat-card>
+    </mat-grid-tile>
+</mat-grid-list>
+<br>
+<button mat-button mat-raised-button (click)="addNewProduct()" color="primary"
+    style=" width:100%;display:flex;justify-content: center;">add item</button>
+<br>
+<br>
+<mat-table class="mat-table" #table [dataSource]="dataSource">
+    <ng-container matColumnDef="id">
+        <mat-header-cell *matHeaderCellDef>Guid</mat-header-cell>
+        <mat-cell *matCellDef="let item">{{ item.id }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="productName">
+        <mat-header-cell *matHeaderCellDef>product name</mat-header-cell>
+        <mat-cell *matCellDef="let item">{{ item.productName }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="tag">
+        <mat-header-cell *matHeaderCellDef>tag</mat-header-cell>
+        <mat-cell *matCellDef="let item">{{ item.tag }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="quantity">
+        <mat-header-cell *matHeaderCellDef>quantity</mat-header-cell>
+        <mat-cell *matCellDef="let item">{{item.quantity}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="arriving">
+        <mat-header-cell *matHeaderCellDef>arriving</mat-header-cell>
+        <mat-cell *matCellDef="let item">{{item.arriving ? "yes" : "no"}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="edit" *ngIf="canAddAndDel">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let item"><button mat-flat-button color="primary" (click)="handleEdit(item.id)">
+                edit
+            </button>
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="delete" *ngIf="canAddAndDel">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let item"><button mat-flat-button color="warn" (click)="handleDelete(item.id)">
+                delete
+            </button>
+        </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+</mat-table>
+<div *ngIf="length === 0">No data</div>
+
+<mat-paginator [length]="100" [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+    aria-label="Select page" #paginator>
+</mat-paginator>

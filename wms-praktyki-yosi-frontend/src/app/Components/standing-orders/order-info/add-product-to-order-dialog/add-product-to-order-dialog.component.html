@@ -1,0 +1,28 @@
+<form [formGroup]="formGroup" (ngSubmit)="handleSumbit()">
+    <h2 matDialogTitle>Add item to document</h2> 
+    <mat-form-field class="example-full-width" appearance="fill" >
+        <mat-label>ProductName</mat-label>
+        <input type="text"
+               aria-label="Product"
+               matInput
+               formControlName="autocomplete"
+               [matAutocomplete]="auto">
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let option of options" [value]="option" >
+            {{option}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    <mat-form-field>
+        <input  matInput type="number" min="0" placeholder="Quantity"  formControlName="quantity">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput type="text" name="tag" placeholder="Tag" formControlName="tag">      
+    </mat-form-field>
+      <mat-checkbox matInput
+      formControlName="arriving">arriving</mat-checkbox>
+    <mat-dialog-actions align="end">
+        <button mat-button matDialogClose="no">Cancel</button>
+        <button type="submit" mat-button>Submit</button>
+    </mat-dialog-actions>
+</form>

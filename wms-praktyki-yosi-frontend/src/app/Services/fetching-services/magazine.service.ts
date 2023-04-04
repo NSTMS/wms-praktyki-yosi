@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { magazineToAdd, magazineToEdit } from '@static/types/magazineTypes';
 import { HttpClient } from '@angular/common/http';
 import { product } from '@static/types/productTypes';
-import { first, firstValueFrom } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 declare var require: any;
 const connection = require('@static/connection.json');
 

@@ -35,8 +35,8 @@ export class AddDocumentComponent {
         id: ++this.counter
       }
     )
-    
   }
+  
   handleDeleteItem(id : number){
     this.data.itemList =this.data.itemList.filter(i => i.id !== id)
   }

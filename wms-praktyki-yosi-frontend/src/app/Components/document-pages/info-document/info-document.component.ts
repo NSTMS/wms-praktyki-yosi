@@ -3,10 +3,8 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DocumentsService } from '@app/Services/fetching-services/documents.service';
-import { detailedDocument, documentItem,EditDialogData, ItemToSend, visitedElement } from '@static/types/documentTypes';
-import {
-  MatDialog,
-} from '@angular/material/dialog';
+import { detailedDocument, documentItem,EditDialogData} from '@static/types/documentTypes';
+import {MatDialog} from '@angular/material/dialog';
 import { EditDialogComponent } from '../dialogs/edit-dialog/edit-dialog.component';
 import { VisitDialogComponent } from '../dialogs/visit-dialog/visit-dialog.component';
 import { AddDialogComponent } from '../dialogs/add-dialog/add-dialog.component';
@@ -118,6 +116,10 @@ export class InfoDocumentComponent {
         }
       }
     })
+    dialogRef.backdropClick().subscribe(()  =>{
+      window.location.reload()
+    })
+    
   }
 
   handleVisit(guid: string)  {
