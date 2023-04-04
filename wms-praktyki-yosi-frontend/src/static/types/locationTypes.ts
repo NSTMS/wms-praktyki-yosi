@@ -3,12 +3,14 @@ export type productLocation = {
   magazineId: number;
   position: string;
   quantity: number;
+  tag : string
 };
 
 export type locationToEdit = {
   position: string;
   magazineId: number;
   quantity: number;
+  tag : string
 };
 
 export type locationToAdd = {

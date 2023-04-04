@@ -24,6 +24,11 @@
     </mat-form-field>
   </mat-grid-tile>
 </mat-grid-list>
+<br>
+<a mat-button mat-raised-button href="/locations/add"
+ color="primary" style=" width:100%;display:flex;justify-content: center;">add location</a>
+<br>
+<br>
 
 <mat-table class="mat-table" #table [dataSource]="dataSource">
   <ng-container matColumnDef="id">
@@ -47,7 +52,10 @@
       {{ location.quantity < 100 ? location.quantity : "🐱‍👓" }}
     </mat-cell>
   </ng-container>
-
+  <ng-container matColumnDef="tag">
+    <mat-header-cell *matHeaderCellDef>Tag</mat-header-cell>
+    <mat-cell *matCellDef="let location">{{ location.tag }}</mat-cell>
+  </ng-container>
   <ng-container matColumnDef="edit" *ngIf="canAddAndDel">
     <mat-header-cell *matHeaderCellDef></mat-header-cell>
     <mat-cell *matCellDef="let location"

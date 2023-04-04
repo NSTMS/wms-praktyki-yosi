@@ -3,13 +3,12 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DocumentsService } from '@app/Services/fetching-services/documents.service';
-import { detailedDocument, documentItem,EditDialogData, ItemToSend, visitedElement } from '@static/types/documentTypes';
-import {
-  MatDialog,
-} from '@angular/material/dialog';
+import { detailedDocument, documentItem,EditDialogData} from '@static/types/documentTypes';
+import {MatDialog} from '@angular/material/dialog';
 import { EditDialogComponent } from '../dialogs/edit-dialog/edit-dialog.component';
 import { VisitDialogComponent } from '../dialogs/visit-dialog/visit-dialog.component';
 import { AddDialogComponent } from '../dialogs/add-dialog/add-dialog.component';
+import { PutbackDialogComponent } from '../dialogs/putback-dialog/putback-dialog.component';
 
 @Component({
   selector: 'app-info-document',
@@ -54,7 +53,7 @@ export class InfoDocumentComponent {
     this.canAddAndDel = localStorage.getItem('role') != 'User';
 
     if (this.canAddAndDel)
-      this.displayedColumns = [...this.columns, 'visit', 'edit', 'delete'];
+      this.displayedColumns = [...this.columns, 'visit','putback', 'edit', 'delete'];
     else this.displayedColumns = [...this.columns];
   }
 
@@ -117,6 +116,10 @@ export class InfoDocumentComponent {
         }
       }
     })
+    dialogRef.backdropClick().subscribe(()  =>{
+      window.location.reload()
+    })
+    
   }
 
   handleVisit(guid: string)  {
@@ -138,9 +141,33 @@ export class InfoDocumentComponent {
             quantity : result.quantityDone,
             tag : result.tag
           }
-          console.log(result);
-          
+    
           await this._service.VisitLocation(this.id, res);
+          window.location.reload()
+        }
+      })
+    });
+  }
+  handlePutBack(guid: string){
+    const dialogData = this.data.items.filter(d=> d.id == guid)[0] as documentItem
+    const dialogRef = this.dialog.open(PutbackDialogComponent, {
+      data: {...dialogData}
+    })
+    dialogRef.backdropClick().subscribe(()  =>{
+      window.location.reload()
+    })
+    dialogRef.afterClosed().subscribe(result=> {     
+      this.data.items.map(async v =>{      
+        if(v.id == guid)
+        {
+          const res = 
+          {
+            productName : result.productName,
+            position : result.position,
+            quantity : result.quantityDone,
+            tag : result.tag
+          }          
+          await this._service.PutBackToLocation(this.id, res);
           window.location.reload()
         }
       })

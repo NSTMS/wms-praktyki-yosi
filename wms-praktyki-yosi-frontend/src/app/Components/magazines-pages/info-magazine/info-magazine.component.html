@@ -59,14 +59,18 @@
       </mat-card-header>
     </mat-card>
   </mat-grid-tile>
-  <mat-grid-tile colspan="5">
-    <mat-card style="width: 90%">
+  <mat-grid-tile colspan="5" style="width:100vh; display: grid; grid-template-columns: 1fr 1fr;">
+    <mat-card style="width: 100%; display: grid; place-items: center;">
+        <mat-card-header style="text-align: center"> <h5>Products</h5> </mat-card-header>
+    </mat-card>
+    <mat-card style="width: 100%; display: grid; place-items: center;">
       <mat-card-header>
-        <mat-card-title style="text-align: center"> Products </mat-card-title>
+        <a mat-flat-button routerLink="/magazines/info/{{ id }}/shelves" color="primary">shelves</a>
       </mat-card-header>
-      <mat-card-content></mat-card-content>
+
     </mat-card>
   </mat-grid-tile>
+
 </mat-grid-list>
 
 <mat-table class="mat-table" #table [dataSource]="dataSource">
@@ -117,11 +121,10 @@
 
   <ng-container matColumnDef="delete" *ngIf="canAddAndDel">
     <mat-header-cell *matHeaderCellDef></mat-header-cell>
-    <mat-cell *matCellDef="let product"
-      ><button mat-flat-button color="warn" (click)="handleDelete(product.id)">
-        Delete
-      </button></mat-cell
-    >
+    <mat-cell *matCellDef="let product">
+      <button mat-flat-button color="warn" (click)="handleDelete(product.id)">
+        Delete</button>
+      </mat-cell>
   </ng-container>
 
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

@@ -1,0 +1,19 @@
+<h1 mat-dialog-title>Edit order</h1>
+<div mat-dialog-content>
+    <mat-form-field appearance="fill">
+        <mat-label>Client</mat-label>
+        <input matInput [(ngModel)]="data.client">
+      </mat-form-field>
+      <mat-form-field appearance="fill" floatLabel="always">
+        <mat-label>Magazine Id</mat-label>
+        <input matInput type="number" class="example-right-align" placeholder="0" [(ngModel)]="data.magazineId">
+    </mat-form-field>
+    <mat-form-field appearance="fill" floatLabel="always">
+        <mat-label>Interval</mat-label>
+        <input matInput type="number" class="example-right-align" placeholder="0" [(ngModel)]="data.interval">
+    </mat-form-field>
+</div>
+<div mat-dialog-actions>
+    <button mat-button mat-raised-button (click)="onNoClick()" color="primary">close</button>
+    <button mat-button mat-raised-button [mat-dialog-close]="data" cdkFocusInitial color="accent">sumbit</button>
+</div>

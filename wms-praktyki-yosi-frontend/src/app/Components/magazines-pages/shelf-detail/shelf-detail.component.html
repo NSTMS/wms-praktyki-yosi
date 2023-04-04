@@ -1,0 +1,93 @@
+<mat-grid-list cols="5" rowHeight="75px" gutterSize="20px">
+    <mat-grid-tile>
+        <mat-card>
+            <mat-card-header>
+                <mat-card-subtitle>Id</mat-card-subtitle>
+                <mat-card-title>
+                    {{ shelf.id }}
+                </mat-card-title>
+            </mat-card-header>
+        </mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile>
+        <mat-card style="width: 100% !important">
+            <mat-card-header style="width: 100% !important">
+                <mat-card-subtitle>Position</mat-card-subtitle>
+                <mat-card-title style="width: 100% !important">
+                        {{ shelf.position }}
+                </mat-card-title>
+            </mat-card-header>
+        </mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile>
+        <mat-card>
+            <mat-card-header>
+                <mat-card-subtitle>Total Quantity</mat-card-subtitle>
+                <mat-card-title>
+                    {{ shelf.totalQuantity }}
+                </mat-card-title>
+            </mat-card-header>
+        </mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile>
+        <mat-card>
+            <mat-card-header>
+                <mat-card-subtitle>Max Quantity</mat-card-subtitle>
+                <mat-card-title>
+                    {{ shelf.maxQuantity }}
+                </mat-card-title>
+            </mat-card-header>
+        </mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile>
+        <mat-card>
+            <mat-card-header>
+                <mat-card-subtitle>Free space</mat-card-subtitle>
+                <mat-card-title>
+                    {{ shelf.freeSpace }}
+                </mat-card-title>
+            </mat-card-header>
+        </mat-card>
+    </mat-grid-tile>
+
+    <mat-grid-tile colspan="5">
+        <mat-card style="width: 90% ; margin: auto;">
+            <mat-card-header>
+                <mat-card-title style="text-align: center"> Locations </mat-card-title>
+            </mat-card-header>
+        </mat-card>
+    </mat-grid-tile>
+</mat-grid-list>
+
+<mat-table class="mat-table" #table [dataSource]="dataSource">
+    <ng-container matColumnDef="productId">
+        <mat-header-cell *matHeaderCellDef>ProductId</mat-header-cell>
+        <mat-cell *matCellDef="let location">{{ location.productId }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="magazineId">
+        <mat-header-cell *matHeaderCellDef>MagazineId</mat-header-cell>
+        <mat-cell *matCellDef="let location">{{ location.magazineId }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="position">
+        <mat-header-cell *matHeaderCellDef>Position</mat-header-cell>
+        <mat-cell *matCellDef="let location">{{ location.position }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="quantity">
+        <mat-header-cell *matHeaderCellDef>Quantity</mat-header-cell>
+        <mat-cell *matCellDef="let location">{{ location.quantity }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="tag">
+        <mat-header-cell *matHeaderCellDef>Tag</mat-header-cell>
+        <mat-cell *matCellDef="let location">{{ location.tag }}</mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+</mat-table>
+
+<mat-paginator [length]="100" [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+    aria-label="Select page" #paginator>
+</mat-paginator>

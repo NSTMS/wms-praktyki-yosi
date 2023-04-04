@@ -104,6 +104,14 @@
       </button>
     </mat-cell>
   </ng-container>
+  <ng-container matColumnDef="putback" *ngIf="canAddAndDel">
+    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+    <mat-cell *matCellDef="let document"
+      ><button mat-flat-button color="warn" (click)="handlePutBack(document.id)">
+        put back
+      </button>
+    </mat-cell>
+  </ng-container>
   <ng-container matColumnDef="edit" *ngIf="canAddAndDel">
     <mat-header-cell *matHeaderCellDef></mat-header-cell>
     <mat-cell *matCellDef="let document"

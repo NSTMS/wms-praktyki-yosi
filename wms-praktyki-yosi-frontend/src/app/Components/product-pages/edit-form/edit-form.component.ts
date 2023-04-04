@@ -23,7 +23,6 @@ export class EditFormComponent {
     Validators.required,
     Validators.pattern('^[0-9]+?(.[0-9]+)?$'),
   ]);
-
   constructor(
     private route: ActivatedRoute,
     private _reader: DataReaderService,

@@ -1,0 +1,75 @@
+<mat-toolbar class="toolbar" style="margin-bottom:100px;padding:10px;">
+  <form [formGroup]="formGroup">
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Search</mat-label>
+      <input matInput type="text" formControlName="search" placeholder="Search..." />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-select formControlName="column">
+        <mat-option *ngFor="let opt of options" [value]="opt">
+          {{opt}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-checkbox matInput formControlName="descending">descending</mat-checkbox>
+    <br>
+    <button mat-flat-button color="primary" (click)="loadData()">Search</button>
+  </form>
+</mat-toolbar>
+
+
+<mat-table class="mat-table" #table [dataSource]="dataSource">
+  <ng-container matColumnDef="id">
+    <mat-header-cell *matHeaderCellDef>Guid</mat-header-cell>
+    <mat-cell *matCellDef="let order">{{ order.id }}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="magazineId">
+    <mat-header-cell *matHeaderCellDef>Magazine Id</mat-header-cell>
+    <mat-cell *matCellDef="let order">{{ order.magazineId }}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="client">
+    <mat-header-cell *matHeaderCellDef>Client</mat-header-cell>
+    <mat-cell *matCellDef="let order">{{ order.client }}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="interval">
+    <mat-header-cell *matHeaderCellDef>interval</mat-header-cell>
+    <mat-cell *matCellDef="let order">{{ order.interval }}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="status">
+    <mat-header-cell *matHeaderCellDef>status</mat-header-cell>
+    <mat-cell *matCellDef="let order">{{ order.status }}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="message">
+    <mat-header-cell *matHeaderCellDef>message</mat-header-cell>
+    <mat-cell *matCellDef="let order">{{ order.message }}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="info" *ngIf="canAddAndDel">
+    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+    <mat-cell *matCellDef="let order">
+        <a mat-stroked-button routerLink="/orders/{{ order.id }}">Info</a>
+      </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="edit">
+    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+    <mat-cell *matCellDef="let order">
+      <button mat-flat-button color="primary" (click)="handleEdit(order.id)">Edit</button>
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="delete" *ngIf="canAddAndDel">
+    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+    <mat-cell *matCellDef="let order">
+      <button mat-flat-button color="warn" (click)="handleDelete(order.id)">Delete</button>
+    </mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+</mat-table>
+<div *ngIf="length === 0">No data</div>
+
+<mat-paginator [length]="100" [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+  aria-label="Select page" #paginator>
+</mat-paginator>

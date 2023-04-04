@@ -46,4 +46,16 @@ export class MagazineService {
     await firstValueFrom(this.http.delete(this.link + '/' + id))
     return true;
   }
+  async showShelves(id : number)
+  {
+    return await firstValueFrom(this.http.get(this.link + "/" + id +"/shelves"))
+  }
+  async GetShelfDetails(id : number, position : string)
+  {
+    return await firstValueFrom(this.http.get(this.link + "/" + id +"/shelves/" + position))
+  }
+  async ChnageShelfProductLocation(id : number, position : string,destination : string)
+  {
+    return await firstValueFrom(this.http.post(this.link + "/" + id +"/shelves/" + position + '/move', JSON.stringify( destination)))
+  }
 }

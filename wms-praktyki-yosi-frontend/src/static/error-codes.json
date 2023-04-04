@@ -21,16 +21,23 @@
     "116": "Hasła są różne",
     "117": "Wymiary są nieprawidlowe",
 
-    "150": "Nie ma tekiej półki",
+    "150": "Nie ma takiej półki",
     "151": "Nie ma produktu o takim id",
-    "152": "Nie ma tekiej lokalozacji",
+    "152": "Nie ma takiej lokacji",
     "153": "Nie ma takiego magazynu",
-    "154": "Nie ma użtkownika o takim Id",
-    "155": "Nie ma takiego Dokumentu",
+    "154": "Nie ma użytkownika o takim id",
+    "155": "Nie ma takiego dokumentu",
+    "156": "Nie ma tego produktu na liście",
+    "157": "Nie ma takiego zlecenia",
+    "158":  "Nie ma takiego produktu w zleceniu",
 
     "180": "Półka pełna",
     "181": "Nie ma wystarczajacej ilości jednego z produktów w magazynie",
-    "182": "Za mało miejsca w Magzynie"
+    "182": "Za mało miejsca w magzynie",
+    "183": "Za mało produktu w danej lokalizacji",
+    "184": "Nie posiadasz wystarczajacej ilości produktu w dokumencie",
+
+    "190": "Nie możesz zmienić zakończonego dokumentu!"
   },
   "en": {
     "1": "id not found",
@@ -52,8 +59,22 @@
     "114": "Password must contain special characters",
     "115": "Your password contains illegal characters",
     "116": "The passwords are different",
+    "117" : "Dimentions are incorrect",
 
-    "150": "There is no shelf of that position",
-    "151": "Product of this id don't exist"
+    "150": "There is no shelf like this",
+    "151": "There is no product with this id",
+    "152": "There is no location like this",
+    "153": "There is no magazine like this",
+    "154": "There is no user with this id",
+    "155": "There is no document like this",
+    "156": "",
+
+    "180": "Shelf is full",
+    "181": "There is not enough quantity of at least one product in magazine",
+    "182": "There is not enough space in the magazine",
+    "183": "There is not enough product in that location",
+    "184": "You don't have enough product like this in your order",
+
+    "190": "You can't edit finished order"
   }
 }

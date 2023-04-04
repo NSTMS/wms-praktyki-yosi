@@ -25,6 +25,7 @@ export class EditLocationComponent {
     Validators.required,
     Validators.pattern('^[0-9]+$'),
   ]);
+  tag = new FormControl("");
 
   id: number;
   constructor(
@@ -47,6 +48,7 @@ export class EditLocationComponent {
     this.position.setValue(location.position);
     this.quantity.setValue(location.quantity);
     this.magazineId.setValue(location.magazineId);
+    this.tag.setValue(location.tag)
   }
 
   async handleSubmit() {
@@ -63,6 +65,7 @@ export class EditLocationComponent {
       position: this.position.value || '',
       quantity: this.quantity.value || 0,
       magazineId: this.magazineId.value || -1,
+      tag : this.tag.value || ""
     };
 
     await this._service.EditLocation(this.id, newLocation)

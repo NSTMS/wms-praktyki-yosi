@@ -15,10 +15,14 @@ import { AddMagazineComponent } from './Components/magazines-pages/add-magazine/
 import { EditMagazineComponent } from './Components/magazines-pages/edit-magazine/edit-magazine.component';
 import { InfoMagazineComponent } from './Components/magazines-pages/info-magazine/info-magazine.component';
 import { AddShelfComponent } from './Components/magazines-pages/add-shelf/add-shelf.component';
-import { EditDocumentComponent } from './Components/document-pages/edit-document/edit-document.component';
 import { AddDocumentComponent } from './Components/document-pages/add-document/add-document.component';
 import { InfoDocumentComponent } from './Components/document-pages/info-document/info-document.component';
 import { DocumentsListComponent } from './Components/document-pages/documents-list/documents-list.component';
+import { ShevlesListComponent } from './Components/magazines-pages/shevles-list/shevles-list.component';
+import { ShelfDetailComponent } from './Components/magazines-pages/shelf-detail/shelf-detail.component';
+import { OrdersListComponent } from '@app/Components/standing-orders/orders-list/orders-list.component';
+import { AddOrderComponent } from '@app/Components/standing-orders/add-order/add-order.component';
+import { OrderInfoComponent } from './Components/standing-orders/order-info/order-info.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/table', pathMatch: 'full' },
@@ -31,6 +35,8 @@ const routes: Routes = [
   { path: 'magazines/addShelf', component: AddShelfComponent },
   { path: 'magazines/edit/:id', component: EditMagazineComponent },
   { path: 'magazines/info/:id', component: InfoMagazineComponent },
+  { path: 'magazines/info/:id/shelves', component: ShevlesListComponent},
+  { path: 'magazines/info/:id/shelves/:position', component: ShelfDetailComponent},
   {
     path: 'magazines/info/:magazineId/product/:id',
     component: ProductInfoComponent,
@@ -48,12 +54,10 @@ const routes: Routes = [
     pathMatch: 'full',
     component: InfoDocumentComponent,
   },
-  {
-    path: 'documents/edit/:id',
-    pathMatch: 'full',
-    component: EditDocumentComponent,
-  },
-
+  { path: 'orders', component: OrdersListComponent },
+  { path: 'orders/add', component: AddOrderComponent },
+  { path: 'orders/:id', component: OrderInfoComponent },
+  
   { path: '**', redirectTo: '/table' },
 ];
 

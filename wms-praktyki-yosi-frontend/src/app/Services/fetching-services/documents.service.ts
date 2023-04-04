@@ -30,7 +30,10 @@ export class DocumentsService {
     return await firstValueFrom(this.http.post(this.link + '/' + guid + '/markasfinished', finished));
   }
   async VisitLocation(guid: string, data: visitedElement) {
-    return await firstValueFrom(this.http.post(this.link + '/' + guid + "/visitedlocation", data));
+    return await firstValueFrom(this.http.post(this.link + '/' + guid + "/visitlocation", data));
+  }
+  async PutBackToLocation(guid: string, data: visitedElement) {
+    return await firstValueFrom(this.http.post(this.link + '/' + guid + "/revertvisit", data));
   }
   async Delete(guid: string) {
     return await firstValueFrom(this.http.delete(this.link + '/' + guid));
