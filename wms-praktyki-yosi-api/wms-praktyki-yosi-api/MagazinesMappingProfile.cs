@@ -3,6 +3,7 @@ using wms_praktyki_yosi_api.Enitities;
 using wms_praktyki_yosi_api.Models.DocumentModels;
 using wms_praktyki_yosi_api.Models.MagazineModels;
 using wms_praktyki_yosi_api.Models.ProductModels;
+using wms_praktyki_yosi_api.Models.StandingOrderModels;
 
 namespace wms_praktyki_yosi_api
 {
@@ -46,6 +47,15 @@ namespace wms_praktyki_yosi_api
                     "Done" :
                     "To much stuff"
                 ));
+
+            CreateMap<StandingOrder, DetailedStandingOrderDto>()
+                .ForMember(d => d.TotalQuantity, opt => opt.MapFrom(d => d.Items.Sum(i => i.Quantity)));
+
+            CreateMap<OrderItem, OrderItemDto>()
+                .ForMember(d => d.ProductName, opt => opt.MapFrom(d => d.Product.ProductName));
+
+            CreateMap<StandingOrder, StandingOrderDto>()
+                .ForMember(d => d.TotalQuantity, opt => opt.MapFrom(d => d.Items.Sum(i => i.Quantity)));
         }
     }
 }
